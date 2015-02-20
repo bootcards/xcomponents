@@ -1,0 +1,64 @@
+ <div class='container bootcards-container'>
+
+ <div class='row'>
+
+ 	<div class="bootcards-list {{colLeft}}" ng-show="!$root.hideList">
+
+		<div class="panel panel-default">
+
+			<ng-include src="'xc-list-heading.html'"></ng-include>
+
+			<div class="list-group">
+
+				<div ng-repeat="group in groups | filter : filter" class="animate-repeat">
+					<div class="list-group-item bootcards-list-subheading" >
+						{{group.name}}
+					</div>
+				
+					<a class="list-group-item" ng-repeat="item in group.entries | filter : filter" ng-click="select(item)"
+						ng-class="{'active' : selected == item}">
+
+						<!--(placeholder) icon-->
+						<i ng-if="showPlaceholder(item)" class="fa fa-2x pull-left" ng-class="'fa-' + imagePlaceholderIcon"></i>
+						<i ng-if="showIcon(item)" class="fa fa-2x pull-left" ng-class="'fa-' + item[iconField]"></i>
+					
+						<!--image-->
+						<img 
+						ng-show="showImage(item)"
+						class="img-rounded pull-left" 
+						ng-src="{{ imageBase + item[imageField] }}" />
+
+						<h4 class="list-group-item-heading">{{item[summaryField]}}&nbsp;</h4>
+
+						<p class="list-group-item-text">{{ convert(item) }}&nbsp;</p>
+						
+					</a>
+
+				</div>
+
+				<div class="list-group-item" ng-show="isLoading">
+					<i class="fa fa-spinner fa-spin fa-fw" style="margin-right:0; opacity: 1;"></i>Loading...
+				</div>
+
+				<div class="list-group-item" ng-show="!isLoading && hasMore">
+					<button ng-click="loadMore()" id="btnLoadMore" class="btn btn-default">
+						Load more...
+					</button>
+				</div>
+
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class='bootcards-cards {{colRight}}' ng-show="$root.showCards">
+
+		<ng-transclude></ng-transclude>
+
+	</div>
+
+ </div>
+
+</div>
+

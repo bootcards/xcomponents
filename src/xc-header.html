@@ -1,0 +1,157 @@
+
+<div>
+
+<div class="navbar navbar-default navbar-fixed-top" ng-class="{'bootcards-navbar-double' : hasSecondaryOptions}" role="navigation">
+
+	<div class="container">
+
+		<div class="navbar-header">
+
+			<a class="navbar-brand">{{::title}}</a>	
+
+      <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse" type="button">
+        <span class="sr-only">Toggle menu</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+		</div>
+
+    <!--right aligned button-->
+    <div class="btn-group bootcards-header-right" ng-transclude></div>
+
+    <!--back button for small displays-->
+    <button class="btn btn-default btn-back pull-left" ng-click="goBack()" type="button" ng-show="$root.hideList">
+      <i class="fa fa-lg fa-chevron-left"></i><span>Back</span>
+    </button>
+
+		<!--slide-in menu button-->
+		<button ng-if="hasMenu && !$root.hideList" type="button" class="btn btn-default btn-menu pull-left offCanvasToggle" data-toggle="offcanvas">
+	   <i class="fa fa-lg fa-bars"></i><span>Menu</span>
+	   </button>
+
+    <div class="navbar-collapse collapse">
+
+      <!--secondary menu options-->
+      <ul ng-if="hasSecondaryOptions" class="nav navbar-nav navbar-right bootcards-nav-secondary">
+        <li ng-repeat="o in ::menuOptionsSecondary" ng-class="{'active' : isActive(o), 'dropdown' : hasSubmenu(o)}">
+
+        {{o.callback}}
+          <!--basic option-->
+          <a href="{{o.url}}" ng-if="!hasSubmenu(o)">
+            <i class="fa" ng-class="o.icon ? o.icon : null"></i>
+            {{o.label}}
+          </a>
+
+          <!--dropdown-->
+          <a href="#" ng-if="hasSubmenu(o)" class="dropdown-toggle" data-toggle="dropdown">
+            <i class="fa" ng-class="o.icon ? o.icon : null"></i>
+            {{::o.label}} <span class="caret"></span>
+
+            <ul class="dropdown-menu">
+              <li ng-repeat="so in ::o.menuOptions"  ng-class="{'active' : isActive(so)}">
+                <a href="{{::so.url}}">
+                  <i class="fa fa-fw" ng-class="so.icon ? so.icon : null"></i>
+                  {{::so.label}}
+                </a>
+              </li>
+            </ul>
+          </a>
+        </li>
+      </ul>
+
+      <!-- menu options (desktop) -->
+      <ul class="nav navbar-nav" ng-class="{'navbar-right' : menuAlignRight, 'navbar-right bootcards-nav-primary' : hasSecondaryOptions}">
+
+        <li ng-repeat="o in ::menuOptions" ng-class="{'active' : isActive(o), 'dropdown' : hasSubmenu(o)}">
+
+          <!--basic option-->
+          <a href="{{o.url}}" ng-if="!hasSubmenu(o)">
+            <i class="fa" ng-class="o.icon ? o.icon : null"></i>
+            {{o.label}}
+          </a>
+
+          <!--dropdown-->
+          <a href="#" ng-if="hasSubmenu(o)" class="dropdown-toggle" data-toggle="dropdown">
+            <i class="fa" ng-class="o.icon ? o.icon : null"></i>
+            {{::o.label}} <span class="caret"></span>
+
+            <ul class="dropdown-menu">
+              <li ng-repeat="so in ::o.menuOptions"  ng-class="{'active' : isActive(so)}">
+                <a href="{{::so.url}}">
+                  <i class="fa fa-fw" ng-class="so.icon ? so.icon : null"></i>
+                  {{::so.label}}
+                </a>
+              </li>
+            </ul>
+          </a>
+        </li>
+      </ul>
+    </div>
+	</div>
+
+</div>
+
+<!--slide in menu-->
+  <nav id="offCanvasMenu" class="navmenu offcanvas offcanvas-left" ng-if="hasMenu">
+    <ul class="nav">
+
+      <li ng-repeat="o in ::menuOptions" ng-class="{'active' : isActive(o)}">
+
+        <!--basic option-->
+        <a href="{{::o.url}}" ng-if="!hasSubmenu(o)">
+          <i class="fa fa-lg fa-fw" ng-class="o.icon ? o.icon : null"></i>&nbsp;{{::o.label}}
+        </a>
+
+        <!--option with submenu-->
+        <a href="#" ng-if="hasSubmenu(o)" class="dropdown-toggle" data-toggle="collapse" ng-click="o.collapsed = !o.collapsed">
+            <i class="fa fa-fw fa-lg fa-chevron-circle-right"></i>&nbsp;{{::o.label}}
+        </a>
+
+        <div collapse="o.collapsed" ng-if="hasSubmenu(o)" >
+
+          <ul class="nav navmenu-nav"  >
+            <li ng-repeat="so in ::o.menuOptions">
+              <a href="{{so.url}}">
+                <i class="fa fa-fw fa-lg" ng-class="so.icon ? so.icon : null"></i>&nbsp;{{::so.label}}
+              </a>
+            </li>
+          </ul>
+
+        </div>
+
+      </li>
+
+      <!--secondary menu options-->
+      <li ng-repeat="o in ::menuOptionsSecondary" ng-class="{'active' : isActive(o)}">
+
+        <!--basic option-->
+        <a href="{{::o.url}}" ng-if="!hasSubmenu(o)">
+          <i class="fa fa-fw fa-lg" ng-class="o.icon ? o.icon : null"></i>&nbsp;{{::o.label}}
+        </a>
+
+        <!--option with submenu-->
+        <a href="#" ng-if="hasSubmenu(o)" class="dropdown-toggle" data-toggle="dropdown" ng-click="o.collapsed = !o.collapsed">
+          <i class="fa fa-fw fa-chevron-circle-right"></i>&nbsp;{{::o.label}}
+        </a>
+ 
+        <div collapse="o.collapsed" ng-if="hasSubmenu(o)" >
+
+          <ul class="nav navmenu-nav"  >
+              <li ng-repeat="so in ::o.menuOptions">
+                <a href="{{so.url}}">
+                  <i class="fa fa-fw fa-lg" ng-class="so.icon ? so.icon : null"></i>&nbsp;{{::so.label}}
+                </a>
+              </li>
+          </ul>
+        </div>
+
+      </li>
+     
+    </ul>
+
+    <div ng-show="appVersion != ''" style="margin-top:20px; padding-left: 20px; font-size: 12px; color: #777">{{appVersion}}</div>
+  </nav>
+
+</div>

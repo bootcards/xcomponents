@@ -1,0 +1,53 @@
+<div class="panel panel-default bootcards-file">
+
+  <div class="panel-heading">
+    <h3 class="panel-title">{{::title}}</h3>
+  </div>
+  <div class="list-group">
+    <div class="list-group-item" ng-if="fileName.length>0">
+      <a ng-href="{{url}}" class="img-rounded pull-left">
+        <i class="fa fa-2x fa-file-pdf-o"></i>
+      </a>
+      <h4 class="list-group-item-heading">
+        <a ng-href="{{url}}">{{::fileName}}</a>
+      </h4>
+      <p class="list-group-item-text"><strong>{{::fileType}}</strong></p>
+      <p class="list-group-item-text"><strong>{{::fileSize}}</strong></p>
+    </div>
+    <div class="list-group-item" ng-if="summary.length>0">
+      <p class="list-group-item-text"><strong>{{::summary}}</strong></p>
+    </div>
+    
+  </div>
+
+  <div class="panel-body">
+{{::description}}
+  </div>
+
+  <img ng-src="{{previewUrl}}" class="img-responsive">
+
+  <div class="panel-footer">
+
+    <div class="btn-group btn-group-justified">
+      <div class="btn-group">
+        <a class="btn btn-default" ng-href="{{url}}" onclick="alert('This button is disabled')">
+          <i class="fa fa-arrow-down"></i>
+          Download
+        </a>
+      </div>
+      <div class="btn-group" ng-if="allowFavorite">
+        <a class="btn btn-default" href="#" onclick="alert('This button is disabled')">
+          <i class="fa fa-star"></i>
+          Favorite
+        </a>
+      </div>
+      <div class="btn-group" ng-show="allowEmail">
+        <a class="btn btn-default" href="#" onclick="alert('This button is disabled')">
+          <i class="fa fa-envelope"></i>
+          Email
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>

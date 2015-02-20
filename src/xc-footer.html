@@ -1,0 +1,19 @@
+
+<div class="navbar navbar-default navbar-fixed-bottom">
+		<div class="container">
+			
+			<div class="bootcards-desktop-footer clearfix">
+				<p class="pull-left">XComponents | version 0.1</p>
+			</div>
+
+			<div class="btn-group">
+				<ng-transclude></ng-transclude>
+
+				<a href="{{o.url}}" ng-repeat="o in ::footerOptions" class="btn btn-default">
+		            <i class="fa fa-2x" ng-class="o.icon ? o.icon : null"></i>
+		            {{o.label}}
+		        </a>
+
+			</div>
+		</div>
+	</div>

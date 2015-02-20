@@ -1,0 +1,44 @@
+<div>
+
+	<div class="panel-heading">
+
+		<div class="row">
+
+			<div class="col-xs-8">
+				<h3 class="panel-title">{{::title}}</h3>
+			</div>
+
+			<div class="col-xs-4" ng-if="allowAdd">
+
+				<a class="btn btn-primary btn-block" href="#" ng-click="addNewItem()">
+					<i class="fa fa-plus"></i> 
+					<span>Add</span>
+				</a>
+				
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class="panel-body" ng-show="allowSearch">
+
+		<!--add a new item-->
+		<div class="search-form">
+			<div class="row">
+			    <div class="col-xs-9">
+			      <div class="form-group">
+				      <input type="text" class="form-control" ng-model="$parent.filter" placeholder="Search {{::modelName}}...">
+				      <i class="fa fa-search"></i>
+			      </div>
+			    </div>
+			    <div class="col-xs-3">
+					
+			    </div>
+			</div>						    
+		</div>				
+
+
+	</div>		
+
+</div>

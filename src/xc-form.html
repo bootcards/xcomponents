@@ -1,0 +1,79 @@
+
+<div>
+
+	<!-- text if no item is selected -->
+	<div ng-class="{'panel panel-default' : true , 'hidden' : selectedItem || !defaultText }">
+		<div class="list-group">
+			<div class="list-group-item">
+				{{defaultText}}
+			</div>
+		</div>
+	</div>
+
+	<!-- card (read) -->
+	<div ng-class="{'panel panel-default' : true , 'hidden' : !selectedItem}">
+
+		<div class="panel-heading clearfix">
+			<h3 class="panel-title pull-left">{{modelName}}</h3>
+			<a class="btn btn-primary pull-right" ng-click="editDetails()">
+				<i class="fa fa-pencil"></i><span>Edit</span>
+			</a>
+
+		</div>
+
+		<div class="list-group">
+
+			<div ng-repeat="field in fieldsRead">
+
+				<div class="list-group-item" ng-if="field.type=='text'">
+
+					<span ng-if="field.field == thumbnailShowWith">
+					
+						<!--placeholder-->
+						<i ng-if="showPlaceholder()" class="fa fa-3x pull-left" ng-class="'fa-' + imagePlaceholderIcon"></i>
+						<i ng-if="showIcon()" class="fa fa-3x pull-left" ng-class="'fa-' + item[iconField]"></i>
+
+						<!--image-->
+						<img 
+							ng-if="showImage()"
+							class="img-rounded pull-left" 
+							ng-src="{{thumbnailSrc}}" />
+					</span>
+
+					<label>{{field.label}}</label>
+					<h4 class="list-group-item-heading">{{selectedItem[field.field]}}</h4>
+				</div>
+				<div class="list-group-item" ng-if="field.type=='date'">
+					<label>{{field.label}}</label>
+					<h4 class="list-group-item-heading">{{selectedItem[field.field] | date}}</h4>
+				</div>
+				<div class="list-group-item" ng-if="field.type=='select'">
+					<label>{{field.label}}</label>
+					<h4 class="list-group-item-heading">{{selectedItem[field.field]}}</h4>
+				</div>
+				<div class="list-group-item" ng-if="field.type=='multiline'">
+					<label>{{field.label}}</label>
+					<h4 class="list-group-item-heading" ng-bind-html="selectedItem[field.field]"></h4>
+				</div>
+				<a href="mailto:{{selectedItem[field.field]}}" class="list-group-item" 
+					ng-if="field.type=='email'">
+					<label>{{field.label}}</label>
+					<h4 class="list-group-item-heading">{{selectedItem[field.field]}}</h4>
+				</a>
+				<a href="tel:{{selectedItem[field.field]}}" class="list-group-item" 
+					ng-if="field.type=='phone'">
+					<label>{{field.label}}</label>
+					<h4 class="list-group-item-heading">{{selectedItem[field.field]}}</h4>
+				</a>
+				<a href="{{selectedItem[field.field]}}" class="list-group-item" 
+					ng-if="field.type=='link'">
+					<label>{{field.label}}</label>
+					<h4 class="list-group-item-heading">{{selectedItem[field.field]}}</h4>
+				</a>
+
+			<div>
+		</div>
+
+	</div>
+
+</div>

@@ -1,0 +1,56 @@
+<div>
+
+	<div class="panel panel-default bootcards-chart">
+		
+		<div class="panel-heading">
+			<h3 class="panel-title">{{title}}</h3>					
+		</div>
+
+		<div>
+
+			<!--bar chart-->
+			<div class="js-chart-canvas" id="chartClosedSales"></div>
+
+			<div class="panel-footer">
+				<button class="btn btn-default btn-block"
+					ng-click="toggleChartData($event)">
+					<i class="fa fa-table"></i>
+					Show Data
+				</button>				
+			</div>
+		</div>
+	<!-- 	
+		<div class="panel-footer">
+			<small class="pull-left">Built with Bootcards - Chart Card</small>
+		</div>		 -->			
+
+	</div>		
+
+	<!-- Table Card data -->
+	<div class="panel panel-default bootcards-table" style="display:none">
+		<div class="panel-heading">
+			<h3 class="panel-title">{{title}}</h3>							
+		</div>	
+		<table class="table table-hover">
+			<thead>				
+				<tr class="active"><th>Name</th><th class="text-right">Sales value</th></tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="row in chartData">
+					<td>{{row.label}}</td><td class="text-right">{{valuePrefix}} {{row.value | number : 0}}</td>
+				<tr>
+					<td><strong>Total</strong></td><td class="text-right"><strong>{{valuePrefix}} {{chartTotal | number : 0}}</strong></td></tr>
+			</tbody>
+		</table>
+		<div class="panel-footer">
+			<button class="btn btn-default btn-block" ng-click="toggleChartData($event)">
+				<i class="fa fa-bar-chart-o"></i>
+				Show Chart
+			</button>				
+		</div>
+		<!-- <div class="panel-footer">
+			<small class="pull-left">Built with Bootcards - Table Card</small>
+		</div>	 -->												
+	</div>
+
+</div>

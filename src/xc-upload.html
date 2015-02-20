@@ -1,0 +1,45 @@
+<div class="panel panel-default boorcards-media"> 
+
+  <div class="panel-heading clearfix">
+    <h class="panel-title pull-left">{{::title}}</h3>  
+  </div>
+    
+  <div class="panel-body">
+    Tap 'Select' to take a new photo or select from your Photos library, then tap 'Upload'.
+
+    <div style="margin-top:15px; text-align: center;">
+      <div class="js-photouploader">
+        <div class="photoUpload btn btn-primary" style="display: none;">
+          <span id="view:_id1:_id173:_id181:computedField1">Select photo</span>
+        </div>
+
+        <div class="js-photouploader-preview">
+          <span style="font-size: 200px; color: #bbb;" class="fa fa-2x fa-camera"></span>
+        </div>
+      </div>
+      <span class="js-custom-select-var hidden">.js-custom-photo-select</span>
+    </div>
+  </div>
+
+  <div class="panel-footer">
+    <div class="btn-group btn-group-justified">
+      <div class="btn-group">
+        <div class="js-custom-photo-select photoUpload btn btn-default"><i class="fa fa-camera"></i>Select
+          <input type="file" class="js-photouploader-upload" accept="image/*" onchange="targetWidth = 1024;
+          targetHeight = 768;
+          doCrop = false;
+          var file = event.target.files[0];
+          orientation = 0;  
+          angular.element(this).scope().loadImage(file);">
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-default" ng-click="rotateImage(true)" type="button"><i class="fa fa-rotate-right"></i>Rotate</button>
+      </div>
+      <div class="btn-group">
+        <button class="hidden" type="button">save</button>
+        <button type="button" ng-click="savePhoto(this, 'view:_id1:_id173:button1')" class="btn btn-default uploadphotobutton">
+          <i class="fa fa-upload"></i>Upload</button></div>
+    </div>
+  </div>
+</div>

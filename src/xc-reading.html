@@ -1,0 +1,18 @@
+<div class="panel panel-default bootcards-richtext"> 
+  <div class="panel-heading clearfix">
+    <h3 class="panel-title pull-left">{{::title}}</h3>
+      
+    <div class="btn-group pull-right">
+      <a class="btn btn-primary icon-only" href="#" ng-click="increaseFontSize()">
+        <i class="fa fa-lg fa-search-plus"></i></a>
+        <a class="btn btn-primary icon-only" href="#" ng-click="decreaseFontSize()">
+        <i class="fa fa-lg fa-search-minus"></i></a>
+    </div>
+  </div>
+    <div class="panel-body typographyreadcontent">
+      <ng-transclude></ng-transclude>
+    </div>
+  <div class="panel-footer">
+    <small class="pull-left">{{footerText}}</small>
+  </div>
+</div>
