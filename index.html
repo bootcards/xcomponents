@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="XComponents - Angular directives for Bootcards">
+  <meta name="author" content="Bootcards">
+  <!--<link rel="shortcut icon" href="../../docs-assets/ico/favicon.png">-->
+
+  <title>XComponents - Angular directives for Bootcards</title>
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="site/css/bootcards-site.css">
+
+  <!--font awesome-->
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
+
+  <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+      <![endif]-->
+
+    </head>
+
+    <body>
+
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">XComponents</a>
+          </div>
+
+          <div class="navbar-collapse collapse">
+
+           <ul class="nav navbar-nav">
+            <li class="active">
+             <a href="./index.html"><span class="fa fa-home"></span> Home</a>
+           </li>
+
+          <!--<li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Demos <span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="https://rawgit.com/bootcards/bootcards/master/samples/starter-template.html" target="_blank">Starter template (iOS style)</a></li>
+              <li><a href="https://rawgit.com/bootcards/bootcards/master/samples/starter-template-android.html" target="_blank">Starter template (Android style)</a></li>
+              <li><a href="https://rawgit.com/bootcards/bootcards/master/samples/az-picker.html" target="_blank">AZ Picker</a></li>
+            </ul>
+          </li>-->
+
+          <!-- <li>
+            <a href="./site/docs.html"><span class="fa fa-book"></span> Documentation</a>
+          </li> -->
+          <li>
+            <a href="./site/about.html"><span class="fa fa-info-circle"></span> About</a>
+          </li>
+
+        </ul>
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="jumbotron jumbotron-main">
+    <div class="container">
+
+      <div class="row">
+       <div class="col-md-12 col-sm-12 text-center intro">
+         <img src="site/images/bootcards-icon-rounded-120x120.png"/>
+         <h1>XComponents</h1>
+         <p>Angular directives for Bootcards</p>
+         
+        <div>
+
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+</div>
+
+<div class="jumbotron subheader">
+ <div class="container text-center">
+
+  <div class="row">
+
+   
+      <a href="https://github.com/bootcards/xcomponents" target="_blank" class="btn btn-link"><i class="fa fa-github fa-2x"></i> GitHub Project</a>
+      <!-- <a href="http://demo.xcomponents.org" target="_blank" class="btn btn-link"><i class="fa fa-mobile-phone fa-2x"></i> Demo App</a> -->
+
+    </div>
+  </div>
+</div>
+
+<div class="container content">
+  <div class="row">
+
+    <div class="col-sm-6">
+
+        <h3><span class="fa fa-question"></span> About XComponents</h3>
+        <p>
+          XComponents is a set of <a href="http://angularjs.org" target="_blank">AngularJS</a> directives that allow you to quickly create a simple app. It is build on top of the <a href="http://bootcards.org" target="_blank">Bootcards</a> UI framework to get a near-native look on iOS and Android.
+         </p>
+      </div>
+
+    <div class="col-sm-6">
+
+      <h3><span class="fa fa-flag-checkered"></span> Getting started</h3>
+      <!-- <p>
+        There are a couple of ways to get started with Bootcards:
+      </p>
+      <p>
+        <ul>
+          <li>Download the latest release from this repository - see link above (or clone it from <code>git clone https://github.com/bootcards/bootcards</code>).</li>
+          <li>Install it using <a href="http://bower.io" target="_blank">Bower</a>: <code>bower install bootcards</code></li>
+          <li>Load Bootcards from a CDN: you can find all the url's <a href="http://cdnjs.com/libraries/bootcards" target="_blank">here</a> or grab them from below.</li>
+        </ul>
+      </p>
+
+      <p>
+        To add Bootcards to your application you'll need to include the Bootcards OS-specific CSS file (for iOS, Android or desktop) and the Bootcards JavaScript file. Since Bootcards is build on top of Bootstrap (3+), including the Bootstrap CSS file is required too. We've made that easy for you by embedding it into the Bootcards CSS files. We've also included 'lite' versions of the CSS files that don't include Bootstrap.
+        <pre>&lt;!-- Important: you'll only need one of the Bootcards CSS files below for every platform --&gt;
+
+&lt;!-- Bootcards CSS for iOS: --&gt;
+&lt;link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootcards/1.0.0/css/bootcards-ios.min.css"&gt;
+
+&lt;!-- Bootcards CSS for Android: --&gt;
+&lt;link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootcards/1.0.0/css/bootcards-android.min.css"&gt;
+
+&lt;!-- Bootcards CSS for desktop: --&gt;
+&lt;link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootcards/1.0.0/css/bootcards-desktop.min.css"&gt;
+
+&lt;!-- Bootstrap and Bootcards JS --&gt;
+&lt;script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"&gt;&lt;/script&gt;
+&lt;script src="//cdnjs.cloudflare.com/ajax/libs/bootcards/1.0.0/js/bootcards.min.js"&gt;&lt;/script&gt;</pre>
+        </p> -->
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <hr />
+</div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+</body>
+</html>
