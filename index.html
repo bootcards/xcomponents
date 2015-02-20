@@ -67,7 +67,7 @@
        <div class="col-md-12 col-sm-12 text-center intro">
          <img src="site/images/bootcards-icon-rounded-120x120.png"/>
          <h1>XComponents</h1>
-         <p>Angular directives for Bootcards</p>
+         <p>Create an Angular app with forms and views using Bootcards</p>
          
         <div>
 
@@ -87,7 +87,7 @@
 
    
       <a href="https://github.com/bootcards/xcomponents" target="_blank" class="btn btn-link"><i class="fa fa-github fa-2x"></i> GitHub Project</a>
-      <!-- <a href="http://demo.xcomponents.org" target="_blank" class="btn btn-link"><i class="fa fa-mobile-phone fa-2x"></i> Demo App</a> -->
+      <a href="http://demo.xcomponents.org" target="_blank" class="btn btn-link"><i class="fa fa-mobile-phone fa-2x"></i> Demo App</a> 
 
     </div>
   </div>
@@ -100,7 +100,7 @@
 
         <h3><span class="fa fa-question"></span> About XComponents</h3>
         <p>
-          XComponents is a set of <a href="http://angularjs.org" target="_blank">AngularJS</a> directives that allow you to quickly create a simple app. It is build on top of the <a href="http://bootcards.org" target="_blank">Bootcards</a> UI framework to get a near-native look on iOS and Android.
+          XComponents is a set of <a href="http://angularjs.org" target="_blank">AngularJS</a> directives that allow you to quickly create a basic app using forms and views (lists). It is build on top of the <a href="http://bootcards.org" target="_blank">Bootcards</a> UI framework to get a near-native look on iOS and Android.
          </p>
 
       </div>
@@ -114,103 +114,47 @@
       </p>
       <p>
         <ul>
-          <li>Download the latest release from this repository - see link above (or clone it from <code>git clone https://github.com/bootcards/xcomponents</code>).</li>
           <li>Install it using <a href="http://bower.io" target="_blank">Bower</a>: <code>bower install xcomponents</code></li>
+          <li>Download the latest release from this repository - see link above (or clone it from <code>git clone https://github.com/bootcards/xcomponents</code>).</li>
+          
         </ul>
       </p>
 
       <p>
-        Check out the <a href="http://github.com/bootcards/xcomponents">demo app</a> or start a new app yourself. Let's get started building a simple app that uses the XComponents and talks to a remote REST API build using Strongloop Loopback.
+        Check out the <a href="http://github.com/bootcards/xcomponents">demo app</a> or start a new app yourself.
       </p>
 
-      <h3>1: Required software</h3>
-      Install Node and <a href="http://bower.io" target="_blank">Bower</a>. Then install Strongloop Loopback in Node: <code>npm install -g strongloop</code>.
+      <h3>Tutorial: an app and REST server in 6 simple steps</h3>
 
-      <h3>2: Setup the app</h3>
-      Create a new folder for you app. Using a terminal, go into the folder and enter <code>slc loopback</code>. This will setup the basic Loopback application.
+      <p>A tutorial on building a simple app that uses the XComponents and talks to a remote REST API powered by <a href="http://strongloop.com/node-js/loopback-framework/" target="_blank">Strongloop Loopback</a>.</p>
 
-      <h3>3</h3>
-      Create a file called <code>.bowerrc</code> in the new folder and set its contents to:
-      <pre><code>
-      {
-  "directory": "client/bower_components/"
-}
-</code></pre>
-      This will tell bower to install all dependencies into the client/bower_components folder.
+      <h4>1: Required software</h4>
+      Install <a href="http://nodejs.org" target="_blank">NodeJS</a> and <a href="http://bower.io" target="_blank">Bower</a>. Then install Strongloop Loopback in Node: <code>npm install -g strongloop</code>.
 
-      <h3>4: Setup up the server</h3>
-      Create a data model: let's create a list of cars. Enter: <code>slc loopback:model</code>. Accept all defaults until you get to "Properties". Create the following properties: 'make', 'type' and 'color'. Leave the property name empty to stop creating properties.
+      <h4>2: Setup the REST server</h4>
+      <p>Create a new folder for you app. Using a terminal, go into the folder and enter <code>slc loopback</code>. This will setup the basic Loopback application.</p>
+
+      <p>We need to create a data model in Loopback: let's create a list of cars. Enter: <code>slc loopback:model</code>. Accept all defaults until you get to "Properties". Create the following properties: 'make', 'type' and 'color'. Leave the property name empty to stop creating properties.
 
       <p>
-        Delete the file server/boot/root.js. We don't need it. Open 'server/middleware.json' and replace the file property with:
-        <code>
-         "files": {
-    "loopback#static": {
-      "params": "$!../client"
-    }
-  },</code>
+        Delete the file <code>server/boot/root.js</code>. That provides a default response for the root (/) route. We don't need that, because we're going to serve our own app: open <code>server/middleware.json</code> and replace the <code>files</code> property with:
+        <pre><code>"files": {
+  "loopback#static": {
+    "params": "$!../client"
+  }
+},</code></pre>
 
-      <h4>5: Install XComponents</h4>
-      Run <code>bower install xcomponents --save</code> to download XComponents and all its dependencies.
+      <h4>3: Install XComponents using Bower</h4>
+      <p>Create a file called <code>.bowerrc</code> in the new folder and set its contents to:
+      <pre><code>{
+  "directory": "client/bower_components/"
+}</code></pre>
+      This will tell bower to install all dependencies into the client/bower_components folder.</p>
 
-      <h4>6: Basic page</h4>
-      Create a file called <code>index.html</code> in the <code>/client</code> folder and set it contents as follows to create a simple form/view page:
-      <pre><code>&lt;!doctype html&gt;
-&lt;html&gt;
+      <p>Run <code>bower install xcomponents --save</code> to download XComponents and all its dependencies.</p>
 
-&lt;head&gt;
-  &lt;title&gt;XComponents&lt;/title&gt;
-  &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
-
-  &lt;!--set the hidden class here, so everything is immediately hidden--&gt;
-  &lt;style type="text/css"&gt;
-    .hidden {
-      display:none;
-    }
-  &lt;/style&gt;
-  
-  &lt;!-- polyfill for html imports --&gt;
-  &lt;script type="text/javascript" src="/bower_components/webcomponentsjs/HTMLImports.min.js"&gt;&lt;/script&gt;
-  &lt;link rel="import" href="/bower_components/xcomponents/dist/includes/includes.html"&gt;
- 
-  &lt;script src="cars.js"&gt;&lt;/script&gt; 
-  
-&lt;/head&gt;
-
-&lt;body ng-controller="xcController" class="hidden"&gt;
-
-  &lt;xc-header title="View my cars"&gt;&lt;/xc-header&gt;
-
-  &lt;xc-list 
-    title="Cars"
-    list-width="5" 
-    allow-add="true"
-    order-by="make"
-    order-reversed="false"
-    url="/api/Cars/:id"
-    summary-field="make"
-    details-field="model"
-    image-field="thumbnailUrl"
-    image-placeholder-icon="car"
-    autoload-first="true"
-    type="categorised"
-    group-by="make"
-    infinite-scroll="true"&gt;
-
-    &lt;xc-form 
-      url="/api/Cars/:id" 
-      default-text="Select a car from the list"
-      thumbnail-field="thumbnailUrl"
-      thumbnail-show-with="name"&gt;&lt;/xc-form&gt;
-
-  &lt;/xc-list&gt;
-
-  &lt;xc-footer&gt;&lt;/xc-footer&gt;
-
-&lt;/body&gt;&lt;/html&gt;</code></pre>
-
-      <h4>7: JavaScript config file</h4>
-      Create a file called <code>cars.js</code> in the <code>/client</code> folder and set it contents as follows:
+      <h4>4: JavaScript config file</h4>
+      <p>Create a file called <code>cars.js</code> in the <code>/client</code> folder. This file contains app configuration settings. Set its contents to:</p>
      <pre> <code>var xcontrols = {
 
   appVersion : '0.1',
@@ -248,9 +192,66 @@
 
 }</code></pre>
 
-      <h4>8: Start the server</h4>
-      Start the local server with <code>slc run</code> and view the result in at <a href="http://localhost:3000" target="_blank">http://localhost:3000</a>. The app has a different look and feel on iOS, Android and Desktop and auto-adapts to the device size, including changing its behaviour. On tablets you get independent scrolling columns. On a smartphone a simple list/detail view with a back button.
+      <h4>5: Basic page for a view (list) and form</h4>
+      <p>Create a file called <code>index.html</code> in the <code>/client</code> folder. This will be our main app page. Set its contents to:</p>
+      <pre><code>&lt;!doctype html&gt;
+&lt;html&gt;
 
+&lt;head&gt;
+  &lt;title&gt;XComponents&lt;/title&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+
+  &lt;!--set the hidden class here, so everything is immediately hidden--&gt;
+  &lt;style type="text/css"&gt;
+    .hidden {
+      display:none;
+    }
+  &lt;/style&gt;
+  
+  &lt;!-- polyfill for html imports & xcomponents resources --&gt;
+  &lt;script type="text/javascript" src="/bower_components/webcomponentsjs/HTMLImports.min.js"&gt;&lt;/script&gt;
+  &lt;link rel="import" href="/bower_components/xcomponents/dist/includes/includes.html"&gt;
+ 
+  &lt;!-- xcomponents app config --&gt;
+  &lt;script src="cars.js"&gt;&lt;/script&gt; 
+  
+&lt;/head&gt;
+
+&lt;body ng-controller="xcController" class="hidden"&gt;
+
+  &lt;xc-header title="View my cars"&gt;&lt;/xc-header&gt;
+
+  &lt;xc-list 
+    title="Cars"
+    list-width="5" 
+    allow-add="true"
+    order-by="make"
+    order-reversed="false"
+    url="/api/Cars/:id"
+    summary-field="make"
+    details-field="model"
+    image-field="thumbnailUrl"
+    image-placeholder-icon="car"
+    autoload-first="true"
+    type="categorised"
+    group-by="make"
+    infinite-scroll="true"&gt;
+
+    &lt;xc-form 
+      url="/api/Cars/:id" 
+      default-text="Select a car from the list"
+      thumbnail-field="thumbnailUrl"
+      thumbnail-show-with="name"&gt;&lt;/xc-form&gt;
+
+  &lt;/xc-list&gt;
+
+  &lt;xc-footer&gt;&lt;/xc-footer&gt;
+
+&lt;/body&gt;&lt;/html&gt;</code></pre>
+
+      <h4>6: Start the server</h4>
+     <p>Start the local server with <code>slc run</code> and view the result at <a href="http://localhost:3000" target="_blank">http://localhost:3000</a>.</p>
+     <p>The app will have a different look and feel on iOS, Android and Desktop and auto-adapts to the device size. Not only by changing the layout (responsive design), but also changing its behaviour: on tablets you get independent scrolling columns. On a smartphone a simple list/detail view with a back button.</p>
 
       </div>
 
@@ -262,7 +263,7 @@
 </div>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
 </body>
 </html>
