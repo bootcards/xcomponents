@@ -46,19 +46,9 @@
             <li class="active">
              <a href="./index.html"><span class="fa fa-home"></span> Home</a>
            </li>
-
-          <!--<li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Demos <span class="caret"></span></a>
-            <ul class="dropdown-menu" role="menu">
-              <li><a href="https://rawgit.com/bootcards/bootcards/master/samples/starter-template.html" target="_blank">Starter template (iOS style)</a></li>
-              <li><a href="https://rawgit.com/bootcards/bootcards/master/samples/starter-template-android.html" target="_blank">Starter template (Android style)</a></li>
-              <li><a href="https://rawgit.com/bootcards/bootcards/master/samples/az-picker.html" target="_blank">AZ Picker</a></li>
-            </ul>
-          </li>-->
-
-          <!-- <li>
+          <li>
             <a href="./site/docs.html"><span class="fa fa-book"></span> Documentation</a>
-          </li> -->
+          </li>
           <li>
             <a href="./site/about.html"><span class="fa fa-info-circle"></span> About</a>
           </li>
@@ -106,7 +96,7 @@
 <div class="container content">
   <div class="row">
 
-    <div class="col-sm-6">
+    <div class="col-sm-12">
 
         <h3><span class="fa fa-question"></span> About XComponents</h3>
         <p>
@@ -115,11 +105,11 @@
 
       </div>
 
-    <div class="col-sm-6">
+    <div class="col-sm-12">
 
       <h3><span class="fa fa-flag-checkered"></span> Getting started</h3>
 
-      <p
+      <p>
        To get started with XComponents:
       </p>
       <p>
@@ -130,8 +120,137 @@
       </p>
 
       <p>
-        Once you've downloaded XComponents you can get started with your application. Check out the <a href="http://github.com/bootcards/xcomponents">demo app</a> or start a new one yourself. Let's create a new basic app:
+        Check out the <a href="http://github.com/bootcards/xcomponents">demo app</a> or start a new app yourself. Let's get started building a simple app that uses the XComponents and talks to a remote REST API build using Strongloop Loopback.
       </p>
+
+      <h3>1: Required software</h3>
+      Install Node and <a href="http://bower.io" target="_blank">Bower</a>. Then install Strongloop Loopback in Node: <code>npm install -g strongloop</code>.
+
+      <h3>2: Setup the app</h3>
+      Create a new folder for you app. Using a terminal, go into the folder and enter <code>slc loopback</code>. This will setup the basic Loopback application.
+
+      <h3>3</h3>
+      Create a file called <code>.bowerrc</code> in the new folder and set its contents to:
+      <pre><code>
+      {
+  "directory": "client/bower_components/"
+}
+</code></pre>
+      This will tell bower to install all dependencies into the client/bower_components folder.
+
+      <h3>4: Setup up the server</h3>
+      Create a data model: let's create a list of cars. Enter: <code>slc loopback:model</code>. Accept all defaults until you get to "Properties". Create the following properties: 'make', 'type' and 'color'. Leave the property name empty to stop creating properties.
+
+      <p>
+        Delete the file server/boot/root.js. We don't need it. Open 'server/middleware.json' and replace the file property with:
+        <code>
+         "files": {
+    "loopback#static": {
+      "params": "$!../client"
+    }
+  },</code>
+
+      <h4>5: Install XComponents</h4>
+      Run <code>bower install xcomponents --save</code> to download XComponents and all its dependencies.
+
+      <h4>6: Basic page</h4>
+      Create a file called <code>index.html</code> in the <code>/client</code> folder and set it contents as follows to create a simple form/view page:
+      <pre><code>&lt;!doctype html&gt;
+&lt;html&gt;
+
+&lt;head&gt;
+  &lt;title&gt;XComponents&lt;/title&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+
+  &lt;!--set the hidden class here, so everything is immediately hidden--&gt;
+  &lt;style type="text/css"&gt;
+    .hidden {
+      display:none;
+    }
+  &lt;/style&gt;
+  
+  &lt;!-- polyfill for html imports --&gt;
+  &lt;script type="text/javascript" src="/bower_components/webcomponentsjs/HTMLImports.min.js"&gt;&lt;/script&gt;
+  &lt;link rel="import" href="/bower_components/xcomponents/dist/includes/includes.html"&gt;
+ 
+  &lt;script src="cars.js"&gt;&lt;/script&gt; 
+  
+&lt;/head&gt;
+
+&lt;body ng-controller="xcController" class="hidden"&gt;
+
+  &lt;xc-header title="View my cars"&gt;&lt;/xc-header&gt;
+
+  &lt;xc-list 
+    title="Cars"
+    list-width="5" 
+    allow-add="true"
+    order-by="make"
+    order-reversed="false"
+    url="/api/Cars/:id"
+    summary-field="make"
+    details-field="model"
+    image-field="thumbnailUrl"
+    image-placeholder-icon="car"
+    autoload-first="true"
+    type="categorised"
+    group-by="make"
+    infinite-scroll="true"&gt;
+
+    &lt;xc-form 
+      url="/api/Cars/:id" 
+      default-text="Select a car from the list"
+      thumbnail-field="thumbnailUrl"
+      thumbnail-show-with="name"&gt;&lt;/xc-form&gt;
+
+  &lt;/xc-list&gt;
+
+  &lt;xc-footer&gt;&lt;/xc-footer&gt;
+
+&lt;/body&gt;&lt;/html&gt;</code></pre>
+
+      <h4>7: JavaScript config file</h4>
+      Create a file called <code>cars.js</code> in the <code>/client</code> folder and set it contents as follows:
+     <pre> <code>var xcontrols = {
+
+  appVersion : '0.1',
+
+  menuOptions : [
+
+    { label : 'Languages', isSecondary : true, icon : 'fa-globe' ,
+      menuOptions : [
+        { label : 'Dutch', url : 'contacts-accordion.html'},
+        { label : 'English', url : 'contacts-accordion.html'}
+      ]
+    },
+    { label : 'Help', isSecondary : true, icon : 'fa-question-circle'},
+    
+    { label : 'Dashboard', url : 'index.html', icon : 'fa-dashboard' },
+    { label : 'Lists', url : 'lists.html', icon : 'fa-list',
+      menuOptions : [
+        { label : 'Cars', url : 'index.html', icon : 'fa-list-alt' }
+      ]
+    },
+    
+  ],
+
+  footerOptions : [
+    { label : 'Cars', url : '/index.html', icon : 'fa-dashboard'}
+  ], 
+
+  modelName : 'Car', 
+
+  fields : [
+    { label : 'Make' , field: 'make', required: true},
+    { label : 'Model' , field: 'model' },
+    { label : 'Color' , field: 'color' },
+  ]
+
+}</code></pre>
+
+      <h4>8: Start the server</h4>
+      Start the local server with <code>slc run</code> and view the result in at <a href="http://localhost:3000" target="_blank">http://localhost:3000</a>. The app has a different look and feel on iOS, Android and Desktop and auto-adapts to the device size, including changing its behaviour. On tablets you get independent scrolling columns. On a smartphone a simple list/detail view with a back button.
+
 
       </div>
 

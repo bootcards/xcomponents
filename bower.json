@@ -23,6 +23,7 @@
     "blueimp-canvas-to-blob": "~2.1.1",
     "blueimp-load-image": "~1.13.0",
     "angular-bootstrap": "~0.12.0",
+    "angular-pouchdb": "~1.0.2",
     "webcomponentsjs": "~0.5.2"
   },
   "resolutions": {
