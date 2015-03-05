@@ -124,3 +124,8 @@ a {
 .bootcards-cards .list-group-item {
 	margin-bottom: 0;
 }
+
+/*don't use modern IE's clear button*/
+.form-control::-ms-clear {
+    display: none;
+}
