@@ -7,7 +7,7 @@
 
 		<div class="navbar-header">
 
-			<a class="navbar-brand">{{::title}}</a>	
+			<a class="navbar-brand" ng-class="{'no-menu' : !hasMenu() }">{{::title}}</a>	
 
       <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse" type="button">
         <span class="sr-only">Toggle menu</span>
@@ -27,7 +27,7 @@
     </button>
 
 		<!--slide-in menu button-->
-		<button ng-if="hasMenu && !$root.hideList" type="button" class="btn btn-default btn-menu pull-left offCanvasToggle" data-toggle="offcanvas">
+		<button ng-if="hasMenu() && !$root.hideList" type="button" class="btn btn-default btn-menu pull-left offCanvasToggle" data-toggle="offcanvas">
 	   <i class="fa fa-lg fa-bars"></i><span>Menu</span>
 	   </button>
 

@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-05 3:02 */
+/* xcomponents 0.1.0 2015-03-05 3:18 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -1375,9 +1375,8 @@ app.directive('xcHeader', function() {
 			var loc = window.location.href;
 
 			$scope.hasMenu = function() {
-				console.log($scope.menuOptions.length );
 				return $scope.menuOptions.length > 0 || $scope.hasSecondaryOptions;
-			}
+			};
 
 			$scope.isActive = function(menuOption) {
 				return (loc.indexOf(menuOption.url)> -1);
@@ -2375,7 +2374,7 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "\n" +
     "		<div class=\"navbar-header\">\n" +
     "\n" +
-    "			<a class=\"navbar-brand\">{{::title}}</a>	\n" +
+    "			<a class=\"navbar-brand\" ng-class=\"{'no-menu' : !hasMenu() }\">{{::title}}</a>	\n" +
     "\n" +
     "      <button class=\"navbar-toggle\" data-target=\".navbar-collapse\" data-toggle=\"collapse\" type=\"button\">\n" +
     "        <span class=\"sr-only\">Toggle menu</span>\n" +
@@ -2395,7 +2394,7 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "    </button>\n" +
     "\n" +
     "		<!--slide-in menu button-->\n" +
-    "		<button ng-if=\"hasMenu && !$root.hideList\" type=\"button\" class=\"btn btn-default btn-menu pull-left offCanvasToggle\" data-toggle=\"offcanvas\">\n" +
+    "		<button ng-if=\"hasMenu() && !$root.hideList\" type=\"button\" class=\"btn btn-default btn-menu pull-left offCanvasToggle\" data-toggle=\"offcanvas\">\n" +
     "	   <i class=\"fa fa-lg fa-bars\"></i><span>Menu</span>\n" +
     "	   </button>\n" +
     "\n" +

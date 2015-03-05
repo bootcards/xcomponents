@@ -22,6 +22,10 @@ a.list-group-item {
 	z-index: 1041;
 }
 
+.navbar-brand.no-menu {
+left: 0 !important;
+}
+
 
 .animate-repeat.ng-move,
 .animate-repeat.ng-enter,

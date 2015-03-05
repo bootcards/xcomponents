@@ -43,9 +43,8 @@ app.directive('xcHeader', function() {
 			var loc = window.location.href;
 
 			$scope.hasMenu = function() {
-				console.log($scope.menuOptions.length );
 				return $scope.menuOptions.length > 0 || $scope.hasSecondaryOptions;
-			}
+			};
 
 			$scope.isActive = function(menuOption) {
 				return (loc.indexOf(menuOption.url)> -1);
