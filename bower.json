@@ -24,7 +24,8 @@
     "blueimp-load-image": "~1.13.0",
     "angular-bootstrap": "~0.12.0",
     "angular-pouchdb": "~1.0.2",
-    "webcomponentsjs": "~0.5.2"
+    "webcomponentsjs": "~0.5.2",
+    "angular-touch": "~1.3.14"
   },
   "resolutions": {
     "angular": "~1.3.8"

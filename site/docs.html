@@ -83,6 +83,9 @@ $(document).ready( function() {
         <li class="sub"><a href="#doc-filecard">File</a></li>
         <li class="sub"><a href="#doc-chartcard">Chart</a></li>
         <li class="sub"><a href="#doc-upload">Upload</a></li>
+
+        <li><a href="#doc-other">Other</a></li>
+        <li class="sub"><a href="#doc-carousel">Carousel</a></li>
 			
 </ul>
 			</div>
@@ -1021,7 +1024,7 @@ xcontrols.imageBase = 'http://your.server/path/to/images/';</code></pre>
   url="/a/b/file.pdf"
   allow-favorite="true"
   allow-email="true"&gt;
-  &lt;/xc-file&gt;</code></pre>
+&lt;/xc-file&gt;</code></pre>
             </div>
 
 <table class="table table-condensed">
@@ -1090,9 +1093,10 @@ xcontrols.imageBase = 'http://your.server/path/to/images/';</code></pre>
 						</div>
 	
             <div class="highlight"><pre><code class="html">&lt;xc-chart chart-id="closed-sales" 
-                    title="Chart Card"
-                    chart-type="donut"
-                    value-prefix="$"&gt;&lt;/xc-chart&gt;</code></pre></div>
+  title="Chart Card"
+  chart-type="donut"
+  value-prefix="$"&gt;
+&lt;/xc-chart&gt;</code></pre></div>
             					</div>
 
 
@@ -1123,19 +1127,49 @@ xcontrols.charts['closed-sales'] = [
 	
 					</div>
 
+          <!--other-->
+          <div id="doc-other" class="bs-docs-section">
+            <h3>Other</h3>
+          </div>
 
+          <!--carousel-->
+          <div id="doc-carousel" class="bs-docs-section">
+            <h3>Carousel</h3>
+            <p class="lead">To display an image carousel.</p>
+            <div class="highlight"><pre><code class="html">&lt;xc-carousel
+  interval="1000"&gt;
+  &lt;/xc-carousel&gt;</code></pre></div>
 
+  <table class="table table-condensed">
+  <thead><tr>
+    <th>Attribute</th><th>Value</th>
+  </tr></thead>
+  <tbody>
+    
+    <tr><td>interval</td><td>Time in Ms to display every slide</td></tr>
+    
+  </table>
 
-				</div>
-			</div>
+            <p>Besides the configuration with HTML attributes, to display a chart you also need to add a section to the application's <code>config.js</code> file. There you can set the image slides to display. Sample contents:</p>
 
+  <div class="highlight"><pre><code class="javascript">var xcontrols = { };
 
+xcontrols.carouselSlides = [     
+  {image : "images/fog.jpeg", text : "Fog"},
+  {image : "images/mountain.jpeg", text : "Mountain"},
+  {image : "images/bike.jpeg", text : "Bike"}
+];</code></pre>
 
-		</div>
+          </div>
 
-	</div>
+        </div>
 
-</div>
+      </div>
+		</div><!--col-->
+
+	</div><!--container-->
+
+</div><!--row-->
 
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>

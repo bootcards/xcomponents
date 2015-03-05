@@ -9,6 +9,7 @@ var app = angular.module('xcontrols', [
 	'templates-main',
 	'xc.factories',
 	'ngResource',
+	'ngTouch',
 	'ngAnimate',
 	'ngSanitize',
 	'ui.bootstrap'
@@ -131,6 +132,6 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 });
 
 app.run( function() {
-	FastClick.attach(document.body);
+	
 });
 
