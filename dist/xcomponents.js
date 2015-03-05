@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-02-20 3:45 */
+/* xcomponents 0.1.0 2015-03-05 1:54 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -392,6 +392,7 @@ var app = angular.module('xcontrols', [
 	'templates-main',
 	'xc.factories',
 	'ngResource',
+	'ngTouch',
 	'ngAnimate',
 	'ngSanitize',
 	'ui.bootstrap'
@@ -514,7 +515,7 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 });
 
 app.run( function() {
-	FastClick.attach(document.body);
+	
 });
 
 
@@ -711,6 +712,30 @@ app.directive('xcBase', function() {
 	};
 
 });
+
+var app = angular.module('xcontrols');
+
+app.directive('xcCarousel', function() {
+
+	return {
+
+		scope : {
+			interval : '='
+		},
+		replace : true,
+		restrict : 'E',
+		templateUrl : 'xc-carousel.html',
+
+		controller : function($scope, xcUtils) {
+
+			$scope.slides = xcUtils.getConfig('carouselSlides');
+
+		}
+
+	};
+
+
+} );
 
 var app = angular.module('xcontrols');
 
@@ -2002,7 +2027,7 @@ app.directive('xcUpload', function() {
 	};
 
 });
-angular.module('templates-main', ['xc-base.html', 'xc-chart.html', 'xc-file.html', 'xc-footer.html', 'xc-form-modal-edit.html', 'xc-form.html', 'xc-header.html', 'xc-image.html', 'xc-list-accordion.html', 'xc-list-categorised.html', 'xc-list-detailed.html', 'xc-list-flat.html', 'xc-list-heading.html', 'xc-reading.html', 'xc-summary-item.html', 'xc-summary.html', 'xc-upload.html']);
+angular.module('templates-main', ['xc-base.html', 'xc-carousel.html', 'xc-chart.html', 'xc-file.html', 'xc-footer.html', 'xc-form-modal-edit.html', 'xc-form.html', 'xc-header.html', 'xc-image.html', 'xc-list-accordion.html', 'xc-list-categorised.html', 'xc-list-detailed.html', 'xc-list-flat.html', 'xc-list-heading.html', 'xc-reading.html', 'xc-summary-item.html', 'xc-summary.html', 'xc-upload.html']);
 
 angular.module("xc-base.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-base.html",
@@ -2019,6 +2044,24 @@ angular.module("xc-base.html", []).run(["$templateCache", function($templateCach
     "  <div class=\"panel-footer\">\n" +
     "    <small class=\"pull-left\">{{footerText}}</small>\n" +
     "  </div>\n" +
+    "</div>\n" +
+    "");
+}]);
+
+angular.module("xc-carousel.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("xc-carousel.html",
+    "<div style=\"height: 300px\">\n" +
+    "\n" +
+    "	<carousel interval=\"interval\">\n" +
+    "		<slide ng-repeat=\"slide in slides\" active=\"slide.active\">\n" +
+    "			<img ng-src=\"{{slide.image}}\" style=\"margin:auto; height:600px\" class=\"img-responsive\">\n" +
+    "			<div class=\"carousel-caption\">\n" +
+    "				<h4>Slide {{$index}}</h4>\n" +
+    "				<p>{{slide.text}}</p>\n" +
+    "			</div>\n" +
+    "		</slide>\n" +
+    "	</carousel>\n" +
+    "\n" +
     "</div>\n" +
     "");
 }]);
@@ -2196,7 +2239,7 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "				<a class=\"fa fa-times-circle fa-lg clearer\" ng-click=\"clearField(field.field)\"></a>\n" +
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='phone'\">\n" +
-    "				<input class=\"form-control\" type=\"number\" name=\"{{field.field}}\" ng-model=\"selectedItem[field.field]\" ng-required=\"field.required\"  />\n" +
+    "				<input class=\"form-control\" type=\"tel\" name=\"{{field.field}}\" ng-model=\"selectedItem[field.field]\" ng-required=\"field.required\"  />\n" +
     "				<a class=\"fa fa-times-circle fa-lg clearer\" ng-click=\"clearField(field.field)\"></a>\n" +
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='date'\">\n" +
