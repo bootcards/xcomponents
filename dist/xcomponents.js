@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-05 3:18 */
+/* xcomponents 0.1.0 2015-03-05 3:34 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -1604,7 +1604,7 @@ app.directive('xcList',
 			$scope.selected = null;
 			$scope.itemsPage = [];
       		$scope.numPages = 1;
-			
+
 			$scope.modelName = xcUtils.getConfig('modelName');
       		$scope.fieldsRead = xcUtils.getConfig('fieldsRead');
 			$scope.fieldsEdit = xcUtils.getConfig('fieldsEdit');
@@ -1613,11 +1613,17 @@ app.directive('xcList',
 			//custom list entries
 			if ($scope.srcData) {
 				$scope.srcDataEntries = xcUtils.getConfig( $scope.srcData);
+
+				if ($scope.autoloadFirst) {
+					$scope.selected = $scope.srcDataEntries[1];
+					$rootScope.showCards = true;
+				}
+
 			}
 
 			$scope.clearSearch = function() {
 				$scope.filter = '';
-			}
+			};
 
 			$scope.addNewItem = function() {
 				$scope.modalInstance = $modal.open({

@@ -153,7 +153,7 @@ app.directive('xcList',
 			$scope.selected = null;
 			$scope.itemsPage = [];
       		$scope.numPages = 1;
-			
+
 			$scope.modelName = xcUtils.getConfig('modelName');
       		$scope.fieldsRead = xcUtils.getConfig('fieldsRead');
 			$scope.fieldsEdit = xcUtils.getConfig('fieldsEdit');
@@ -162,11 +162,17 @@ app.directive('xcList',
 			//custom list entries
 			if ($scope.srcData) {
 				$scope.srcDataEntries = xcUtils.getConfig( $scope.srcData);
+
+				if ($scope.autoloadFirst) {
+					$scope.selected = $scope.srcDataEntries[0];
+					$rootScope.showCards = true;
+				}
+
 			}
 
 			$scope.clearSearch = function() {
 				$scope.filter = '';
-			}
+			};
 
 			$scope.addNewItem = function() {
 				$scope.modalInstance = $modal.open({
