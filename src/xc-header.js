@@ -54,6 +54,25 @@ app.directive('xcHeader', function() {
 				return (menuOption.hasOwnProperty('menuOptions') && menuOption.menuOptions.length>0);
 			};
 
+			$scope.toggleOffCanvas = function() {
+
+				if ( !$scope.toggleMenuButton) {
+					$scope.toggleMenuButton = angular.element(document.getElementById('offCanvasToggleButton'));
+				}
+				if ( !$scope.toggleMenu) {
+					$scope.toggleMenu = angular.element(document.getElementById('offCanvasMenu'));
+				}
+
+				if ($scope.toggleMenu.hasClass('active')) {
+					$scope.toggleMenu.removeClass('active');
+					//$scope.toggleMenuButton.removeClass('active');
+				} else {
+					$scope.toggleMenu.addClass('active');
+					//$scope.toggleMenuButton.removeClass('active');
+				}
+				
+			};
+
 			//add handlers to show the collapsed/ expanded icon on lists with sub-options
 			$timeout(function(){
 

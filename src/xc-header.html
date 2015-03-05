@@ -27,7 +27,7 @@
     </button>
 
 		<!--slide-in menu button-->
-		<button ng-if="hasMenu() && !$root.hideList" type="button" class="btn btn-default btn-menu pull-left offCanvasToggle" data-toggle="offcanvas">
+		<button ng-if="hasMenu() && !$root.hideList" type="button" class="btn btn-default btn-menu pull-left offCanvasToggle" id="offCanvasToggleButton" ng-click="toggleOffCanvas()">
 	   <i class="fa fa-lg fa-bars"></i><span>Menu</span>
 	   </button>
 

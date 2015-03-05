@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-05 3:34 */
+/* xcomponents 0.1.0 2015-03-05 3:54 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -1386,6 +1386,25 @@ app.directive('xcHeader', function() {
 				return (menuOption.hasOwnProperty('menuOptions') && menuOption.menuOptions.length>0);
 			};
 
+			$scope.toggleOffCanvas = function() {
+
+				if ( !$scope.toggleMenuButton) {
+					$scope.toggleMenuButton = angular.element(document.getElementById('offCanvasToggleButton'));
+				}
+				if ( !$scope.toggleMenu) {
+					$scope.toggleMenu = angular.element(document.getElementById('offCanvasMenu'));
+				}
+
+				if ($scope.toggleMenu.hasClass('active')) {
+					$scope.toggleMenu.removeClass('active');
+					//$scope.toggleMenuButton.removeClass('active');
+				} else {
+					$scope.toggleMenu.addClass('active');
+					//$scope.toggleMenuButton.removeClass('active');
+				}
+				
+			};
+
 			//add handlers to show the collapsed/ expanded icon on lists with sub-options
 			$timeout(function(){
 
@@ -1615,7 +1634,7 @@ app.directive('xcList',
 				$scope.srcDataEntries = xcUtils.getConfig( $scope.srcData);
 
 				if ($scope.autoloadFirst) {
-					$scope.selected = $scope.srcDataEntries[1];
+					$scope.selected = $scope.srcDataEntries[0];
 					$rootScope.showCards = true;
 				}
 
@@ -2400,7 +2419,7 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "    </button>\n" +
     "\n" +
     "		<!--slide-in menu button-->\n" +
-    "		<button ng-if=\"hasMenu() && !$root.hideList\" type=\"button\" class=\"btn btn-default btn-menu pull-left offCanvasToggle\" data-toggle=\"offcanvas\">\n" +
+    "		<button ng-if=\"hasMenu() && !$root.hideList\" type=\"button\" class=\"btn btn-default btn-menu pull-left offCanvasToggle\" id=\"offCanvasToggleButton\" ng-click=\"toggleOffCanvas()\">\n" +
     "	   <i class=\"fa fa-lg fa-bars\"></i><span>Menu</span>\n" +
     "	   </button>\n" +
     "\n" +
