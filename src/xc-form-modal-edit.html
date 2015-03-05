@@ -30,7 +30,7 @@
 				<a class="fa fa-times-circle fa-lg clearer" ng-click="clearField(field.field)"></a>
 			</div>
 			<div class="col-xs-9" ng-if="field.type=='phone'">
-				<input class="form-control" type="number" name="{{field.field}}" ng-model="selectedItem[field.field]" ng-required="field.required"  />
+				<input class="form-control" type="tel" name="{{field.field}}" ng-model="selectedItem[field.field]" ng-required="field.required"  />
 				<a class="fa fa-times-circle fa-lg clearer" ng-click="clearField(field.field)"></a>
 			</div>
 			<div class="col-xs-9" ng-if="field.type=='date'">
