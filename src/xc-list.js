@@ -164,6 +164,10 @@ app.directive('xcList',
 				$scope.srcDataEntries = xcUtils.getConfig( $scope.srcData);
 			}
 
+			$scope.clearSearch = function() {
+				$scope.filter = '';
+			}
+
 			$scope.addNewItem = function() {
 				$scope.modalInstance = $modal.open({
 					templateUrl: 'xc-form-modal-edit.html',

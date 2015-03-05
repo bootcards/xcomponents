@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-05 1:54 */
+/* xcomponents 0.1.0 2015-03-05 3:02 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -1616,6 +1616,10 @@ app.directive('xcList',
 				$scope.srcDataEntries = xcUtils.getConfig( $scope.srcData);
 			}
 
+			$scope.clearSearch = function() {
+				$scope.filter = '';
+			}
+
 			$scope.addNewItem = function() {
 				$scope.modalInstance = $modal.open({
 					templateUrl: 'xc-form-modal-edit.html',
@@ -2846,6 +2850,7 @@ angular.module("xc-list-heading.html", []).run(["$templateCache", function($temp
     "			    <div class=\"col-xs-9\">\n" +
     "			      <div class=\"form-group\">\n" +
     "				      <input type=\"text\" class=\"form-control\" ng-model=\"$parent.filter\" placeholder=\"Search {{::modelName}}...\">\n" +
+    "				      <a class=\"fa fa-times-circle fa-lg clearer\" ng-click=\"clearSearch()\" ng-show=\"$parent.filter\"></a>\n" +
     "				      <i class=\"fa fa-search\"></i>\n" +
     "			      </div>\n" +
     "			    </div>\n" +

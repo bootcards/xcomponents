@@ -29,6 +29,7 @@
 			    <div class="col-xs-9">
 			      <div class="form-group">
 				      <input type="text" class="form-control" ng-model="$parent.filter" placeholder="Search {{::modelName}}...">
+				      <a class="fa fa-times-circle fa-lg clearer" ng-click="clearSearch()" ng-show="$parent.filter"></a>
 				      <i class="fa fa-search"></i>
 			      </div>
 			    </div>
