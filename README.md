@@ -1,6 +1,6 @@
 ## XComponents
 
-[XComponents](http://xcomponents.org) is a set of AngularJS directives that allow you to quickly create a basic app using Cards and Lists.  It is built on top of the [Bootcards](bootcards.org) UI framework, giving a near-native look on iOS and Android.  It's intended to help AngularJS developers create responsive and mobile-first applications, faster.
+[XComponents](http://xcomponents.org) is a set of [AngularJS](http://angularjs.org) directives that allow you to quickly create a basic app using Cards and Lists.  It is built on top of the [Bootcards](http://bootcards.org) UI framework, giving a near-native look on iOS and Android.  It's intended to help AngularJS developers create responsive and mobile-first applications, faster.
 
 These applications can be used with most modern PC and mobile browsers. For delivery through mobile app stores for Apple iOS and Android devices, XComponents uses Cordova.
 XComponents apps can support any back end that can provide a suitable REST API, including MongoDB, Microsoft SQL Server, PostgreSQL and IBM Domino 9.x with Domino Access Services.
@@ -13,7 +13,7 @@ These Cards and Lists are rendered by the framework in an optimized way for the 
 As a result, developers need to write much less user interface adaptation code.
 
 2. **Integrates with Bootstrap**
-With the XComponents, Card and List user interface objects are built with [Bootstrap](http://getbootstrap.com), using the [Bootcards](http://bootcareds.org) framework.
+With the XComponents, Card and List user interface objects are built with [Bootstrap](http://getbootstrap.com), using the [Bootcards](http://bootcards.org) framework.
 Twitter Bootstrap is the most popular and widely used responsive web design framework.
 Use the responsive framework that you already know and love - Bootstrap.
 
