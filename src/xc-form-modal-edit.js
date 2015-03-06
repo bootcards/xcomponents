@@ -2,29 +2,28 @@
 var app = angular.module('xcontrols');
 
 app.controller('UpdateItemInstanceCtrl', 
-	['$scope', '$modalInstance', 'selectedItem', 'xcUtils', 'fieldsEdit', 'RESTFactory', 'PouchFactory', 
+	['$rootScope', '$scope', '$modalInstance', 'selectedItem', 'xcUtils', 'fieldsEdit', 'RESTFactory', 'PouchFactory', 
 	'LowlaFactory', 'scope', 'configService', 'xcUtils', 'modelName', 'isNew', 'allowDelete', 'items',
-	function ($scope, $modalInstance, selectedItem, xcUtils, fieldsEdit, RESTFactory, PouchFactory, 
+	function ($rootScope, $scope, $modalInstance, selectedItem, xcUtils, fieldsEdit, RESTFactory, PouchFactory, 
 		LowlaFactory, scope, configService, xcUtils, modelName, isNew, allowDelete, items) {
 
 	if (selectedItem == null) {
-
-		//creating a new item: check for field defaults from config
 		selectedItem = {};
+	}
 
-		angular.forEach( fieldsEdit, function(field) {
-
-			if (field.hasOwnProperty('default') && field.type == 'date') {
+	//check for date fields
+	angular.forEach( fieldsEdit, function(field) {
+	
+		if (field.type == 'date' && isNew) {
+			if (field.hasOwnProperty('default') ) {
 				switch(field['default']) {
 					case 'now':
-						selectedItem[field.field] = new Date();
-				}
-	
+						selectedItem[field.field] = new Date(); break;
+				}	
 			}
-		
-		});
-
-	}
+		}
+	
+	});
 
 	$scope.selectedItem = selectedItem;
 	$scope.fieldsEdit = fieldsEdit;
@@ -36,6 +35,9 @@ app.controller('UpdateItemInstanceCtrl',
 		/*clear a field*/
 		$scope.selectedItem[fld] = "";
 	};
+	$scope.isEmpty = function(fld) {
+		return fld == null || typeof fld == 'undefined' || fld.length == '';
+	};
 
 	$scope.saveItem = function(form) {
   	
@@ -43,7 +45,7 @@ app.controller('UpdateItemInstanceCtrl',
 
 		xcUtils.calculateFormFields(selectedItem);
 
-		//determine the factory to use
+		//determine the factory to use to store the data
 		var f = null;
 		switch( scope.datastoreType) {
 			case 'pouch':
@@ -61,10 +63,10 @@ app.controller('UpdateItemInstanceCtrl',
 
 			f.saveNew( $scope.selectedItem )
 			.then( function(res) {
-				
-				if (scope.type == 'categorised' || scope.type=='accordion') {
 
-					scope.groups = xcUtils.getGroups( res, scope.groupBy, scope.orderBy, orderReversed );
+				if (scope.type == 'categorised' || scope.type=='accordion'){ 
+
+					$rootScope.$emit('refreshList', '');
 
 				} else {
 
@@ -72,7 +74,6 @@ app.controller('UpdateItemInstanceCtrl',
 
 			        //resort
 			        var ress = scope.items;
-
 			        ress.sort( sortFunction );
 
 			        scope.items = ress;
@@ -96,16 +97,14 @@ app.controller('UpdateItemInstanceCtrl',
 
 
 		} else {
-
+			
 			f.update( $scope.selectedItem)
 			.then( function(res) {
 
-				$scope.selectedItem = res;
+				$rootScope.$emit('refreshList', '');
 
 				$modalInstance.close();
 				$scope.isNew = false;
-
-				//$scope.$apply();
 
 			})
 			.catch( function(err) {

@@ -34,10 +34,14 @@ app.factory('xcUtils', function($rootScope) {
 		getSortByFunction : function(orderBy, orderReversed) {
 			//function to sort an array of objects on a specific property and order
 
+			if (typeof orderReversed == 'string') {
+				orderReversed = (orderReversed == 'true' ? true : false);
+			}
+
 			return function(a,b) {
 				
 				var _a = (a[orderBy] || '');
-				var _b = (b[orderBy] || '')
+				var _b = (b[orderBy] || '');
 
 				if (typeof _a === 'string') { _a = _a.toLowerCase(); }
 				if (typeof _b === 'string') { _b = _b.toLowerCase(); }

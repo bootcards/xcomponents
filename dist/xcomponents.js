@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-05 3:54 */
+/* xcomponents 0.1.0 2015-03-06 4:12 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -518,6 +518,15 @@ app.run( function() {
 	
 });
 
+app.directive('disableNgAnimate', ['$animate', function($animate) {
+  return {
+    restrict: 'A',
+    link: function(scope, element) {
+      $animate.enabled(false, element);
+    }
+  };
+}]);
+
 
 
 //polyfill for indexOf function
@@ -625,10 +634,14 @@ app.factory('xcUtils', function($rootScope) {
 		getSortByFunction : function(orderBy, orderReversed) {
 			//function to sort an array of objects on a specific property and order
 
+			if (typeof orderReversed == 'string') {
+				orderReversed = (orderReversed == 'true' ? true : false);
+			}
+
 			return function(a,b) {
 				
 				var _a = (a[orderBy] || '');
-				var _b = (b[orderBy] || '')
+				var _b = (b[orderBy] || '');
 
 				if (typeof _a === 'string') { _a = _a.toLowerCase(); }
 				if (typeof _b === 'string') { _b = _b.toLowerCase(); }
@@ -1001,29 +1014,28 @@ app.directive('xcFooter', function() {
 var app = angular.module('xcontrols');
 
 app.controller('UpdateItemInstanceCtrl', 
-	['$scope', '$modalInstance', 'selectedItem', 'xcUtils', 'fieldsEdit', 'RESTFactory', 'PouchFactory', 
+	['$rootScope', '$scope', '$modalInstance', 'selectedItem', 'xcUtils', 'fieldsEdit', 'RESTFactory', 'PouchFactory', 
 	'LowlaFactory', 'scope', 'configService', 'xcUtils', 'modelName', 'isNew', 'allowDelete', 'items',
-	function ($scope, $modalInstance, selectedItem, xcUtils, fieldsEdit, RESTFactory, PouchFactory, 
+	function ($rootScope, $scope, $modalInstance, selectedItem, xcUtils, fieldsEdit, RESTFactory, PouchFactory, 
 		LowlaFactory, scope, configService, xcUtils, modelName, isNew, allowDelete, items) {
 
 	if (selectedItem == null) {
-
-		//creating a new item: check for field defaults from config
 		selectedItem = {};
+	}
 
-		angular.forEach( fieldsEdit, function(field) {
-
-			if (field.hasOwnProperty('default') && field.type == 'date') {
+	//check for date fields
+	angular.forEach( fieldsEdit, function(field) {
+	
+		if (field.type == 'date' && isNew) {
+			if (field.hasOwnProperty('default') ) {
 				switch(field['default']) {
 					case 'now':
-						selectedItem[field.field] = new Date();
-				}
-	
+						selectedItem[field.field] = new Date(); break;
+				}	
 			}
-		
-		});
-
-	}
+		}
+	
+	});
 
 	$scope.selectedItem = selectedItem;
 	$scope.fieldsEdit = fieldsEdit;
@@ -1035,6 +1047,9 @@ app.controller('UpdateItemInstanceCtrl',
 		/*clear a field*/
 		$scope.selectedItem[fld] = "";
 	};
+	$scope.isEmpty = function(fld) {
+		return fld == null || typeof fld == 'undefined' || fld.length == '';
+	};
 
 	$scope.saveItem = function(form) {
   	
@@ -1042,7 +1057,7 @@ app.controller('UpdateItemInstanceCtrl',
 
 		xcUtils.calculateFormFields(selectedItem);
 
-		//determine the factory to use
+		//determine the factory to use to store the data
 		var f = null;
 		switch( scope.datastoreType) {
 			case 'pouch':
@@ -1060,10 +1075,10 @@ app.controller('UpdateItemInstanceCtrl',
 
 			f.saveNew( $scope.selectedItem )
 			.then( function(res) {
-				
-				if (scope.type == 'categorised' || scope.type=='accordion') {
 
-					scope.groups = xcUtils.getGroups( res, scope.groupBy, scope.orderBy, orderReversed );
+				if (scope.type == 'categorised' || scope.type=='accordion'){ 
+
+					$rootScope.$emit('refreshList', '');
 
 				} else {
 
@@ -1071,7 +1086,6 @@ app.controller('UpdateItemInstanceCtrl',
 
 			        //resort
 			        var ress = scope.items;
-
 			        ress.sort( sortFunction );
 
 			        scope.items = ress;
@@ -1095,16 +1109,14 @@ app.controller('UpdateItemInstanceCtrl',
 
 
 		} else {
-
+			
 			f.update( $scope.selectedItem)
 			.then( function(res) {
 
-				$scope.selectedItem = res;
+				$rootScope.$emit('refreshList', '');
 
 				$modalInstance.close();
 				$scope.isNew = false;
-
-				//$scope.$apply();
 
 			})
 			.catch( function(err) {
@@ -1474,6 +1486,91 @@ app.directive('xcList',
 	['$rootScope', '$filter', 'xcUtils', 'RESTFactory', 'PouchFactory', 'LowlaFactory', 'configService', 
 	function($rootScope, $filter, xcUtils, RESTFactory, PouchFactory, LowlaFactory, configService) {
 
+	var loadData = function(scope) {
+
+		if ( scope.srcDataEntries) {
+
+			scope.isLoading = false;
+			scope.hasMore = false;
+			scope.items = scope.srcDataEntries;
+			scope.itemsPage = scope.items;
+			scope.totalNumItems = scope.items.length;
+			
+		} else {
+
+			var f = null;
+			switch( scope.datastoreType) {
+				case 'pouch':
+					f=PouchFactory; break;
+				case 'lowla':
+					f=LowlaFactory; break;
+				default:
+					f=RESTFactory; break;
+			}
+		
+			f.all().then( function(res) {
+				
+				var numRes = res.length;
+
+				if (scope.filterBy && scope.filterValue) {
+					//filter the result set
+					
+					var filteredRes = [];
+
+					angular.forEach( res, function(entry, idx) {
+
+						if (entry[scope.filterBy] == scope.filterValue) {
+							filteredRes.push( entry);
+						}
+					});
+
+					res = filteredRes;
+
+				}
+				
+				if (scope.type == 'categorised' || scope.type=='accordion') {
+
+					scope.groups = xcUtils.getGroups( res, scope.groupBy, scope.orderBy, scope.orderReversed );
+					scope.isLoading = false;
+					
+					//auto load first entry in the first group
+					if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+						scope.select( scope.groups[0].entries[0] );
+						if (scope.type == 'accordion') {		//auto expand first group
+							scope.groups[0].collapsed = false;
+						}
+					}
+		
+				} else {			//flat or detailed
+
+					//sort the results
+					res.sort( xcUtils.getSortByFunction( scope.orderBy, scope.orderReversed ) );
+
+		        	//return first page of results
+					var b = [];
+					for (var i=0; i<scope.itemsPerPage && i<res.length; i++) {
+						b.push( res[i] );
+					}
+
+		        	scope.items = res;
+					scope.itemsPage = b;
+					scope.isLoading = false;
+					scope.totalNumItems = res.length;
+
+					scope.hasMore = scope.itemsPage.length < scope.totalNumItems;
+
+					//auto load first entry in the list
+					if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
+						scope.select( res[0] );
+					}
+
+				}
+
+			});
+
+		}
+	};
+
 	return {
 
 		scope : {
@@ -1520,95 +1617,15 @@ app.directive('xcList',
 			scope.colLeft = 'col-sm-' + attrs.listWidth;
 			scope.colRight = 'col-sm-' + (12 - parseInt(attrs.listWidth, 10) );
 			
-			var orderReversed = scope.$eval(attrs.orderReversed);		//for booleans
-
-			if ( scope.srcDataEntries) {
-
-				scope.isLoading = false;
-				scope.hasMore = false;
-				scope.items = scope.srcDataEntries;
-				scope.itemsPage = scope.items;
-				scope.totalNumItems = scope.items.length;
-				
-			} else {
-
-				var f = null;
-				switch( attrs.datastoreType) {
-					case 'pouch':
-						f=PouchFactory; break;
-					case 'lowla':
-						f=LowlaFactory; break;
-					default:
-						f=RESTFactory; break;
-				}
-			
-				f.all().then( function(res) {
-					
-					var numRes = res.length;
-
-					if (scope.filterBy && scope.filterValue) {
-						//filter the result set
-						
-						var filteredRes = [];
-
-						angular.forEach( res, function(entry, idx) {
-
-							if (entry[scope.filterBy] == scope.filterValue) {
-								filteredRes.push( entry);
-							}
-						});
-
-						res = filteredRes;
-
-					}
-					
-					if (scope.type == 'categorised' || scope.type=='accordion') {
-
-						scope.groups = xcUtils.getGroups( res, scope.groupBy, scope.orderBy, orderReversed );
-						scope.isLoading = false;
-						
-						//auto load first entry in the first group
-						if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
-							scope.select( scope.groups[0].entries[0] );
-							if (scope.type == 'accordion') {		//auto expand first group
-								scope.groups[0].collapsed = false;
-							}
-						}
-			
-					} else {			//flat or detailed
-
-						//sort the results
-						res.sort( xcUtils.getSortByFunction( scope.orderBy, orderReversed ) );
-
-			        	//return first page of results
-						var b = [];
-						for (var i=0; i<scope.itemsPerPage && i<res.length; i++) {
-							b.push( res[i] );
-						}
-
-			        	scope.items = res;
-						scope.itemsPage = b;
-						scope.isLoading = false;
-						scope.totalNumItems = res.length;
-
-						scope.hasMore = scope.itemsPage.length < scope.totalNumItems;
-
-						//auto load first entry in the list
-						if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
-							scope.select( res[0] );
-						}
-
-					}
-
-				});
-
-			}
+			loadData(scope);
 
 		},
 
 		controller: function($rootScope, $scope, $modal, $filter, xcUtils) {
 
 			$scope.hideList = false;
+			$scope.orderReversed = $scope.$eval( $scope.orderReversed);		//for booleans
+			$scope.datastoreType = (typeof $scope.datastoreType == 'undefined' ? 'accordion' : $scope.datastoreType);
 
 			//set defaults
 			$scope.allowSearch = (typeof $scope.allowSearch == 'undefined' ? true : $scope.allowSearch);
@@ -1628,6 +1645,10 @@ app.directive('xcList',
       		$scope.fieldsRead = xcUtils.getConfig('fieldsRead');
 			$scope.fieldsEdit = xcUtils.getConfig('fieldsEdit');
 			$scope.imageBase = xcUtils.getConfig('imageBase');
+
+			$rootScope.$on('refreshList', function(msg) {
+				loadData($scope);
+			});
 			
 			//custom list entries
 			if ($scope.srcData) {
@@ -1645,6 +1666,7 @@ app.directive('xcList',
 			};
 
 			$scope.addNewItem = function() {
+
 				$scope.modalInstance = $modal.open({
 					templateUrl: 'xc-form-modal-edit.html',
 					controller: 'UpdateItemInstanceCtrl',
@@ -1742,31 +1764,7 @@ app.directive('xcList',
 			}
 
 			$scope.delete = function(item) {
-
-				//remove an item
-				if ($scope.itemsPage) {
-					for (var i=0; i<$scope.itemsPage.length; i++) {
-						if ($scope.itemsPage[i] == item) {
-							//remove from the scope list, set selected to null
-							$scope.itemsPage.splice( i, 1);
-							$scope.selected = null;
-							$scope.$emit('selectItemEvent', null);
-							break;
-						}
-					}
-				}
-				if ($scope.groups) {
-					for( i=$scope.groups.length-1; i>=0; i--) {
-						var e = $scope.groups[i].entries;
-						for (j=e.length-1; j>=0; j--) {
-							if (e[j] == item) {
-								$scope.groups[i].entries.splice(j, 1);
-								break;
-							}
-						}
-					}
-				}
-				
+				loadData($scope);
 			};
 
 			$rootScope.$on('deleteItemEvent', function(ev, item) {
@@ -2078,20 +2076,17 @@ angular.module("xc-base.html", []).run(["$templateCache", function($templateCach
 
 angular.module("xc-carousel.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-carousel.html",
-    "<div style=\"height: 300px\">\n" +
-    "\n" +
-    "	<carousel interval=\"interval\">\n" +
+    "<div>\n" +
+    "	<carousel interval=\"interval\" disable-ng-animate>\n" +
     "		<slide ng-repeat=\"slide in slides\" active=\"slide.active\">\n" +
-    "			<img ng-src=\"{{slide.image}}\" style=\"margin:auto; height:600px\" class=\"img-responsive\">\n" +
+    "			<img ng-src=\"{{slide.image}}\" style=\"margin:auto;\">\n" +
     "			<div class=\"carousel-caption\">\n" +
-    "				<h4>Slide {{$index}}</h4>\n" +
+    "				<h4>{{slide.title}}</h4>\n" +
     "				<p>{{slide.text}}</p>\n" +
     "			</div>\n" +
     "		</slide>\n" +
     "	</carousel>\n" +
-    "\n" +
-    "</div>\n" +
-    "");
+    "</div>");
 }]);
 
 angular.module("xc-chart.html", []).run(["$templateCache", function($templateCache) {
@@ -2256,26 +2251,26 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "					\n" +
     "	<div class=\"modal-body form-horizontal\">\n" +
     "\n" +
-    "		<div class=\"form-group\" ng-repeat=\"field in fieldsEdit\" ng-class=\"{ 'has-error': cardForm[field.field].$invalid }\">\n" +
+    "		<div class=\"form-group\" ng-repeat=\"field in fieldsEdit\" ng-class=\"{ 'has-error': cardForm[field.field].$dirty && cardForm[field.field].$invalid }\">\n" +
     "			<label class=\"col-xs-3 control-label\">{{field.label}}</label>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='text' || field.type=='link'\">\n" +
     "				<input class=\"form-control\" name=\"{{field.field}}\" ng-model=\"selectedItem[field.field]\" ng-required=\"field.required\"  />\n" +
-    "				<a class=\"fa fa-times-circle fa-lg clearer\" ng-click=\"clearField(field.field)\"></a>\n" +
+    "				<a class=\"fa fa-times-circle fa-lg clearer\" ng-hide=\"isEmpty(selectedItem[field.field])\" ng-click=\"clearField(field.field)\"></a>\n" +
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='email'\">\n" +
     "				<input class=\"form-control\" type=\"email\" name=\"{{field.field}}\" ng-model=\"selectedItem[field.field]\" ng-required=\"field.required\"  />\n" +
-    "				<a class=\"fa fa-times-circle fa-lg clearer\" ng-click=\"clearField(field.field)\"></a>\n" +
+    "				<a class=\"fa fa-times-circle fa-lg clearer\" ng-hide=\"isEmpty(selectedItem[field.field])\" ng-click=\"clearField(field.field)\"></a>\n" +
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='phone'\">\n" +
     "				<input class=\"form-control\" type=\"tel\" name=\"{{field.field}}\" ng-model=\"selectedItem[field.field]\" ng-required=\"field.required\"  />\n" +
-    "				<a class=\"fa fa-times-circle fa-lg clearer\" ng-click=\"clearField(field.field)\"></a>\n" +
+    "				<a class=\"fa fa-times-circle fa-lg clearer\" ng-hide=\"isEmpty(selectedItem[field.field])\" ng-click=\"clearField(field.field)\"></a>\n" +
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='date'\">\n" +
     "				<input class=\"form-control\" type=\"date\" name=\"{{field.field}}\" ng-model=\"selectedItem[field.field]\" ng-required=\"field.required\"  />\n" +
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='multiline'\">\n" +
     "				<textarea class=\"form-control\" name=\"{{field.field}}\" ng-model=\"selectedItem[field.field]\" ng-required=\"field.required\"></textarea>\n" +
-    "				<a class=\"fa fa-times-circle fa-lg clearer\" ng-click=\"clearField(field.field)\"></a>\n" +
+    "				<a class=\"fa fa-times-circle fa-lg clearer\" ng-hide=\"isEmpty(selectedItem[field.field])\"ng-click=\"clearField(field.field)\"></a>\n" +
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='select'\">\n" +
     "				<select class=\"form-control\" name=\"{{field.field}}\" ng-model=\"selectedItem[field.field]\" ng-required=\"field.required\">\n" +

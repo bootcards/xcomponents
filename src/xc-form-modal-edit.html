@@ -19,26 +19,26 @@
 					
 	<div class="modal-body form-horizontal">
 
-		<div class="form-group" ng-repeat="field in fieldsEdit" ng-class="{ 'has-error': cardForm[field.field].$invalid }">
+		<div class="form-group" ng-repeat="field in fieldsEdit" ng-class="{ 'has-error': cardForm[field.field].$dirty && cardForm[field.field].$invalid }">
 			<label class="col-xs-3 control-label">{{field.label}}</label>
 			<div class="col-xs-9" ng-if="field.type=='text' || field.type=='link'">
 				<input class="form-control" name="{{field.field}}" ng-model="selectedItem[field.field]" ng-required="field.required"  />
-				<a class="fa fa-times-circle fa-lg clearer" ng-click="clearField(field.field)"></a>
+				<a class="fa fa-times-circle fa-lg clearer" ng-hide="isEmpty(selectedItem[field.field])" ng-click="clearField(field.field)"></a>
 			</div>
 			<div class="col-xs-9" ng-if="field.type=='email'">
 				<input class="form-control" type="email" name="{{field.field}}" ng-model="selectedItem[field.field]" ng-required="field.required"  />
-				<a class="fa fa-times-circle fa-lg clearer" ng-click="clearField(field.field)"></a>
+				<a class="fa fa-times-circle fa-lg clearer" ng-hide="isEmpty(selectedItem[field.field])" ng-click="clearField(field.field)"></a>
 			</div>
 			<div class="col-xs-9" ng-if="field.type=='phone'">
 				<input class="form-control" type="tel" name="{{field.field}}" ng-model="selectedItem[field.field]" ng-required="field.required"  />
-				<a class="fa fa-times-circle fa-lg clearer" ng-click="clearField(field.field)"></a>
+				<a class="fa fa-times-circle fa-lg clearer" ng-hide="isEmpty(selectedItem[field.field])" ng-click="clearField(field.field)"></a>
 			</div>
 			<div class="col-xs-9" ng-if="field.type=='date'">
 				<input class="form-control" type="date" name="{{field.field}}" ng-model="selectedItem[field.field]" ng-required="field.required"  />
 			</div>
 			<div class="col-xs-9" ng-if="field.type=='multiline'">
 				<textarea class="form-control" name="{{field.field}}" ng-model="selectedItem[field.field]" ng-required="field.required"></textarea>
-				<a class="fa fa-times-circle fa-lg clearer" ng-click="clearField(field.field)"></a>
+				<a class="fa fa-times-circle fa-lg clearer" ng-hide="isEmpty(selectedItem[field.field])"ng-click="clearField(field.field)"></a>
 			</div>
 			<div class="col-xs-9" ng-if="field.type=='select'">
 				<select class="form-control" name="{{field.field}}" ng-model="selectedItem[field.field]" ng-required="field.required">
