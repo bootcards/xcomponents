@@ -40,8 +40,25 @@ app.controller('UpdateItemInstanceCtrl',
 	};
 
 	$scope.saveItem = function(form) {
-  	
-	  	if (!form.$valid) { alert('Please fill in all required fields'); return; }
+
+	  	if (!form.$valid) { 
+
+	  		var msgs = [];
+
+	  		msgs.push("Please correct the following errors:\n");
+
+	  		if (form.$error.required) {
+	  			msgs.push("- fill in all required fields\n");
+	  		}
+	  		
+	  		if (form.$error.email) {
+				msgs.push("- enter a valid email address\n");
+	  		}
+
+	  		alert(msgs.join(''));
+	  		return;
+
+	  	}
 
 		xcUtils.calculateFormFields(selectedItem);
 
