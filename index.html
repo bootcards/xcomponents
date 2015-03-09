@@ -26,15 +26,12 @@
 <meta name="msapplication-TileImage" content="site/images/ms-icon-144x144.png">
 <meta name="theme-color" content="#ffffff">
  
-
   <title>XComponents - Create an AngularJS app with Cards and Lists using Bootcards</title>
 
-  <!-- Bootstrap core CSS -->
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="site/css/bootcards-site.css"> 
-
-  <!--font awesome-->
   <link href="//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
+   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/styles/github.min.css">
 
   <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -172,7 +169,7 @@ Create your app once using XComponents and Javascript, then run it online or off
       <h4>2: Setup the REST server</h4>
       <p>Create a new folder for you app. Using a terminal, go into the folder and enter <code>slc loopback</code>. This will setup the basic Loopback application.</p>
 
-      <p>We need to create a data model in Loopback: let's create a list of cars. Enter: <code>slc loopback:model</code>. Accept all defaults until you get to "Properties". Create the following properties: 'make', 'type' and 'color'. Leave the property name empty to stop creating properties.
+      <p>We need to create a data model in Loopback: let's create a list of cars. Enter: <code>slc loopback:model</code> and enter Car as the model name. Accept all defaults until you get to "Properties". Create the following properties: 'make', 'type' and 'color'. Leave the property name empty to stop creating properties.
 
       <p>
         Delete the file <code>server/boot/root.js</code>. That provides a default response for the root (/) route. We don't need that, because we're going to serve our own app: open <code>server/middleware.json</code> and replace the <code>files</code> property with:
@@ -189,11 +186,11 @@ Create your app once using XComponents and Javascript, then run it online or off
 }</code></pre>
       This will tell bower to install all dependencies into the client/bower_components folder.</p>
 
-      <p>Run <code>bower install xcomponents --save</code> to download XComponents and all its dependencies.</p>
+      <p>Run <code>bower install xcomponents#master --save</code> to download XComponents and all its dependencies. This will retrieve the latest version.</p>
 
       <h4>4: JavaScript config file</h4>
       <p>Create a file called <code>cars.js</code> in the <code>/client</code> folder. This file contains app configuration settings. Set its contents to:</p>
-     <pre> <code>var xcontrols = {
+     <pre><code>var xcontrols = {
 
   appVersion : '0.1',
 
@@ -230,8 +227,8 @@ Create your app once using XComponents and Javascript, then run it online or off
 
 }</code></pre>
 
-      <h4>5: Basic page for a view (list) and form</h4>
-      <p>Create a file called <code>index.html</code> in the <code>/client</code> folder. This will be our main app page. Set its contents to:</p>
+      <h4>5: Basic page with a list and card</h4>
+      <p>Create a file called <code>index.html</code> in the <code>/client</code> folder. This will be our main app page:</p>
       <pre><code>&lt;!doctype html&gt;
 &lt;html&gt;
 
@@ -302,6 +299,12 @@ Create your app once using XComponents and Javascript, then run it online or off
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
+
+<script type="text/javascript">
+  //activate highlight.js
+  hljs.initHighlightingOnLoad();
+</script>
 
 </body>
 </html>
