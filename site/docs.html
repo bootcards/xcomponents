@@ -6,6 +6,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
   <title>XComponents documentation</title>
 
+  <link rel="apple-touch-icon" sizes="57x57" href="site/images/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="site/images/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="site/images/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="site/images/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="site/images/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="site/images/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="site/images/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="site/images/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="site/images/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192"  href="site/images/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="site/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="site/images/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="site/images/favicon-16x16.png">
+<link rel="manifest" href="site/images/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="site/images/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+
   <link href="//cdnjs.cloudflare.com/ajax/libs/bootcards/1.1.0/css/bootcards-desktop.min.css" rel="stylesheet" />
   <link href="./css/docs.css" rel="stylesheet" />
 
@@ -101,7 +119,7 @@ $(document).ready( function() {
 
             <p>Every page should have a minimal setup that looks like this:</p>
 
-            <pre><code>&lt;!doctype html&gt;
+            <div class="highlight"><pre><code class="html">&lt;!doctype html&gt;
 &lt;html&gt;
 
 &lt;head&gt;
@@ -131,7 +149,7 @@ $(document).ready( function() {
 
   &lt;xc-footer&gt;&lt;/xc-footer&gt;
 
-&lt;/body&gt;&lt;/html&gt;</code></pre>
+&lt;/body&gt;&lt;/html&gt;</code></pre></div>
 
 <p>This gives you a basic XComponents starter page that loads all the required resources. Resources are included using web components (using the <a href="http://polymer-project.org" target="_blank">Polymer</a> polyfill). It includes a header and footer.</p>
 
@@ -225,7 +243,7 @@ $(document).ready( function() {
 
             </p>
 
-            <pre><code>var xcontrols = { };
+            <div class="highlight"><pre><code class="javascript">var xcontrols = { };
 
 xcontrols.menuOptions : [
     { label : 'Languages', isSecondary : true, icon : 'fa-globe' ,
@@ -242,7 +260,7 @@ xcontrols.menuOptions : [
         { label : 'Cars', url : 'cars.html', icon : 'fa-list-alt' }
       ]
     },
-  ];</code></pre>
+  ];</code></pre></div>
 
           </div>
 
@@ -468,7 +486,7 @@ xcontrols.footerOptions : [
                         
             </div>
 
-  <pre><code>&lt;xc-list 
+  <div class="highlight"><pre><code class="html">&lt;xc-list 
     title="People"
     list-width="5" 
     allow-add="true"
@@ -491,7 +509,7 @@ xcontrols.footerOptions : [
       thumbnail-field="thumbnailUrl"
       thumbnail-show-with="name"&gt;&lt;/xc-form&gt;
 
-  &lt;/xc-list&gt;</code></pre>
+  &lt;/xc-list&gt;</code></pre></div>
 
   <table class="table table-condensed">
   <thead><tr>
@@ -544,7 +562,7 @@ xcontrols.footerOptions : [
                         
             </div>
 
-   <pre><code class="html">&lt;xc-list 
+   <div class="highlight"><pre><code class="html">&lt;xc-list 
     title="People"
     list-width="5" 
     allow-add="true"
@@ -564,7 +582,7 @@ xcontrols.footerOptions : [
       thumbnail-field="thumbnailUrl"
       thumbnail-show-with="name"&gt;&lt;/xc-form&gt;
 
-  &lt;/xc-list&gt;</code></pre>
+  &lt;/xc-list&gt;</code></pre></div>
 
 </div>
 	
@@ -606,6 +624,7 @@ xcontrols.footerOptions : [
 						</div>
 <div class="highlight"><pre><code class="html">&lt;xc-base ng-if="$parent.selected.id =='base'" footer-text="Built with Bootcards - Base Card"
   title="Base Card"&gt;
+  
   &lt;div class="list-group-item"&gt;
       &lt;p class="list-group-item-text"&gt;Name&lt;/p&gt;
         &lt;h4 class="list-group-item-heading"&gt;John Smith&lt;/h4&gt;
@@ -617,6 +636,7 @@ xcontrols.footerOptions : [
     &lt;div class="list-group-item"&gt;
         &lt;p class="list-group-item-text"&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam mauris tellus, vehicula ut tellus id, suscipit dapibus tortor. Integer viverra turpis ac fringilla hendrerit. Sed faucibus posuere felis et pellentesque. Cras varius tortor vitae molestie tempor. Proin ut viverra elit, ac gravida tortor.&lt;/p&gt;
     &lt;/div&gt;
+
 &lt;/xc-base&gt;</code></pre></div>
 
 <table class="table table-condensed">
@@ -702,7 +722,7 @@ xcontrols.footerOptions : [
 
   <p>Besides the configuration with HTML attributes, to display form data you also need to add a section to the application's <code>config.js</code> file. There you can control which object properties to show (in read and/or edit mode), which properties are required, etc. Sample contents:</p>
 
-  <pre><code>var xcontrols = { };
+  <div class="highlight"><pre><code class="javascript">var xcontrols = { };
 
 xcontrols.modelName = 'Contact';
 
@@ -721,7 +741,7 @@ xcontrols.fields = [
   { field : 'comments', type : 'multiline'}
 ];
 
-xcontrols.imageBase = 'http://your.server/path/to/images/';</code></pre>
+xcontrols.imageBase = 'http://your.server/path/to/images/';</code></pre></div>
 
 <table class="table table-condensed">
   <thead><tr>
@@ -1138,7 +1158,7 @@ xcontrols.charts['closed-sales'] = [
             <p class="lead">To display an image carousel.</p>
             <div class="highlight"><pre><code class="html">&lt;xc-carousel
   interval="1000"&gt;
-  &lt;/xc-carousel&gt;</code></pre></div>
+&lt;/xc-carousel&gt;</code></pre></div>
 
   <table class="table table-condensed">
   <thead><tr>
@@ -1175,6 +1195,13 @@ xcontrols.carouselSlides = [
 <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.3/highlight.min.js"></script>
+
+<script type="text/javascript">
+  //activate highlight.js
+  hljs.initHighlightingOnLoad();
+
+</script>
+
 
 </body>
 </html>
