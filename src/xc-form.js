@@ -54,7 +54,9 @@ app.directive('xcForm',
 					angular.forEach($scope.fieldsEdit, function(fld) {
 						//convert date fields (stored as strings) to JS date objects
 						if (fld.type == 'date') {
-							$scope.selectedItem[fld.field] = new Date( $scope.selectedItem[fld.field]);
+							if ($scope.selectedItem[fld.field] != null && $scope.selectedItem[fld.field].length>0) {
+								$scope.selectedItem[fld.field] = new Date( $scope.selectedItem[fld.field]);
+							}
 						}
 					});
 				}
