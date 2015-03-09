@@ -10,7 +10,7 @@
 
 			<div class="list-group">
 				
-				<a class="list-group-item animate-repeat" ng-repeat="item in itemsPage | filter : filter"  ng-click="select(item)"
+				<a class="list-group-item animate-repeat" ng-repeat="item in items | filter: filter | limitTo : itemsShown track by item.id"  ng-click="select(item)"
 					ng-class="{'active' : selected == item}">
 
 					<!--(placeholder) icon-->

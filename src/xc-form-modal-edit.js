@@ -95,14 +95,6 @@ app.controller('UpdateItemInstanceCtrl',
 
 			        scope.items = ress;
 
-					//return first page of results
-					var b = [];
-					for (var i=0; i<scope.itemsPerPage && i<ress.length; i++) {
-						b.push( ress[i]);
-					}
-
-					scope.itemsPage = b;
-
 				}
 
 				$modalInstance.close();				

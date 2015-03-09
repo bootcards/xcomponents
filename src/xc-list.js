@@ -11,7 +11,6 @@ app.directive('xcList',
 			scope.isLoading = false;
 			scope.hasMore = false;
 			scope.items = scope.srcDataEntries;
-			scope.itemsPage = scope.items;
 			scope.totalNumItems = scope.items.length;
 			
 		} else {
@@ -64,18 +63,10 @@ app.directive('xcList',
 					//sort the results
 					res.sort( xcUtils.getSortByFunction( scope.orderBy, scope.orderReversed ) );
 
-		        	//return first page of results
-					var b = [];
-					for (var i=0; i<scope.itemsPerPage && i<res.length; i++) {
-						b.push( res[i] );
-					}
-
 		        	scope.items = res;
-					scope.itemsPage = b;
 					scope.isLoading = false;
 					scope.totalNumItems = res.length;
-
-					scope.hasMore = scope.itemsPage.length < scope.totalNumItems;
+					scope.hasMore = scope.itemsShown < scope.totalNumItems;
 
 					//auto load first entry in the list
 					if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
@@ -155,9 +146,10 @@ app.directive('xcList',
       		$scope.hasMore = false;
 
 			$scope.itemsPerPage = 20;
+			$scope.itemsShown = $scope.itemsPerPage;
+
 			$scope.selected = null;
-			$scope.itemsPage = [];
-      		$scope.numPages = 1;
+			$scope.numPages = 1;
 
 			$scope.modelName = xcUtils.getConfig('modelName');
       		$scope.fieldsRead = xcUtils.getConfig('fieldsRead');
@@ -289,24 +281,13 @@ app.directive('xcList',
 				$scope.delete(item);
 			});
 
-		    //load more items
 		    $scope.loadMore = function() {
 
-		    	var start = $scope.itemsPage.length;
-		        var end = Math.min(start + $scope.itemsPerPage, $scope.items.length);
-				
-				if (start < end) {
-				 
-			        $scope.isLoading = true;
-			        $scope.numPages++;
-			        
-			        for ( var i=start; i<end; i++) {
-			          $scope.itemsPage.push( $scope.items[i]);
-			        }
-
-			        $scope.isLoading = false;
-			        $scope.hasMore = $scope.itemsPage.length < $scope.totalNumItems;
+		    	if ($scope.hasMore) {
+			    	$scope.itemsShown += $scope.itemsPerPage;
+			    	$scope.hasMore = $scope.itemsShown < $scope.totalNumItems;
 			    }
+
 		    };
 
 		    $scope.convert = function(item) {
@@ -326,3 +307,29 @@ app.directive('xcList',
 	};
 
 }]);
+
+app.filter('searchFilter', function() {
+
+   return function(items, word, numPerPage) {
+
+    var filtered = [];
+  
+    if (!word) {return items;}
+
+    angular.forEach(items, function(item) {
+        if(item.lastName.toLowerCase().indexOf(word.toLowerCase()) !== -1){
+            filtered.push(item);
+        }
+    });
+
+    /*
+
+    filtered.sort(function(a,b){
+        if(a.indexOf(word) < b.indexOf(word)) return -1;
+        else if(a.indexOf(word) > b.indexOf(word)) return 1;
+        else return 0;
+    });*/
+
+    return filtered;
+  };
+});
