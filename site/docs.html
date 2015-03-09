@@ -239,11 +239,13 @@ $(document).ready( function() {
 </table>
 
             <p>
-              The <code>header</code> element gives you a header that contains a title and a navigation menu. The navigation menu can optionally span two lines. It includes an offcanvas menu for smartphones. The menu options must be configured in the <code>config.js</code> file in an array named <code>menuOptions</code>. Every object can have a label, url and icon. Sample contents for <code>config.js</code>:
+              The <code>header</code> element gives you a header that contains a title and a navigation menu. The navigation menu can optionally span two lines. It includes an offcanvas menu for smartphones. The menu options must be configured in the <code>config.js</code> file in an array named <code>menuOptions</code>. The <code>menuAlignRight</code> property can be used to control alignment of the header menu on desktop (only relevant for a single line of menu options). Every object can have a label, url and icon. Sample contents for <code>config.js</code>:
 
             </p>
 
             <div class="highlight"><pre><code class="javascript">var xcontrols = { };
+
+xcontrols.menuAlignRight : false,
 
 xcontrols.menuOptions : [
     { label : 'Languages', isSecondary : true, icon : 'fa-globe' ,
