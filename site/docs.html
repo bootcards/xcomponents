@@ -243,11 +243,11 @@ $(document).ready( function() {
 
             </p>
 
-            <div class="highlight"><pre><code class="javascript">var xcontrols = { };
+            <div class="highlight"><pre><code class="javascript">var xcomponents = { };
 
-xcontrols.menuAlignRight : false,
+xcomponents.menuAlignRight : false,
 
-xcontrols.menuOptions : [
+xcomponents.menuOptions : [
     { label : 'Languages', isSecondary : true, icon : 'fa-globe' ,
       menuOptions : [
         { label : 'Dutch', url : 'contacts-accordion.html'},
@@ -276,9 +276,9 @@ xcontrols.menuOptions : [
 
             </p>
 
-<pre><code>var xcontrols = { };
+<pre><code>var xcomponents = { };
 
-xcontrols.footerOptions : [
+xcomponents.footerOptions : [
   { label : 'Dashboard', url : '/index.html', icon : 'fa-dashboard'},
   { label : 'Contacts', url : 'contacts-flat.html', icon : 'fa-users' }
 ];</code></pre>
@@ -724,11 +724,11 @@ xcontrols.footerOptions : [
 
   <p>Besides the configuration with HTML attributes, to display form data you also need to add a section to the application's <code>config.js</code> file. There you can control which object properties to show (in read and/or edit mode), which properties are required, etc. Sample contents:</p>
 
-  <div class="highlight"><pre><code class="javascript">var xcontrols = { };
+  <div class="highlight"><pre><code class="javascript">var xcomponents = { };
 
-xcontrols.modelName = 'Contact';
+xcomponents.modelName = 'Contact';
 
-xcontrols.fields = [
+xcomponents.fields = [
   { label : 'First name' , field: 'firstName', required: true, read: false},
   { label : 'Last name' , field: 'lastName', required: true, read: false},
   { field : 'name', edit: false, formula : ['firstName', 'lastName'] },
@@ -743,7 +743,7 @@ xcontrols.fields = [
   { field : 'comments', type : 'multiline'}
 ];
 
-xcontrols.imageBase = 'http://your.server/path/to/images/';</code></pre></div>
+xcomponents.imageBase = 'http://your.server/path/to/images/';</code></pre></div>
 
 <table class="table table-condensed">
   <thead><tr>
@@ -1135,9 +1135,9 @@ xcontrols.imageBase = 'http://your.server/path/to/images/';</code></pre></div>
 
   <p>Besides the configuration with HTML attributes, to display a chart you also need to add a section to the application's <code>config.js</code> file. There you can set the chart data to use. Sample contents:</p>
 
-  <pre><code>var xcontrols = { };
+  <pre><code>var xcomponents = { };
 
-xcontrols.charts['closed-sales'] = [
+xcomponents.charts['closed-sales'] = [
   {label: 'Guy Bardsley', value: 560 },
   {label: 'Adam Callahan', value: 1500 },
   {label: 'Arlo Geist', value: 3750 },
@@ -1174,9 +1174,9 @@ xcontrols.charts['closed-sales'] = [
 
             <p>Besides the configuration with HTML attributes, to display a chart you also need to add a section to the application's <code>config.js</code> file. There you can set the image slides to display. Sample contents:</p>
 
-  <div class="highlight"><pre><code class="javascript">var xcontrols = { };
+  <div class="highlight"><pre><code class="javascript">var xcomponents = { };
 
-xcontrols.carouselSlides = [     
+xcomponents.carouselSlides = [     
   {image : "images/fog.jpeg", text : "Fog"},
   {image : "images/mountain.jpeg", text : "Mountain"},
   {image : "images/bike.jpeg", text : "Bike"}
