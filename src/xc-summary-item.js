@@ -1,6 +1,6 @@
 
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.directive('xcSummaryItem', function() {
 

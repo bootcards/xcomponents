@@ -5,7 +5,7 @@
  * the module using just angular.module('<modname>');
  */
 
-var app = angular.module('xcontrols', [
+var app = angular.module('xcomponents', [
 	'templates-main',
 	'xc.factories',
 	'ngResource',
@@ -19,11 +19,11 @@ var hasNativeHTMLImportsSupport = ('import' in document.createElement('link'));
 
 if (hasNativeHTMLImportsSupport) {
 	angular.element(document).ready(function() {
-	 angular.bootstrap(document, ['xcontrols']);
+	 angular.bootstrap(document, ['xcomponents']);
 	});
 } else {
 	window.addEventListener('HTMLImportsLoaded', function(e){ 
-		angular.bootstrap(document, ['xcontrols']);
+		angular.bootstrap(document, ['xcomponents']);
 	});
 }
 
@@ -61,11 +61,11 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 	//remove hidden class from body to show content
 	$('body').removeClass('hidden');
 
-	if (typeof xcontrols != 'undefined') {
+	if (typeof xcomponents != 'undefined') {
 
 		console.log('set XComponents config');
 
-		var config = xcontrols;
+		var config = xcomponents;
 
 		if (config.fields) {
 
@@ -113,7 +113,7 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 			}
 		}
 
-		$rootScope.config = xcontrols;
+		$rootScope.config = xcomponents;
 
 	}
 

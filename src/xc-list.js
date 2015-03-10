@@ -1,4 +1,4 @@
-var app = angular.module("xcontrols");
+var app = angular.module("xcomponents");
 
 app.directive('xcList', 
 	['$rootScope', '$filter', 'xcUtils', 'RESTFactory', 'PouchFactory', 'LowlaFactory', 'configService', 

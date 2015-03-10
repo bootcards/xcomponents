@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-09 2:39 */
+/* xcomponents 0.1.0 2015-03-10 11:22 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -388,7 +388,7 @@ app.factory('LowlaFactory', ['configService', function(configService) {
  * the module using just angular.module('<modname>');
  */
 
-var app = angular.module('xcontrols', [
+var app = angular.module('xcomponents', [
 	'templates-main',
 	'xc.factories',
 	'ngResource',
@@ -402,11 +402,11 @@ var hasNativeHTMLImportsSupport = ('import' in document.createElement('link'));
 
 if (hasNativeHTMLImportsSupport) {
 	angular.element(document).ready(function() {
-	 angular.bootstrap(document, ['xcontrols']);
+	 angular.bootstrap(document, ['xcomponents']);
 	});
 } else {
 	window.addEventListener('HTMLImportsLoaded', function(e){ 
-		angular.bootstrap(document, ['xcontrols']);
+		angular.bootstrap(document, ['xcomponents']);
 	});
 }
 
@@ -444,11 +444,11 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 	//remove hidden class from body to show content
 	$('body').removeClass('hidden');
 
-	if (typeof xcontrols != 'undefined') {
+	if (typeof xcomponents != 'undefined') {
 
 		console.log('set XComponents config');
 
-		var config = xcontrols;
+		var config = xcomponents;
 
 		if (config.fields) {
 
@@ -496,7 +496,7 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 			}
 		}
 
-		$rootScope.config = xcontrols;
+		$rootScope.config = xcomponents;
 
 	}
 
@@ -598,7 +598,7 @@ if (!Array.prototype.indexOf) {
 }
 
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.factory('xcUtils', function($rootScope) {
 
@@ -705,7 +705,7 @@ app.factory('xcUtils', function($rootScope) {
 
 });
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.directive('xcBase', function() {
 
@@ -725,7 +725,7 @@ app.directive('xcBase', function() {
 
 });
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.directive('xcCarousel', function() {
 
@@ -749,7 +749,7 @@ app.directive('xcCarousel', function() {
 
 } );
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.directive('xcChart', function() {
 
@@ -960,7 +960,7 @@ app.directive('xcChart', function() {
 });
 
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.directive('xcFile', function() {
 
@@ -989,7 +989,7 @@ app.directive('xcFile', function() {
 
 });
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.directive('xcFooter', function() {
 
@@ -1010,7 +1010,7 @@ app.directive('xcFooter', function() {
 
 });
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.controller('UpdateItemInstanceCtrl', 
 	['$rootScope', '$scope', '$modalInstance', 'selectedItem', 'xcUtils', 'fieldsEdit', 'RESTFactory', 'PouchFactory', 
@@ -1169,7 +1169,7 @@ app.controller('UpdateItemInstanceCtrl',
 
 } ] );
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.directive('xcForm', 
 	['$rootScope', 'RESTFactory', 'PouchFactory', 'LowlaFactory', 'configService', 
@@ -1224,7 +1224,9 @@ app.directive('xcForm',
 					angular.forEach($scope.fieldsEdit, function(fld) {
 						//convert date fields (stored as strings) to JS date objects
 						if (fld.type == 'date') {
-							$scope.selectedItem[fld.field] = new Date( $scope.selectedItem[fld.field]);
+							if ($scope.selectedItem[fld.field] != null && $scope.selectedItem[fld.field].length>0) {
+								$scope.selectedItem[fld.field] = new Date( $scope.selectedItem[fld.field]);
+							}
 						}
 					});
 				}
@@ -1351,7 +1353,7 @@ app.directive('animateOnChange', function($animate) {
 });
 
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.directive('xcHeader', function() {
 
@@ -1452,7 +1454,7 @@ app.directive('xcHeader', function() {
 
 });
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.directive('xcImage', function() {
 
@@ -1488,7 +1490,7 @@ app.directive('xcImage', function() {
 	};
 
 });
-var app = angular.module("xcontrols");
+var app = angular.module("xcomponents");
 
 app.directive('xcList', 
 	['$rootScope', '$filter', 'xcUtils', 'RESTFactory', 'PouchFactory', 'LowlaFactory', 'configService', 
@@ -1825,7 +1827,7 @@ app.filter('searchFilter', function() {
 });
 
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.directive('xcReading', function() {
 
@@ -1895,7 +1897,7 @@ app.directive('xcReading', function() {
 });
 
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.directive('xcSummaryItem', function() {
 
@@ -1916,7 +1918,7 @@ app.directive('xcSummaryItem', function() {
 
 });
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.directive('xcSummary', function() {
 
@@ -1936,7 +1938,7 @@ app.directive('xcSummary', function() {
 
 });
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.directive('xcToggle', function() {
 
@@ -1972,7 +1974,7 @@ app.directive('xcToggle', function() {
 
 });
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.directive('xcUpload', function() {
 

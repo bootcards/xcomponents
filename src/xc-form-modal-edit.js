@@ -1,5 +1,5 @@
 
-var app = angular.module('xcontrols');
+var app = angular.module('xcomponents');
 
 app.controller('UpdateItemInstanceCtrl', 
 	['$rootScope', '$scope', '$modalInstance', 'selectedItem', 'xcUtils', 'fieldsEdit', 'RESTFactory', 'PouchFactory', 
