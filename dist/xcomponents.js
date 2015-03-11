@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-11 12:08 */
+/* xcomponents 0.1.0 2015-03-11 4:52 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -1358,6 +1358,8 @@ app.directive('xcHeader', function() {
 				angular.element($document[0].body).addClass('has-bootcards-navbar-double');
 			}
 
+
+
 			$scope.appVersion = xcUtils.getConfig('appVersion');
 
 			var loc = window.location.href;
@@ -1372,25 +1374,6 @@ app.directive('xcHeader', function() {
 
 			$scope.hasSubmenu = function(menuOption) {
 				return (menuOption.hasOwnProperty('menuOptions') && menuOption.menuOptions.length>0);
-			};
-
-			$scope.toggleOffCanvas = function() {
-
-				if ( !$scope.toggleMenuButton) {
-					$scope.toggleMenuButton = angular.element(document.getElementById('offCanvasToggleButton'));
-				}
-				if ( !$scope.toggleMenu) {
-					$scope.toggleMenu = angular.element(document.getElementById('offCanvasMenu'));
-				}
-
-				if ($scope.toggleMenu.hasClass('active')) {
-					$scope.toggleMenu.removeClass('active');
-					//$scope.toggleMenuButton.removeClass('active');
-				} else {
-					$scope.toggleMenu.addClass('active');
-					//$scope.toggleMenuButton.removeClass('active');
-				}
-				
 			};
 
 			//add handlers to show the collapsed/ expanded icon on lists with sub-options
@@ -1408,6 +1391,38 @@ app.directive('xcHeader', function() {
 					i.addClass("fa-chevron-circle-right").removeClass("fa-chevron-circle-down");
 				});
 		    }); 
+
+		    $rootScope.$on("selectItemEvent", function(ev, item) {
+		    	//item selected: hide the 'menu' button
+
+		    	if (bootcards.isXS() ) {
+
+		    		if ( !$scope.toggleMenuButton) {	
+						$scope.toggleMenuButton = angular.element(document.getElementById('offCanvasToggleButton'));
+					}
+					if ( !$scope.backButton) {
+						$scope.backButton = angular.element(document.getElementById('backButton'));
+					}
+
+					if (item != null) {
+						$scope.backButton.removeClass("hidden");
+						$scope.toggleMenuButton.addClass("hidden");
+						$rootScope.hideList = true;
+					} else {
+						$scope.backButton.addClass("hidden");
+						$scope.toggleMenuButton.removeClass("hidden");
+						$rootScope.hideList = false;
+					}
+
+					$rootScope.showCards = (item != null);
+
+				} else {
+
+					$rootScope.showCards = true;
+					window.scrollTo(0, 0);
+				}
+
+		    });
 
 			$scope.goBack = function() {
 				$scope.$emit('selectItemEvent', null);
@@ -1713,16 +1728,8 @@ app.directive('xcList',
 			$scope.select = function(item) {
 		
 				$scope.selected = item;
-
 				$scope.$emit('selectItemEvent', item);
 				
-				if (bootcards.isXS() ) {
-					$rootScope.hideList = (item != null);
-					$rootScope.showCards = (item != null);
-				} else {
-					$rootScope.showCards = true;
-					window.scrollTo(0, 0);
-				}
 			};
 
 			$scope.showImage = function(item) {
@@ -2443,12 +2450,12 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "    <div class=\"btn-group bootcards-header-right\" ng-transclude></div>\n" +
     "\n" +
     "    <!--back button for small displays-->\n" +
-    "    <button class=\"btn btn-default btn-back pull-left\" ng-click=\"goBack()\" type=\"button\" ng-show=\"$root.hideList\">\n" +
+    "    <button id=\"backButton\" class=\"btn btn-default btn-back pull-left hidden\" ng-click=\"goBack()\" type=\"button\" >\n" +
     "      <i class=\"fa fa-lg fa-chevron-left\"></i><span>Back</span>\n" +
     "    </button>\n" +
     "\n" +
     "		<!--slide-in menu button-->\n" +
-    "		<button ng-if=\"hasMenu() && !$root.hideList\" type=\"button\" class=\"btn btn-default btn-menu pull-left offCanvasToggle\" id=\"offCanvasToggleButton\" ng-click=\"toggleOffCanvas()\" data-toggle=\"offcanvas\">\n" +
+    "		<button id=\"offCanvasToggleButton\" type=\"button\" class=\"btn btn-default btn-menu pull-left offCanvasToggle\" data-toggle=\"offcanvas\">\n" +
     "	   <i class=\"fa fa-lg fa-bars\"></i><span>Menu</span>\n" +
     "	   </button>\n" +
     "\n" +

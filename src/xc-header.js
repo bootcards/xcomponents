@@ -38,6 +38,8 @@ app.directive('xcHeader', function() {
 				angular.element($document[0].body).addClass('has-bootcards-navbar-double');
 			}
 
+
+
 			$scope.appVersion = xcUtils.getConfig('appVersion');
 
 			var loc = window.location.href;
@@ -52,25 +54,6 @@ app.directive('xcHeader', function() {
 
 			$scope.hasSubmenu = function(menuOption) {
 				return (menuOption.hasOwnProperty('menuOptions') && menuOption.menuOptions.length>0);
-			};
-
-			$scope.toggleOffCanvas = function() {
-
-				if ( !$scope.toggleMenuButton) {
-					$scope.toggleMenuButton = angular.element(document.getElementById('offCanvasToggleButton'));
-				}
-				if ( !$scope.toggleMenu) {
-					$scope.toggleMenu = angular.element(document.getElementById('offCanvasMenu'));
-				}
-
-				if ($scope.toggleMenu.hasClass('active')) {
-					$scope.toggleMenu.removeClass('active');
-					//$scope.toggleMenuButton.removeClass('active');
-				} else {
-					$scope.toggleMenu.addClass('active');
-					//$scope.toggleMenuButton.removeClass('active');
-				}
-				
 			};
 
 			//add handlers to show the collapsed/ expanded icon on lists with sub-options
@@ -88,6 +71,38 @@ app.directive('xcHeader', function() {
 					i.addClass("fa-chevron-circle-right").removeClass("fa-chevron-circle-down");
 				});
 		    }); 
+
+		    $rootScope.$on("selectItemEvent", function(ev, item) {
+		    	//item selected: hide the 'menu' button
+
+		    	if (bootcards.isXS() ) {
+
+		    		if ( !$scope.toggleMenuButton) {	
+						$scope.toggleMenuButton = angular.element(document.getElementById('offCanvasToggleButton'));
+					}
+					if ( !$scope.backButton) {
+						$scope.backButton = angular.element(document.getElementById('backButton'));
+					}
+
+					if (item != null) {
+						$scope.backButton.removeClass("hidden");
+						$scope.toggleMenuButton.addClass("hidden");
+						$rootScope.hideList = true;
+					} else {
+						$scope.backButton.addClass("hidden");
+						$scope.toggleMenuButton.removeClass("hidden");
+						$rootScope.hideList = false;
+					}
+
+					$rootScope.showCards = (item != null);
+
+				} else {
+
+					$rootScope.showCards = true;
+					window.scrollTo(0, 0);
+				}
+
+		    });
 
 			$scope.goBack = function() {
 				$scope.$emit('selectItemEvent', null);

@@ -22,12 +22,12 @@
     <div class="btn-group bootcards-header-right" ng-transclude></div>
 
     <!--back button for small displays-->
-    <button class="btn btn-default btn-back pull-left" ng-click="goBack()" type="button" ng-show="$root.hideList">
+    <button id="backButton" class="btn btn-default btn-back pull-left hidden" ng-click="goBack()" type="button" >
       <i class="fa fa-lg fa-chevron-left"></i><span>Back</span>
     </button>
 
 		<!--slide-in menu button-->
-		<button ng-if="hasMenu() && !$root.hideList" type="button" class="btn btn-default btn-menu pull-left offCanvasToggle" id="offCanvasToggleButton" ng-click="toggleOffCanvas()" data-toggle="offcanvas">
+		<button id="offCanvasToggleButton" type="button" class="btn btn-default btn-menu pull-left offCanvasToggle" data-toggle="offcanvas">
 	   <i class="fa fa-lg fa-bars"></i><span>Menu</span>
 	   </button>
 

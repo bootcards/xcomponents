@@ -255,16 +255,8 @@ app.directive('xcList',
 			$scope.select = function(item) {
 		
 				$scope.selected = item;
-
 				$scope.$emit('selectItemEvent', item);
 				
-				if (bootcards.isXS() ) {
-					$rootScope.hideList = (item != null);
-					$rootScope.showCards = (item != null);
-				} else {
-					$rootScope.showCards = true;
-					window.scrollTo(0, 0);
-				}
 			};
 
 			$scope.showImage = function(item) {
