@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-10 11:22 */
+/* xcomponents 0.1.0 2015-03-11 12:08 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -1013,14 +1013,8 @@ app.directive('xcFooter', function() {
 var app = angular.module('xcomponents');
 
 app.controller('UpdateItemInstanceCtrl', 
-	['$rootScope', '$scope', '$modalInstance', 'selectedItem', 'xcUtils', 'fieldsEdit', 'RESTFactory', 'PouchFactory', 
-	'LowlaFactory', 'scope', 'configService', 'xcUtils', 'modelName', 'isNew', 'allowDelete', 'items',
-	function ($rootScope, $scope, $modalInstance, selectedItem, xcUtils, fieldsEdit, RESTFactory, PouchFactory, 
-		LowlaFactory, scope, configService, xcUtils, modelName, isNew, allowDelete, items) {
-
-	if (selectedItem == null) {
-		selectedItem = {};
-	}
+	[ '$scope', '$modalInstance', 'selectedItem', 'fieldsEdit', 'modelName', 'isNew', 'allowDelete',
+	function ( $scope, $modalInstance, selectedItem, fieldsEdit, modelName, isNew, allowDelete) {
 
 	//check for date fields
 	angular.forEach( fieldsEdit, function(field) {
@@ -1036,14 +1030,16 @@ app.controller('UpdateItemInstanceCtrl',
 	
 	});
 
-	$scope.selectedItem = selectedItem;
+	//create a copy of the object we're editing (to deal with 'cancel')
+	$scope.selectedItem = angular.copy( selectedItem );
+
+	//$scope.selectedItem = selectedItem;
 	$scope.fieldsEdit = fieldsEdit;
 	$scope.modelName = modelName;
 	$scope.isNew = isNew;
 	$scope.allowDelete = allowDelete;
 
 	$scope.clearField = function(fld) {
-		/*clear a field*/
 		$scope.selectedItem[fld] = "";
 	};
 	$scope.isEmpty = function(fld) {
@@ -1052,7 +1048,8 @@ app.controller('UpdateItemInstanceCtrl',
 
 	$scope.saveItem = function(form) {
 
-	  	if (!form.$valid) { 
+		//validate the input
+		if (!form.$valid) { 
 
 	  		var msgs = [];
 
@@ -1071,101 +1068,17 @@ app.controller('UpdateItemInstanceCtrl',
 
 	  	}
 
-		xcUtils.calculateFormFields(selectedItem);
-
-		//determine the factory to use to store the data
-		var f = null;
-		switch( scope.datastoreType) {
-			case 'pouch':
-				f=PouchFactory; break;
-			case 'lowla':
-				f=LowlaFactory; break;
-			default:
-				f=RESTFactory; break;
-		}
-
-		if ($scope.isNew) {
-
-			var orderReversed = $scope.$eval(scope.orderReversed);		//for booleans  
-			var sortFunction = xcUtils.getSortByFunction( scope.orderBy, orderReversed );
-
-			f.saveNew( $scope.selectedItem )
-			.then( function(res) {
-
-				if (scope.type == 'categorised' || scope.type=='accordion'){ 
-
-					$rootScope.$emit('refreshList', '');
-
-				} else {
-
-					scope.items.push(res);
-
-			        //resort
-			        var ress = scope.items;
-			        ress.sort( sortFunction );
-
-			        scope.items = ress;
-
-				}
-
-				$modalInstance.close();				
-
-			})
-			.catch( function(err) {
-				alert("The item could not be saved/ updated: " + err.statusText);
-			});
-
-
-		} else {
-			
-			f.update( $scope.selectedItem)
-			.then( function(res) {
-
-				$rootScope.$emit('refreshList', '');
-
-				$modalInstance.close();
-				$scope.isNew = false;
-
-			})
-			.catch( function(err) {
-				alert("The item could not be saved/ updated: " + err.statusText);
-			});
-		}
+		$modalInstance.close({reason: 'save', item : $scope.selectedItem});
 
 	};
 
-  	//delete an item
 	$scope.deleteItem = function() {
-
-		var f = null;
-		switch( scope.datastoreType) {
-			case 'pouch':
-				f=PouchFactory; break;
-			case 'lowla':
-				f=LowlaFactory; break;
-			default:
-				f=RESTFactory; break;
-		}
-
-		f.delete( $scope.selectedItem )
-		.then( function(res) {
-
-			$scope.$emit('deleteItemEvent', $scope.selectedItem);
-
-			//clear the selected item
-			$scope.selectedItem = null;
-			$modalInstance.close();
-
-		})
-		.catch( function(err) {
-			console.error(err);
-		});
-		
+		$modalInstance.close({reason:'delete', item: $scope.selectedItem} );
 	};
 
-  $scope.cancelEdit = function () {
-    $modalInstance.dismiss('cancel');
-  };
+	$scope.cancelEdit = function () {
+		$modalInstance.dismiss('cancel');
+	};
 
 } ] );
 
@@ -1285,7 +1198,8 @@ app.directive('xcForm',
 			}
 
 			$scope.editDetails = function() {
-				$scope.modalInstance = $modal.open({
+
+				var modalInstance = $scope.modalInstance = $modal.open({
 					templateUrl: 'xc-form-modal-edit.html',
 					controller: 'UpdateItemInstanceCtrl',
 					backdrop : true,
@@ -1304,15 +1218,19 @@ app.directive('xcForm',
 						},
 						allowDelete : function() {
 							return $scope.allowDelete;
-						},
-						items : function() {
-							return null;
-						},
-						scope : function() {
-							return $scope;
 						}
 					}
 				});
+
+				modalInstance.result.then(function (data) {
+					if (data.reason == 'save') {
+						$scope.saveItem(data.item);
+					} else if (data.reason == 'delete') {
+						$scope.deleteItem(data.item);
+					}
+			    }, function () {
+			      //console.log('modal closed');
+			    });
 			};
 
 			//determine if we need to show an image, placeholder image or just an icon
@@ -1326,11 +1244,59 @@ app.directive('xcForm',
 				return $scope.selectedItem && $scope.iconField && $scope.selectedItem[$scope.iconField];
 			};
 
+			$scope.saveItem = function(targetItem) {
+
+				xcUtils.calculateFormFields(targetItem);
+
+				$scope.selectedItem = targetItem;
+
+				//determine the factory to use to store the data
+				var f = null;
+				switch( $scope.datastoreType) {
+					case 'pouch':
+						f=PouchFactory; break;
+					case 'lowla':
+						f=LowlaFactory; break;
+					default:
+						f=RESTFactory; break;
+				}
+
+				f.update( $scope.selectedItem)
+				.then( function(res) {
+
+					$rootScope.$emit('refreshList', '');
+					$scope.isNew = false;
+
+				})
+				.catch( function(err) {
+					alert("The item could not be saved/ updated: " + err.statusText);
+				});
+
+			};
+
+			$scope.deleteItem = function(targetItem) {
+				var f = null;
+				switch( $scope.datastoreType) {
+					case 'pouch':
+						f=PouchFactory; break;
+					case 'lowla':
+						f=LowlaFactory; break;
+					default:
+						f=RESTFactory; break;
+				}
+
+				f.delete( targetItem )
+				.then( function(res) {
+
+					$scope.$emit('deleteItemEvent', targetItem);
+					$scope.selectedItem = null;
+
+				})
+				.catch( function(err) {
+					console.error(err);
+				});
+			};
 			
-		},
-
-		link : function(scope, elem, attrs) {
-
 		}
 
 	};
@@ -1669,13 +1635,13 @@ app.directive('xcList',
 
 			$scope.addNewItem = function() {
 
-				$scope.modalInstance = $modal.open({
+				var modalInstance = $scope.modalInstance = $modal.open({
 					templateUrl: 'xc-form-modal-edit.html',
 					controller: 'UpdateItemInstanceCtrl',
 					backdrop : true,
 					resolve: {
 						selectedItem : function () {
-							return null;
+							return {};
 						},
 						fieldsEdit : function() {
 							return $scope.fieldsEdit;
@@ -1688,15 +1654,19 @@ app.directive('xcList',
 						},
 						allowDelete : function() {
 							return false;
-						},
-						items : function() {
-							return $scope.items;
-						},
-						scope : function() {
-							return $scope;
 						}
 					}
 				});
+
+				modalInstance.result.then(function (data) {
+					if (data.reason =='save') {
+						$scope.saveNewItem(data.item);
+					}
+			    }, function () {
+			      //console.log('modal closed');
+			    });
+
+
 			};
 
 			//bind events for infinite scroll
@@ -1793,6 +1763,53 @@ app.directive('xcList',
 
 		  
 		    };
+
+		    $scope.saveNewItem = function(targetItem) {
+
+		    	xcUtils.calculateFormFields(targetItem);
+
+		    	$scope.select(targetItem);
+
+				//determine the factory to use to store the data
+				var f = null;
+				switch( $scope.datastoreType) {
+					case 'pouch':
+						f=PouchFactory; break;
+					case 'lowla':
+						f=LowlaFactory; break;
+					default:
+						f=RESTFactory; break;
+				}
+				
+				f.saveNew( targetItem )
+				.then( function(res) {
+
+					if ($scope.type == 'categorised' || $scope.type=='accordion'){ 
+
+						//do a full refresh of the list
+						$rootScope.$emit('refreshList', '');
+
+					} else {
+
+						//add the item to the list and sort it
+						var sortFunction = xcUtils.getSortByFunction( $scope.orderBy, $scope.orderReversed );
+
+						$scope.items.push(res);
+
+				        //resort
+				        var ress = $scope.items;
+				        ress.sort( sortFunction );
+
+				        $scope.items = ress;
+
+					}				
+
+				})
+				.catch( function(err) {
+					alert("The item could not be saved/ updated: " + err.statusText);
+				});
+
+			};
 
 		}
 

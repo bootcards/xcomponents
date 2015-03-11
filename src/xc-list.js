@@ -177,13 +177,13 @@ app.directive('xcList',
 
 			$scope.addNewItem = function() {
 
-				$scope.modalInstance = $modal.open({
+				var modalInstance = $scope.modalInstance = $modal.open({
 					templateUrl: 'xc-form-modal-edit.html',
 					controller: 'UpdateItemInstanceCtrl',
 					backdrop : true,
 					resolve: {
 						selectedItem : function () {
-							return null;
+							return {};
 						},
 						fieldsEdit : function() {
 							return $scope.fieldsEdit;
@@ -196,15 +196,19 @@ app.directive('xcList',
 						},
 						allowDelete : function() {
 							return false;
-						},
-						items : function() {
-							return $scope.items;
-						},
-						scope : function() {
-							return $scope;
 						}
 					}
 				});
+
+				modalInstance.result.then(function (data) {
+					if (data.reason =='save') {
+						$scope.saveNewItem(data.item);
+					}
+			    }, function () {
+			      //console.log('modal closed');
+			    });
+
+
 			};
 
 			//bind events for infinite scroll
@@ -301,6 +305,53 @@ app.directive('xcList',
 
 		  
 		    };
+
+		    $scope.saveNewItem = function(targetItem) {
+
+		    	xcUtils.calculateFormFields(targetItem);
+
+		    	$scope.select(targetItem);
+
+				//determine the factory to use to store the data
+				var f = null;
+				switch( $scope.datastoreType) {
+					case 'pouch':
+						f=PouchFactory; break;
+					case 'lowla':
+						f=LowlaFactory; break;
+					default:
+						f=RESTFactory; break;
+				}
+				
+				f.saveNew( targetItem )
+				.then( function(res) {
+
+					if ($scope.type == 'categorised' || $scope.type=='accordion'){ 
+
+						//do a full refresh of the list
+						$rootScope.$emit('refreshList', '');
+
+					} else {
+
+						//add the item to the list and sort it
+						var sortFunction = xcUtils.getSortByFunction( $scope.orderBy, $scope.orderReversed );
+
+						$scope.items.push(res);
+
+				        //resort
+				        var ress = $scope.items;
+				        ress.sort( sortFunction );
+
+				        $scope.items = ress;
+
+					}				
+
+				})
+				.catch( function(err) {
+					alert("The item could not be saved/ updated: " + err.statusText);
+				});
+
+			};
 
 		}
 

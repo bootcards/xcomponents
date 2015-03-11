@@ -115,7 +115,8 @@ app.directive('xcForm',
 			}
 
 			$scope.editDetails = function() {
-				$scope.modalInstance = $modal.open({
+
+				var modalInstance = $scope.modalInstance = $modal.open({
 					templateUrl: 'xc-form-modal-edit.html',
 					controller: 'UpdateItemInstanceCtrl',
 					backdrop : true,
@@ -134,15 +135,19 @@ app.directive('xcForm',
 						},
 						allowDelete : function() {
 							return $scope.allowDelete;
-						},
-						items : function() {
-							return null;
-						},
-						scope : function() {
-							return $scope;
 						}
 					}
 				});
+
+				modalInstance.result.then(function (data) {
+					if (data.reason == 'save') {
+						$scope.saveItem(data.item);
+					} else if (data.reason == 'delete') {
+						$scope.deleteItem(data.item);
+					}
+			    }, function () {
+			      //console.log('modal closed');
+			    });
 			};
 
 			//determine if we need to show an image, placeholder image or just an icon
@@ -156,11 +161,59 @@ app.directive('xcForm',
 				return $scope.selectedItem && $scope.iconField && $scope.selectedItem[$scope.iconField];
 			};
 
+			$scope.saveItem = function(targetItem) {
+
+				xcUtils.calculateFormFields(targetItem);
+
+				$scope.selectedItem = targetItem;
+
+				//determine the factory to use to store the data
+				var f = null;
+				switch( $scope.datastoreType) {
+					case 'pouch':
+						f=PouchFactory; break;
+					case 'lowla':
+						f=LowlaFactory; break;
+					default:
+						f=RESTFactory; break;
+				}
+
+				f.update( $scope.selectedItem)
+				.then( function(res) {
+
+					$rootScope.$emit('refreshList', '');
+					$scope.isNew = false;
+
+				})
+				.catch( function(err) {
+					alert("The item could not be saved/ updated: " + err.statusText);
+				});
+
+			};
+
+			$scope.deleteItem = function(targetItem) {
+				var f = null;
+				switch( $scope.datastoreType) {
+					case 'pouch':
+						f=PouchFactory; break;
+					case 'lowla':
+						f=LowlaFactory; break;
+					default:
+						f=RESTFactory; break;
+				}
+
+				f.delete( targetItem )
+				.then( function(res) {
+
+					$scope.$emit('deleteItemEvent', targetItem);
+					$scope.selectedItem = null;
+
+				})
+				.catch( function(err) {
+					console.error(err);
+				});
+			};
 			
-		},
-
-		link : function(scope, elem, attrs) {
-
 		}
 
 	};
