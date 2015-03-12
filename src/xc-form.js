@@ -2,8 +2,8 @@
 var app = angular.module('xcomponents');
 
 app.directive('xcForm', 
-	['$rootScope', 'RESTFactory', 'PouchFactory', 'LowlaFactory', 'configService', 
-	function($rootScope, RESTFactory, PouchFactory, LowlaFactory, configService) {
+	['$rootScope', 'xcDataFactory','configService', 
+	function($rootScope, xcDataFactory, configService) {
 
 	return {
 
@@ -66,15 +66,7 @@ app.directive('xcForm',
 			//load specified entry 
 			if (typeof $scope.itemId != 'undefined' ) {
 
-				var f = null;
-				switch( $attrs.datastoreType) {
-					case 'pouch':
-						f=PouchFactory; break;
-					case 'lowla':
-						f=LowlaFactory; break;
-					default:
-						f=RESTFactory; break;
-				}
+				var f = xcDataFactory.getStore($attrs.datastoreType);
 
 				f.exists( $scope.itemId)
 				.then( function(res) {
@@ -167,18 +159,8 @@ app.directive('xcForm',
 
 				$scope.selectedItem = targetItem;
 
-				//determine the factory to use to store the data
-				var f = null;
-				switch( $scope.datastoreType) {
-					case 'pouch':
-						f=PouchFactory; break;
-					case 'lowla':
-						f=LowlaFactory; break;
-					default:
-						f=RESTFactory; break;
-				}
-
-				f.update( $scope.selectedItem)
+				xcDataFactory.getStore($scope.datastoreType)
+				.update( $scope.selectedItem)
 				.then( function(res) {
 
 					$rootScope.$emit('refreshList', '');
@@ -192,17 +174,9 @@ app.directive('xcForm',
 			};
 
 			$scope.deleteItem = function(targetItem) {
-				var f = null;
-				switch( $scope.datastoreType) {
-					case 'pouch':
-						f=PouchFactory; break;
-					case 'lowla':
-						f=LowlaFactory; break;
-					default:
-						f=RESTFactory; break;
-				}
 
-				f.delete( targetItem )
+				xcDataFactory.getStore($scope.datastoreType)
+				.delete( targetItem )
 				.then( function(res) {
 
 					$scope.$emit('deleteItemEvent', targetItem);
@@ -212,6 +186,7 @@ app.directive('xcForm',
 				.catch( function(err) {
 					console.error(err);
 				});
+				
 			};
 			
 		}

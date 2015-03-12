@@ -1,8 +1,8 @@
 var app = angular.module("xcomponents");
 
 app.directive('xcList', 
-	['$rootScope', '$filter', 'xcUtils', 'RESTFactory', 'PouchFactory', 'LowlaFactory', 'configService', 
-	function($rootScope, $filter, xcUtils, RESTFactory, PouchFactory, LowlaFactory, configService) {
+	['$rootScope', '$filter', 'xcUtils', 'xcDataFactory', 'configService', 
+	function($rootScope, $filter, xcUtils, xcDataFactory, configService) {
 
 	var loadData = function(scope) {
 
@@ -15,22 +15,14 @@ app.directive('xcList',
 			
 		} else {
 
-			var f = null;
-			switch( scope.datastoreType) {
-				case 'pouch':
-					f=PouchFactory; break;
-				case 'lowla':
-					f=LowlaFactory; break;
-				default:
-					f=RESTFactory; break;
-			}
-		
-			f.all().then( function(res) {
+			xcDataFactory.getStore(scope.datastoreType)
+			.all().then( function(res) {
 				
 				var numRes = res.length;
 
 				if (scope.filterBy && scope.filterValue) {
 					//filter the result set
+					console.log('filter the data using ' + scope.filterBy + ' and ' + scope.filterValue);
 					
 					var filteredRes = [];
 
@@ -303,19 +295,9 @@ app.directive('xcList',
 		    	xcUtils.calculateFormFields(targetItem);
 
 		    	$scope.select(targetItem);
-
-				//determine the factory to use to store the data
-				var f = null;
-				switch( $scope.datastoreType) {
-					case 'pouch':
-						f=PouchFactory; break;
-					case 'lowla':
-						f=LowlaFactory; break;
-					default:
-						f=RESTFactory; break;
-				}
 				
-				f.saveNew( targetItem )
+				xcDataFactory.getStore($scope.datastoreType)
+				.saveNew( targetItem )
 				.then( function(res) {
 
 					if ($scope.type == 'categorised' || $scope.type=='accordion'){ 

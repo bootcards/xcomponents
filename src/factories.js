@@ -17,6 +17,30 @@ app.service('configService', [ function() {
 
 } ] );
 
+
+
+app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory', 
+		function( RESTFactory, PouchFactory, LowlaFactory) {
+
+	return {
+
+		getStore : function(type) {
+
+			switch(type) {
+
+			case 'pouch':
+				return PouchFactory;
+			case 'lowla':
+				return LowlaFactory;
+			default:
+				return RESTFactory; 
+			}
+
+		}
+	};
+
+}]);
+
 app.factory('RESTFactory', ['$http', 'configService', function($http, configService) {
 
 	return {
