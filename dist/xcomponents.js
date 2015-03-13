@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-13 10:45 */
+/* xcomponents 0.1.0 2015-03-13 2:55 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -467,6 +467,26 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 					f.edit = true;
 				}
 
+				if (f.type == 'select' || f.type == 'select-multiple') {
+				
+					if (f.options.hasOwnProperty('endpoint')) {
+
+						f.options = xcUtils.resolveRemoteOptionsList(f.options);
+						
+					} else if (f.options.length>0 && typeof f.options[0] == 'string') {
+
+						var o = [];
+
+						angular.forEach(f.options, function(option) {
+							o.push( {label : option, value : option});
+						});
+
+						f.options = o;
+
+					}
+
+				}
+
 				if (f.read) {
 					config.fieldsRead.push(f);
 				}
@@ -477,12 +497,8 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 				if ( f.hasOwnProperty('formula') && f.formula != null ) {
 					config.fieldsFormula.push(f);
 				}
-				if (f.isSummary) {
-					config.summaryField = f.field;
-				}
-				if (f.isDetail) {
-					config.detailField = f.field;
-				}
+
+				
 			}
 		}
 
@@ -590,7 +606,7 @@ if (!Array.prototype.indexOf) {
 
 var app = angular.module('xcomponents');
 
-app.factory('xcUtils', function($rootScope) {
+app.factory('xcUtils', function($rootScope, $http) {
 
 	return {
 
@@ -689,7 +705,23 @@ app.factory('xcUtils', function($rootScope) {
 
 			return groups;
 
+		},
+
+		resolveRemoteOptionsList : function(optionSettings) {
+
+			var o = [];
+
+			return $http.get(optionSettings.endpoint).then( function (res) {
+
+				angular.forEach( res.data, function(option) {
+					o.push( {label : option[optionSettings.label], value : option[optionSettings.value] });
+				});
+
+				return o;
+				
+			});
 		}
+	
 
 	};
 
@@ -1022,6 +1054,22 @@ app.controller('UpdateItemInstanceCtrl',
 
 	//create a copy of the object we're editing (to deal with 'cancel')
 	$scope.selectedItem = angular.copy( selectedItem );
+
+	$scope.fieldOptions = [];
+
+	angular.forEach( fieldsEdit, function(f) {
+		if (f.type.indexOf('sel')==0) {
+
+			$scope.fieldOptions[f.field] = f.options;
+
+			try {
+				f.options.then( function(res) {
+					$scope.fieldOptions[f.field] = res;
+				});
+			} catch (e) { }
+		}
+
+	})
 
 	//$scope.selectedItem = selectedItem;
 	$scope.fieldsEdit = fieldsEdit;
@@ -2303,13 +2351,20 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "				<a class=\"fa fa-times-circle fa-lg clearer\" ng-hide=\"isEmpty(selectedItem[field.field])\"ng-click=\"clearField(field.field)\"></a>\n" +
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='select'\">\n" +
-    "				<select class=\"form-control\" name=\"{{field.field}}\" ng-model=\"selectedItem[field.field]\" ng-required=\"field.required\">\n" +
-    "					<option ng-repeat=\"o in field.options\" value=\"{{o}}\">{{o}}</option>\n" +
+    "				<select class=\"form-control\" \n" +
+    "					name=\"{{field.field}}\" \n" +
+    "					ng-model=\"selectedItem[field.field]\" \n" +
+    "					ng-options=\"option.value as option.label for option in fieldOptions[field.field]\"\n" +
+    "					ng-required=\"field.required\">\n" +
     "				</select>\n" +
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='select-multiple'\">\n" +
-    "				<select class=\"form-control\" multiple name=\"{{field.field}}\" ng-model=\"selectedItem[field.field]\" ng-required=\"field.required\" >\n" +
-    "					<option ng-repeat=\"o in field.options\" value=\"{{o}}\">{{o}}</option>\n" +
+    "				<select \n" +
+    "					class=\"form-control\" multiple \n" +
+    "					name=\"{{field.field}}\" \n" +
+    "					ng-model=\"selectedItem[field.field]\" \n" +
+    "					ng-options=\"option.value as option.label for option in fieldOptions[field.field]\"\n" +
+    "					ng-required=\"field.required\" >\n" +
     "				</select>\n" +
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='toggle'\">	\n" +

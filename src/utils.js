@@ -1,7 +1,7 @@
 
 var app = angular.module('xcomponents');
 
-app.factory('xcUtils', function($rootScope) {
+app.factory('xcUtils', function($rootScope, $http) {
 
 	return {
 
@@ -100,7 +100,23 @@ app.factory('xcUtils', function($rootScope) {
 
 			return groups;
 
+		},
+
+		resolveRemoteOptionsList : function(optionSettings) {
+
+			var o = [];
+
+			return $http.get(optionSettings.endpoint).then( function (res) {
+
+				angular.forEach( res.data, function(option) {
+					o.push( {label : option[optionSettings.label], value : option[optionSettings.value] });
+				});
+
+				return o;
+				
+			});
 		}
+	
 
 	};
 

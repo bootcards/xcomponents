@@ -94,6 +94,26 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 					f.edit = true;
 				}
 
+				if (f.type == 'select' || f.type == 'select-multiple') {
+				
+					if (f.options.hasOwnProperty('endpoint')) {
+
+						f.options = xcUtils.resolveRemoteOptionsList(f.options);
+						
+					} else if (f.options.length>0 && typeof f.options[0] == 'string') {
+
+						var o = [];
+
+						angular.forEach(f.options, function(option) {
+							o.push( {label : option, value : option});
+						});
+
+						f.options = o;
+
+					}
+
+				}
+
 				if (f.read) {
 					config.fieldsRead.push(f);
 				}
@@ -104,12 +124,8 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 				if ( f.hasOwnProperty('formula') && f.formula != null ) {
 					config.fieldsFormula.push(f);
 				}
-				if (f.isSummary) {
-					config.summaryField = f.field;
-				}
-				if (f.isDetail) {
-					config.detailField = f.field;
-				}
+
+				
 			}
 		}
 

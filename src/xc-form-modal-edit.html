@@ -41,13 +41,20 @@
 				<a class="fa fa-times-circle fa-lg clearer" ng-hide="isEmpty(selectedItem[field.field])"ng-click="clearField(field.field)"></a>
 			</div>
 			<div class="col-xs-9" ng-if="field.type=='select'">
-				<select class="form-control" name="{{field.field}}" ng-model="selectedItem[field.field]" ng-required="field.required">
-					<option ng-repeat="o in field.options" value="{{o}}">{{o}}</option>
+				<select class="form-control" 
+					name="{{field.field}}" 
+					ng-model="selectedItem[field.field]" 
+					ng-options="option.value as option.label for option in fieldOptions[field.field]"
+					ng-required="field.required">
 				</select>
 			</div>
 			<div class="col-xs-9" ng-if="field.type=='select-multiple'">
-				<select class="form-control" multiple name="{{field.field}}" ng-model="selectedItem[field.field]" ng-required="field.required" >
-					<option ng-repeat="o in field.options" value="{{o}}">{{o}}</option>
+				<select 
+					class="form-control" multiple 
+					name="{{field.field}}" 
+					ng-model="selectedItem[field.field]" 
+					ng-options="option.value as option.label for option in fieldOptions[field.field]"
+					ng-required="field.required" >
 				</select>
 			</div>
 			<div class="col-xs-9" ng-if="field.type=='toggle'">	

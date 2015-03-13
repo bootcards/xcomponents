@@ -22,6 +22,22 @@ app.controller('UpdateItemInstanceCtrl',
 	//create a copy of the object we're editing (to deal with 'cancel')
 	$scope.selectedItem = angular.copy( selectedItem );
 
+	$scope.fieldOptions = [];
+
+	angular.forEach( fieldsEdit, function(f) {
+		if (f.type.indexOf('sel')==0) {
+
+			$scope.fieldOptions[f.field] = f.options;
+
+			try {
+				f.options.then( function(res) {
+					$scope.fieldOptions[f.field] = res;
+				});
+			} catch (e) { }
+		}
+
+	})
+
 	//$scope.selectedItem = selectedItem;
 	$scope.fieldsEdit = fieldsEdit;
 	$scope.modelName = modelName;
