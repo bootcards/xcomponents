@@ -84,6 +84,7 @@ $(document).ready( function() {
 
         <li><a href="#doc-general">General/ layout</a></li>
         <li class="sub"><a href="#doc-header">Header</a></li>
+        <li class="sub"><a href="#doc-layout">Layout</a></li>
         <li class="sub"><a href="#doc-footer">Footer</a></li>
 
         <li><a href="#doc-lists">Lists</a></li>
@@ -146,6 +147,8 @@ $(document).ready( function() {
 &lt;body ng-controller="xcController" class="hidden"&gt;
 
   &lt;xc-header title="Title"&gt;&lt;/xc-header&gt;
+
+  &lt;xc-layout&gt;&lt;/xc-layout&gt;
 
   &lt;xc-footer&gt;&lt;/xc-footer&gt;
 
@@ -266,6 +269,17 @@ xcomponents.menuOptions : [
 
           </div>
 
+          <div id="doc-layout" class="bs-docs-section">
+            <h3>Layout</h3>
+
+            <pre><code>&lt;xc-layout&gt;&lt;/xc-layout&gt;</code></pre>
+
+            <p>
+                The <code>layout</code> constructs the HTML needed for a standard Bootcards layout.
+            </p>
+
+          </div>
+
 					<div id="doc-footer" class="bs-docs-section">
   <h3>Footer</h3>
 
@@ -353,7 +367,7 @@ xcomponents.footerOptions : [
   </tr></thead>
   <tbody>
     <tr><td>type</td><td>List type, can be 'flat', 'detailed', 'accordion' or 'categorised'</td><td>flat</td></tr>
-    <tr><td>title</td><td>List title</td><td>People</td></tr>
+    <tr><td>title</td><td>(optional) List title</td><td>People</td></tr>
     <tr><td>infinite-scroll</td><td>Activate infinite scroll. The list will show a 'load more' link if disabled.</td><td>true/ false</td></tr>
     <tr><td>list-width</td><td>Relative list of the width. Can be a number from 1 to 12 (like the Bootstrap grid system)</td><td>5</td></tr>
     <tr><td>allow-add</td><td>Controls if an add button will be displayed</td><td>true / false</td></tr>

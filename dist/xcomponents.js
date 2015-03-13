@@ -1,30 +1,36 @@
-/* xcomponents 0.1.0 2015-03-11 4:52 */
+/* xcomponents 0.1.0 2015-03-13 10:45 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
-app.service('configService', [ function() {
-
-    var endpoint = '/null';
-
-    return {
-
-	    setEndpoint : function(url) {
-	    	this.endpoint = url;
-	    },
-
-	    endpoint : endpoint
-	   
-	};
-
-} ] );
-
-app.factory('RESTFactory', ['$http', 'configService', function($http, configService) {
+app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory', 
+		function( RESTFactory, PouchFactory, LowlaFactory) {
 
 	return {
 
-		info : function() {
+		getStore : function(type) {
 
-			var url = configService.endpoint.replace(":id", "") + 'count';
+			switch(type) {
+
+			case 'pouch':
+				return PouchFactory;
+			case 'lowla':
+				return LowlaFactory;
+			default:
+				return RESTFactory; 
+			}
+
+		}
+	};
+
+}]);
+
+app.factory('RESTFactory', ['$http', function($http) {
+
+	return {
+
+		info : function(url) {
+
+			url = url.replace(":id", "") + 'count';
 
 			return $http.get(url).then( function(res) {
 				return { 'count' : res.data.count};
@@ -32,13 +38,13 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 
 		},
 
-		insert : function(toInsert) {
+		insert : function(url, toInsert) {
 			console.error('not implemented');
 		},
 
-		all : function() { 
+		all : function(url) { 
 
-			var url = configService.endpoint.replace(":id", "");
+			url = url.replace(":id", "");
 
 			console.log('querying REST service at ' + url);
 
@@ -49,9 +55,9 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 
 		},
 
-		saveNew : function(item) {
+		saveNew : function(url, item) {
 			
-			var url = configService.endpoint.replace(":id", "");
+			url = url.replace(":id", "");
 
 			return $http.post(url, item).then( function(res) {
 				return res.data;
@@ -59,9 +65,9 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 
 		},
 
-		update : function(item) {
+		update : function(url, item) {
 		
-			var url = configService.endpoint.replace(":id", "");
+			url = url.replace(":id", "");
 
 			return $http.put(url, item).then( function(res) {
 				return res.data;
@@ -69,8 +75,8 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 
 		},
 
-		delete : function(item) {
-			var url = configService.endpoint.replace(":id", item.id);
+		delete : function(url, item) {
+			url = url.replace(":id", item.id);
 			return $http.delete(url);
 		},
 
@@ -80,9 +86,9 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 			
 		},
 
-		getById : function(id) {
+		getById : function(url, id) {
 
-			var url = configService.endpoint.replace(":id", id);
+			url = url.replace(":id", id);
 
 			return $http.get(url).then( function(res) {
 				return res.data;
@@ -90,9 +96,9 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 
 		},
 
-		exists : function(id) {
+		exists : function(url, id) {
 
-			var url = configService.endpoint.replace(":id", id) + '/exists';
+			url = url.replace(":id", id) + '/exists';
 
 			return $http.get(url).then( function(res) {
 				return res.data;
@@ -103,13 +109,12 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 
 } ] );
 
-app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, configService) {
+app.factory('PouchFactory', ['pouchDB', function(pouchDB) {
 
 	return {
 
-		info : function() {
+		info : function(dbName) {
 
-			var dbName = configService.endpoint;
 			var db = pouchDB(dbName);
 
 			return db.info()
@@ -123,15 +128,13 @@ app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, confi
 
 		},
 
-		insert : function( toInsert ) {
-			var dbName = configService.endpoint;
+		insert : function( dbName, toInsert ) {
 			var pouch = pouchDB(dbName);
 			return pouch.bulkDocs(toInsert);
 		},
 
-		all : function() { 
+		all : function(dbName) { 
 			
-			var dbName = configService.endpoint;
 			var db = pouchDB(dbName);
 
 			console.log('querying Pouch database named ' + dbName);
@@ -156,9 +159,8 @@ app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, confi
 
 		},
 
-		saveNew : function(item) {
+		saveNew : function(dbName, item) {
 
-			var dbName = configService.endpoint;
 			var db = pouchDB(dbName);
 
 			return db.post(item).then( function(res) {
@@ -173,9 +175,8 @@ app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, confi
 			})
 		},
 
-		getById : function(id) {
+		getById : function(dbName, id) {
 
-			var dbName = configService.endpoint;
 			var db = pouchDB(dbName);
 
 			return db.get(id)
@@ -191,9 +192,8 @@ app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, confi
 
 		},
 
-		update : function(item) {
+		update : function(dbName, item) {
 
-			var dbName = configService.endpoint;
 			var db = pouchDB(dbName);
 
 			return db.put(item)
@@ -208,9 +208,8 @@ app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, confi
 			
 		},
 
-		delete : function(item) {
+		delete : function(dbName, item) {
 
-			var dbName = configService.endpoint;
 			var db = pouchDB(dbName);
 
 			return db.remove(item)
@@ -223,13 +222,13 @@ app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, confi
 
 		},
 
-		deleteAll : function() {
+		deleteAll : function(dbName) {
 
 			console.error('not implemented');
 
 		},
 
-		exists : function(id) {
+		exists : function(dbName, id) {
 			return this.getById(id).then( function(res) {
 				return {exists : (res != null)};
 			});
@@ -240,7 +239,7 @@ app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, confi
 
 }] );
 
-app.factory('LowlaFactory', ['configService', function(configService) {
+app.factory('LowlaFactory', [function() {
 
 	var collection = 'items';
 	var lowla = null;
@@ -254,9 +253,8 @@ app.factory('LowlaFactory', ['configService', function(configService) {
 			return this.lowla;
 		},
 
-		info : function() {
+		info : function(dbName) {
 
-			var dbName = configService.endpoint;
 			var items = this.getDb().collection(dbName, collection);
 
 			return items.count().then(function(res) {
@@ -265,15 +263,13 @@ app.factory('LowlaFactory', ['configService', function(configService) {
 
 		},
 
-		insert : function( toInsert ) {
-			var dbName = configService.endpoint;
+		insert : function( dbName, toInsert ) {
 			var items = this.getDb().collection(dbName, collection);
 			return items.insert(toInsert);
 		},
 
-		all : function() { 
+		all : function(dbName) { 
 
-			var dbName = configService.endpoint;
 			var items = this.getDb().collection(dbName, collection);
 
 			console.log('querying Lowla database named ' + dbName);
@@ -288,9 +284,8 @@ app.factory('LowlaFactory', ['configService', function(configService) {
 
 		},
 
-		saveNew : function(item) {
+		saveNew : function(dbName, item) {
 
-			var dbName = configService.endpoint;
 			var items = this.getDb().collection(dbName, collection);
 
 			//need to remove this property, else Lowla will throw an error
@@ -310,18 +305,16 @@ app.factory('LowlaFactory', ['configService', function(configService) {
 			})*/
 		},
 
-		getById : function(id) {
+		getById : function(dbName, id) {
 
-			var dbName = configService.endpoint;
 			var items = this.getDb().collection(dbName, collection);
 
 			return items.find( { _id : id});
 
 		},
 
-		update : function(item) {
+		update : function(dbName, item) {
 
-			var dbName = configService.endpoint;
 			var items = this.getDb().collection(dbName, collection);
 
 			//need to remove this property, else Lowla will throw an error
@@ -339,10 +332,8 @@ app.factory('LowlaFactory', ['configService', function(configService) {
 			
 		},
 
-		delete : function(item) {
+		delete : function(dbName, item) {
 
-
-			var dbName = configService.endpoint;
 			var items = this.getDb().collection(dbName, collection);
 
 			return items.remove( { _id : item._id } ).then( function(res) {
@@ -354,9 +345,8 @@ app.factory('LowlaFactory', ['configService', function(configService) {
 
 		},
 
-		deleteAll : function() {
+		deleteAll : function(dbName) {
 
-			var dbName = configService.endpoint;
 			var items = this.getDb().collection(dbName, collection);
 
 			return items.remove({})
@@ -371,7 +361,7 @@ app.factory('LowlaFactory', ['configService', function(configService) {
 			
 		},
 
-		exists : function(id) {
+		exists : function(dbName, id) {
 			return this.getById(id).then( function(res) {
 				return {exists : (res != null)};
 			});
@@ -1085,8 +1075,8 @@ app.controller('UpdateItemInstanceCtrl',
 var app = angular.module('xcomponents');
 
 app.directive('xcForm', 
-	['$rootScope', 'RESTFactory', 'PouchFactory', 'LowlaFactory', 'configService', 
-	function($rootScope, RESTFactory, PouchFactory, LowlaFactory, configService) {
+	['$rootScope', 'xcDataFactory', 
+	function($rootScope, xcDataFactory) {
 
 	return {
 
@@ -1111,7 +1101,6 @@ app.directive('xcForm',
 		controller : function($scope, $attrs, $modal, xcUtils) {
 
 			//set defaults
-			configService.setEndpoint( $scope.url);
 			$scope.allowDelete = (typeof $scope.allowDelete == 'undefined' ? true : $scope.allowDelete);
 
 			$scope.selectedItem = null;
@@ -1149,17 +1138,9 @@ app.directive('xcForm',
 			//load specified entry 
 			if (typeof $scope.itemId != 'undefined' ) {
 
-				var f = null;
-				switch( $attrs.datastoreType) {
-					case 'pouch':
-						f=PouchFactory; break;
-					case 'lowla':
-						f=LowlaFactory; break;
-					default:
-						f=RESTFactory; break;
-				}
+				var f = xcDataFactory.getStore($attrs.datastoreType);
 
-				f.exists( $scope.itemId)
+				f.exists( $scope.url, $scope.itemId)
 				.then( function(res) {
 
 					if (res.exists) {
@@ -1250,18 +1231,8 @@ app.directive('xcForm',
 
 				$scope.selectedItem = targetItem;
 
-				//determine the factory to use to store the data
-				var f = null;
-				switch( $scope.datastoreType) {
-					case 'pouch':
-						f=PouchFactory; break;
-					case 'lowla':
-						f=LowlaFactory; break;
-					default:
-						f=RESTFactory; break;
-				}
-
-				f.update( $scope.selectedItem)
+				xcDataFactory.getStore($scope.datastoreType)
+				.update( $scope.url, $scope.selectedItem)
 				.then( function(res) {
 
 					$rootScope.$emit('refreshList', '');
@@ -1275,17 +1246,9 @@ app.directive('xcForm',
 			};
 
 			$scope.deleteItem = function(targetItem) {
-				var f = null;
-				switch( $scope.datastoreType) {
-					case 'pouch':
-						f=PouchFactory; break;
-					case 'lowla':
-						f=LowlaFactory; break;
-					default:
-						f=RESTFactory; break;
-				}
 
-				f.delete( targetItem )
+				xcDataFactory.getStore($scope.datastoreType)
+				.delete( $scope.url, targetItem )
 				.then( function(res) {
 
 					$scope.$emit('deleteItemEvent', targetItem);
@@ -1295,6 +1258,7 @@ app.directive('xcForm',
 				.catch( function(err) {
 					console.error(err);
 				});
+
 			};
 			
 		}
@@ -1473,11 +1437,34 @@ app.directive('xcImage', function() {
 });
 var app = angular.module("xcomponents");
 
+app.directive('xcLayout', [ function() {
+
+	return {
+
+		restrict : 'E',
+		transclude : true,
+		replace : true,
+		templateUrl: 'xc-layout.html'
+
+	};
+
+} ] );
+
+var app = angular.module("xcomponents");
+
 app.directive('xcList', 
-	['$rootScope', '$filter', 'xcUtils', 'RESTFactory', 'PouchFactory', 'LowlaFactory', 'configService', 
-	function($rootScope, $filter, xcUtils, RESTFactory, PouchFactory, LowlaFactory, configService) {
+	['$rootScope', '$filter', 'xcUtils', 'xcDataFactory', 
+	function($rootScope, $filter, xcUtils, xcDataFactory) {
 
 	var loadData = function(scope) {
+
+		//abort if the data needs to be filtered, but there's not filter value
+		if (scope.filterBy && (typeof scope.filterValue == 'undefined' ||
+			scope.filterValue == null || scope.filterValue.length==0) ) {
+			return;
+		}
+
+		//console.info("LOAD FROM " + scope.url, scope.filterBy, scope.filterValue);
 
 		if ( scope.srcDataEntries) {
 
@@ -1488,19 +1475,12 @@ app.directive('xcList',
 			
 		} else {
 
-			var f = null;
-			switch( scope.datastoreType) {
-				case 'pouch':
-					f=PouchFactory; break;
-				case 'lowla':
-					f=LowlaFactory; break;
-				default:
-					f=RESTFactory; break;
-			}
-		
-			f.all().then( function(res) {
+			xcDataFactory.getStore(scope.datastoreType)
+			.all(scope.url).then( function(res) {
 				
 				var numRes = res.length;
+
+				//console.log('found ' + numRes + ' at ' + scope.url);
 
 				if (scope.filterBy && scope.filterValue) {
 					//filter the result set
@@ -1515,6 +1495,8 @@ app.directive('xcList',
 					});
 
 					res = filteredRes;
+
+					//console.log('filtered:' + res.length);
 
 				}
 				
@@ -1569,7 +1551,8 @@ app.directive('xcList',
 			autoloadFirst : '=?',
 			allowAdd : '=',
 			groupBy : '@',			/*only relevant for categorised, accordion lists*/
-			filterBy : '@',			
+			filterBy : '@',	
+			filterSrc : '@',		
 			filterValue : '@',		
 			orderBy : '@',
 			orderReversed : '@',
@@ -1579,8 +1562,8 @@ app.directive('xcList',
 			iconField : '@',		/*icon*/ 
 			imagePlaceholderIcon : '@',		/*icon to be used if no thumbnail could be found, see http://fortawesome.github.io/Font-Awesome/icons/ */
 			datastoreType : '@',
-			infiniteScroll : '@'
-
+			infiniteScroll : '@',
+			embedded : '@'
 		},
 
 		restrict : 'E',
@@ -1593,8 +1576,6 @@ app.directive('xcList',
 		},
 
 		link : function(scope, elem, attrs) {
-
-			configService.setEndpoint( attrs.url);
 
 			scope.colLeft = 'col-sm-' + attrs.listWidth;
 			scope.colRight = 'col-sm-' + (12 - parseInt(attrs.listWidth, 10) );
@@ -1610,6 +1591,7 @@ app.directive('xcList',
 			$scope.datastoreType = (typeof $scope.datastoreType == 'undefined' ? 'accordion' : $scope.datastoreType);
 
 			//set defaults
+			$scope.embedded = (typeof $scope.embedded == 'undefined' ? false : $scope.embedded);
 			$scope.allowSearch = (typeof $scope.allowSearch == 'undefined' ? true : $scope.allowSearch);
 			$scope.autoloadFirst = (typeof $scope.autoloadFirst == 'undefined' ? false : $scope.autoloadFirst);
 			$scope.infiniteScroll = (typeof $scope.infiniteScroll == 'undefined' ? false : $scope.infiniteScroll);
@@ -1646,6 +1628,10 @@ app.directive('xcList',
 
 			$scope.clearSearch = function() {
 				$scope.filter = '';
+			};
+
+			$scope.colClass = function() {
+				return ($scope.embedded ? '' : $scope.colLeft);
 			};
 
 			$scope.addNewItem = function() {
@@ -1729,18 +1715,31 @@ app.directive('xcList',
 		
 				$scope.selected = item;
 				$scope.$emit('selectItemEvent', item);
+
+				//broadcast event to child scopes
+				$scope.$broadcast('itemSelected', item);
 				
 			};
 
+			
+			$rootScope.$on('selectItemEvent', function(ev, item) {
+
+				if ($scope.filterBy) {
+					$scope.filterValue = item[$scope.filterSrc];
+					loadData($scope);
+				}
+				
+			});
+
 			$scope.showImage = function(item) {
 				return $scope.imageField && item[$scope.imageField];
-			}
+			};
 			$scope.showPlaceholder = function(item) {
 				return $scope.imagePlaceholderIcon && !item[$scope.imageField];
-			}
+			};
 			$scope.showIcon = function(item) {
 				return $scope.iconField && item[$scope.iconField];
-			}
+			};
 
 			$scope.delete = function(item) {
 				loadData($scope);
@@ -1776,19 +1775,9 @@ app.directive('xcList',
 		    	xcUtils.calculateFormFields(targetItem);
 
 		    	$scope.select(targetItem);
-
-				//determine the factory to use to store the data
-				var f = null;
-				switch( $scope.datastoreType) {
-					case 'pouch':
-						f=PouchFactory; break;
-					case 'lowla':
-						f=LowlaFactory; break;
-					default:
-						f=RESTFactory; break;
-				}
 				
-				f.saveNew( targetItem )
+				xcDataFactory.getStore($scope.datastoreType)
+				.saveNew( $scope.url, targetItem )
 				.then( function(res) {
 
 					if ($scope.type == 'categorised' || $scope.type=='accordion'){ 
@@ -2094,7 +2083,7 @@ app.directive('xcUpload', function() {
 	};
 
 });
-angular.module('templates-main', ['xc-base.html', 'xc-carousel.html', 'xc-chart.html', 'xc-file.html', 'xc-footer.html', 'xc-form-modal-edit.html', 'xc-form.html', 'xc-header.html', 'xc-image.html', 'xc-list-accordion.html', 'xc-list-categorised.html', 'xc-list-detailed.html', 'xc-list-flat.html', 'xc-list-heading.html', 'xc-reading.html', 'xc-summary-item.html', 'xc-summary.html', 'xc-upload.html']);
+angular.module('templates-main', ['xc-base.html', 'xc-carousel.html', 'xc-chart.html', 'xc-file.html', 'xc-footer.html', 'xc-form-modal-edit.html', 'xc-form.html', 'xc-header.html', 'xc-image.html', 'xc-layout.html', 'xc-list-accordion.html', 'xc-list-categorised.html', 'xc-list-detailed.html', 'xc-list-flat.html', 'xc-list-heading.html', 'xc-reading.html', 'xc-summary-item.html', 'xc-summary.html', 'xc-upload.html']);
 
 angular.module("xc-base.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-base.html",
@@ -2602,13 +2591,20 @@ angular.module("xc-image.html", []).run(["$templateCache", function($templateCac
     "");
 }]);
 
+angular.module("xc-layout.html", []).run(["$templateCache", function($templateCache) {
+  $templateCache.put("xc-layout.html",
+    "<div class=\"container bootcards-container\">\n" +
+    "	<div class=\"row\">\n" +
+    "		<ng-transclude></ng-transclude>\n" +
+    "	</div>\n" +
+    "</div>");
+}]);
+
 angular.module("xc-list-accordion.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-list-accordion.html",
-    "<div class=\"container bootcards-container\">\n" +
+    "<div>\n" +
     "\n" +
-    " <div class=\"row\">\n" +
-    "\n" +
-    " 	<div class=\"bootcards-list {{colLeft}}\" ng-show=\"!$root.hideList\">\n" +
+    " 	<div class=\"bootcards-list\" ng-class=\"colClass()\" ng-show=\"!$root.hideList\">\n" +
     "\n" +
     "		<div class=\"panel panel-default\">\n" +
     "\n" +
@@ -2646,6 +2642,10 @@ angular.module("xc-list-accordion.html", []).run(["$templateCache", function($te
     "					<i class=\"fa fa-spinner fa-spin fa-fw\" style=\"margin-right:0; opacity: 1;\"></i>Loading...\n" +
     "				</div>\n" +
     "\n" +
+    "				<div class=\"list-group-item\" ng-show=\"groups.length == 0\">\n" +
+    "					No items found\n" +
+    "				</div>\n" +
+    "\n" +
     "				<div class=\"list-group-item\" ng-show=\"!isLoading && hasMore\">\n" +
     "					<button ng-click=\"loadMore()\" id=\"btnLoadMore\" class=\"btn btn-default\">\n" +
     "						Load more...\n" +
@@ -2664,20 +2664,15 @@ angular.module("xc-list-accordion.html", []).run(["$templateCache", function($te
     "\n" +
     "	</div>\n" +
     "\n" +
-    " </div>\n" +
-    "\n" +
     "</div>\n" +
-    "\n" +
     "");
 }]);
 
 angular.module("xc-list-categorised.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-list-categorised.html",
-    "<div class='container bootcards-container'>\n" +
+    "<div>\n" +
     "\n" +
-    " <div class='row'>\n" +
-    "\n" +
-    " 	<div class=\"bootcards-list {{colLeft}}\" ng-show=\"!$root.hideList\">\n" +
+    " 	<div class=\"bootcards-list\" ng-class=\"colClass()\" ng-show=\"!$root.hideList\">\n" +
     "\n" +
     "		<div class=\"panel panel-default\">\n" +
     "\n" +
@@ -2715,6 +2710,10 @@ angular.module("xc-list-categorised.html", []).run(["$templateCache", function($
     "					<i class=\"fa fa-spinner fa-spin fa-fw\" style=\"margin-right:0; opacity: 1;\"></i>Loading...\n" +
     "				</div>\n" +
     "\n" +
+    "				<div class=\"list-group-item\" ng-show=\"groups.length == 0\">\n" +
+    "					No items found\n" +
+    "				</div>\n" +
+    "\n" +
     "				<div class=\"list-group-item\" ng-show=\"!isLoading && hasMore\">\n" +
     "					<button ng-click=\"loadMore()\" id=\"btnLoadMore\" class=\"btn btn-default\">\n" +
     "						Load more...\n" +
@@ -2733,20 +2732,15 @@ angular.module("xc-list-categorised.html", []).run(["$templateCache", function($
     "\n" +
     "	</div>\n" +
     "\n" +
-    " </div>\n" +
-    "\n" +
     "</div>\n" +
-    "\n" +
     "");
 }]);
 
 angular.module("xc-list-detailed.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-list-detailed.html",
-    "<div class='container bootcards-container'>\n" +
+    "<div>\n" +
     "\n" +
-    " <div class='row'>\n" +
-    "\n" +
-    " 	<div class=\"bootcards-list {{colLeft}}\" ng-show=\"!$root.hideList\">\n" +
+    " 	<div class=\"bootcards-list\" ng-class=\"colClass()\" ng-show=\"!$root.hideList\">\n" +
     "\n" +
     "		<div class=\"panel panel-default\">\n" +
     "\n" +
@@ -2790,6 +2784,10 @@ angular.module("xc-list-detailed.html", []).run(["$templateCache", function($tem
     "					<i class=\"fa fa-spinner fa-spin fa-fw\" style=\"margin-right:0; opacity: 1;\"></i>Loading...\n" +
     "				</div>\n" +
     "\n" +
+    "				<div class=\"list-group-item\" ng-show=\"items.length == 0\">\n" +
+    "					No items found\n" +
+    "				</div>\n" +
+    "\n" +
     "				<div class=\"list-group-item\" ng-show=\"!isLoading && hasMore\">\n" +
     "					<button ng-click=\"loadMore()\" id=\"btnLoadMore\" class=\"btn btn-default\">\n" +
     "						Load more...\n" +
@@ -2808,20 +2806,15 @@ angular.module("xc-list-detailed.html", []).run(["$templateCache", function($tem
     "\n" +
     "	</div>\n" +
     "\n" +
-    " </div>\n" +
-    "\n" +
     "</div>\n" +
-    "\n" +
     "");
 }]);
 
 angular.module("xc-list-flat.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-list-flat.html",
-    "<div class='container bootcards-container'>\n" +
+    "<div>\n" +
     "\n" +
-    " <div class='row'>\n" +
-    "\n" +
-    " 	<div class=\"bootcards-list {{colLeft}}\" ng-show=\"!$root.hideList\">\n" +
+    " 	<div class=\"bootcards-list\" ng-class=\"colClass()\" ng-show=\"!$root.hideList\">\n" +
     "\n" +
     "		<div class=\"panel panel-default\">\n" +
     "\n" +
@@ -2852,6 +2845,10 @@ angular.module("xc-list-flat.html", []).run(["$templateCache", function($templat
     "					<i class=\"fa fa-spinner fa-spin fa-fw\" style=\"margin-right:0; opacity: 1;\"></i>Loading...\n" +
     "				</div>\n" +
     "\n" +
+    "				<div class=\"list-group-item\" ng-show=\"items.length == 0\">\n" +
+    "					No items found\n" +
+    "				</div>\n" +
+    "\n" +
     "				<div class=\"list-group-item\" ng-show=\"!isLoading && hasMore\">\n" +
     "					<button ng-click=\"loadMore()\" id=\"btnLoadMore\" class=\"btn btn-default\">\n" +
     "						Load more...\n" +
@@ -2870,8 +2867,6 @@ angular.module("xc-list-flat.html", []).run(["$templateCache", function($templat
     "\n" +
     "	</div>\n" +
     "\n" +
-    " </div>\n" +
-    "\n" +
     "</div>\n" +
     "\n" +
     "");
@@ -2881,7 +2876,7 @@ angular.module("xc-list-heading.html", []).run(["$templateCache", function($temp
   $templateCache.put("xc-list-heading.html",
     "<div>\n" +
     "\n" +
-    "	<div class=\"panel-heading\">\n" +
+    "	<div class=\"panel-heading\" ng-if=\"title.length>0\">\n" +
     "\n" +
     "		<div class=\"row\">\n" +
     "\n" +
@@ -2914,9 +2909,16 @@ angular.module("xc-list-heading.html", []).run(["$templateCache", function($temp
     "				      <i class=\"fa fa-search\"></i>\n" +
     "			      </div>\n" +
     "			    </div>\n" +
-    "			    <div class=\"col-xs-3\">\n" +
+    "				   \n" +
+    "				<div class=\"col-xs-3\" ng-if=\"allowAdd && !title\">\n" +
+    "\n" +
+    "					<a class=\"btn btn-primary btn-block\" href=\"#\" ng-click=\"addNewItem()\">\n" +
+    "						<i class=\"fa fa-plus\"></i> \n" +
+    "						<span>Add</span>\n" +
+    "					</a>\n" +
     "					\n" +
-    "			    </div>\n" +
+    "				</div>\n" +
+    "\n" +
     "			</div>						    \n" +
     "		</div>				\n" +
     "\n" +

@@ -2,8 +2,8 @@
 var app = angular.module('xcomponents');
 
 app.directive('xcForm', 
-	['$rootScope', 'xcDataFactory','configService', 
-	function($rootScope, xcDataFactory, configService) {
+	['$rootScope', 'xcDataFactory', 
+	function($rootScope, xcDataFactory) {
 
 	return {
 
@@ -28,7 +28,6 @@ app.directive('xcForm',
 		controller : function($scope, $attrs, $modal, xcUtils) {
 
 			//set defaults
-			configService.setEndpoint( $scope.url);
 			$scope.allowDelete = (typeof $scope.allowDelete == 'undefined' ? true : $scope.allowDelete);
 
 			$scope.selectedItem = null;
@@ -68,7 +67,7 @@ app.directive('xcForm',
 
 				var f = xcDataFactory.getStore($attrs.datastoreType);
 
-				f.exists( $scope.itemId)
+				f.exists( $scope.url, $scope.itemId)
 				.then( function(res) {
 
 					if (res.exists) {
@@ -160,7 +159,7 @@ app.directive('xcForm',
 				$scope.selectedItem = targetItem;
 
 				xcDataFactory.getStore($scope.datastoreType)
-				.update( $scope.selectedItem)
+				.update( $scope.url, $scope.selectedItem)
 				.then( function(res) {
 
 					$rootScope.$emit('refreshList', '');
@@ -176,7 +175,7 @@ app.directive('xcForm',
 			$scope.deleteItem = function(targetItem) {
 
 				xcDataFactory.getStore($scope.datastoreType)
-				.delete( targetItem )
+				.delete( $scope.url, targetItem )
 				.then( function(res) {
 
 					$scope.$emit('deleteItemEvent', targetItem);
@@ -186,7 +185,7 @@ app.directive('xcForm',
 				.catch( function(err) {
 					console.error(err);
 				});
-				
+
 			};
 			
 		}

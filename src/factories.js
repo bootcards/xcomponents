@@ -1,24 +1,6 @@
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
-app.service('configService', [ function() {
-
-    var endpoint = '/null';
-
-    return {
-
-	    setEndpoint : function(url) {
-	    	this.endpoint = url;
-	    },
-
-	    endpoint : endpoint
-	   
-	};
-
-} ] );
-
-
-
 app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory', 
 		function( RESTFactory, PouchFactory, LowlaFactory) {
 
@@ -41,13 +23,13 @@ app.factory('xcDataFactory', ['RESTFactory', 'PouchFactory', 'LowlaFactory',
 
 }]);
 
-app.factory('RESTFactory', ['$http', 'configService', function($http, configService) {
+app.factory('RESTFactory', ['$http', function($http) {
 
 	return {
 
-		info : function() {
+		info : function(url) {
 
-			var url = configService.endpoint.replace(":id", "") + 'count';
+			url = url.replace(":id", "") + 'count';
 
 			return $http.get(url).then( function(res) {
 				return { 'count' : res.data.count};
@@ -55,13 +37,13 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 
 		},
 
-		insert : function(toInsert) {
+		insert : function(url, toInsert) {
 			console.error('not implemented');
 		},
 
-		all : function() { 
+		all : function(url) { 
 
-			var url = configService.endpoint.replace(":id", "");
+			url = url.replace(":id", "");
 
 			console.log('querying REST service at ' + url);
 
@@ -72,9 +54,9 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 
 		},
 
-		saveNew : function(item) {
+		saveNew : function(url, item) {
 			
-			var url = configService.endpoint.replace(":id", "");
+			url = url.replace(":id", "");
 
 			return $http.post(url, item).then( function(res) {
 				return res.data;
@@ -82,9 +64,9 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 
 		},
 
-		update : function(item) {
+		update : function(url, item) {
 		
-			var url = configService.endpoint.replace(":id", "");
+			url = url.replace(":id", "");
 
 			return $http.put(url, item).then( function(res) {
 				return res.data;
@@ -92,8 +74,8 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 
 		},
 
-		delete : function(item) {
-			var url = configService.endpoint.replace(":id", item.id);
+		delete : function(url, item) {
+			url = url.replace(":id", item.id);
 			return $http.delete(url);
 		},
 
@@ -103,9 +85,9 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 			
 		},
 
-		getById : function(id) {
+		getById : function(url, id) {
 
-			var url = configService.endpoint.replace(":id", id);
+			url = url.replace(":id", id);
 
 			return $http.get(url).then( function(res) {
 				return res.data;
@@ -113,9 +95,9 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 
 		},
 
-		exists : function(id) {
+		exists : function(url, id) {
 
-			var url = configService.endpoint.replace(":id", id) + '/exists';
+			url = url.replace(":id", id) + '/exists';
 
 			return $http.get(url).then( function(res) {
 				return res.data;
@@ -126,13 +108,12 @@ app.factory('RESTFactory', ['$http', 'configService', function($http, configServ
 
 } ] );
 
-app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, configService) {
+app.factory('PouchFactory', ['pouchDB', function(pouchDB) {
 
 	return {
 
-		info : function() {
+		info : function(dbName) {
 
-			var dbName = configService.endpoint;
 			var db = pouchDB(dbName);
 
 			return db.info()
@@ -146,15 +127,13 @@ app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, confi
 
 		},
 
-		insert : function( toInsert ) {
-			var dbName = configService.endpoint;
+		insert : function( dbName, toInsert ) {
 			var pouch = pouchDB(dbName);
 			return pouch.bulkDocs(toInsert);
 		},
 
-		all : function() { 
+		all : function(dbName) { 
 			
-			var dbName = configService.endpoint;
 			var db = pouchDB(dbName);
 
 			console.log('querying Pouch database named ' + dbName);
@@ -179,9 +158,8 @@ app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, confi
 
 		},
 
-		saveNew : function(item) {
+		saveNew : function(dbName, item) {
 
-			var dbName = configService.endpoint;
 			var db = pouchDB(dbName);
 
 			return db.post(item).then( function(res) {
@@ -196,9 +174,8 @@ app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, confi
 			})
 		},
 
-		getById : function(id) {
+		getById : function(dbName, id) {
 
-			var dbName = configService.endpoint;
 			var db = pouchDB(dbName);
 
 			return db.get(id)
@@ -214,9 +191,8 @@ app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, confi
 
 		},
 
-		update : function(item) {
+		update : function(dbName, item) {
 
-			var dbName = configService.endpoint;
 			var db = pouchDB(dbName);
 
 			return db.put(item)
@@ -231,9 +207,8 @@ app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, confi
 			
 		},
 
-		delete : function(item) {
+		delete : function(dbName, item) {
 
-			var dbName = configService.endpoint;
 			var db = pouchDB(dbName);
 
 			return db.remove(item)
@@ -246,13 +221,13 @@ app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, confi
 
 		},
 
-		deleteAll : function() {
+		deleteAll : function(dbName) {
 
 			console.error('not implemented');
 
 		},
 
-		exists : function(id) {
+		exists : function(dbName, id) {
 			return this.getById(id).then( function(res) {
 				return {exists : (res != null)};
 			});
@@ -263,7 +238,7 @@ app.factory('PouchFactory', ['pouchDB', 'configService', function(pouchDB, confi
 
 }] );
 
-app.factory('LowlaFactory', ['configService', function(configService) {
+app.factory('LowlaFactory', [function() {
 
 	var collection = 'items';
 	var lowla = null;
@@ -277,9 +252,8 @@ app.factory('LowlaFactory', ['configService', function(configService) {
 			return this.lowla;
 		},
 
-		info : function() {
+		info : function(dbName) {
 
-			var dbName = configService.endpoint;
 			var items = this.getDb().collection(dbName, collection);
 
 			return items.count().then(function(res) {
@@ -288,15 +262,13 @@ app.factory('LowlaFactory', ['configService', function(configService) {
 
 		},
 
-		insert : function( toInsert ) {
-			var dbName = configService.endpoint;
+		insert : function( dbName, toInsert ) {
 			var items = this.getDb().collection(dbName, collection);
 			return items.insert(toInsert);
 		},
 
-		all : function() { 
+		all : function(dbName) { 
 
-			var dbName = configService.endpoint;
 			var items = this.getDb().collection(dbName, collection);
 
 			console.log('querying Lowla database named ' + dbName);
@@ -311,9 +283,8 @@ app.factory('LowlaFactory', ['configService', function(configService) {
 
 		},
 
-		saveNew : function(item) {
+		saveNew : function(dbName, item) {
 
-			var dbName = configService.endpoint;
 			var items = this.getDb().collection(dbName, collection);
 
 			//need to remove this property, else Lowla will throw an error
@@ -333,18 +304,16 @@ app.factory('LowlaFactory', ['configService', function(configService) {
 			})*/
 		},
 
-		getById : function(id) {
+		getById : function(dbName, id) {
 
-			var dbName = configService.endpoint;
 			var items = this.getDb().collection(dbName, collection);
 
 			return items.find( { _id : id});
 
 		},
 
-		update : function(item) {
+		update : function(dbName, item) {
 
-			var dbName = configService.endpoint;
 			var items = this.getDb().collection(dbName, collection);
 
 			//need to remove this property, else Lowla will throw an error
@@ -362,10 +331,8 @@ app.factory('LowlaFactory', ['configService', function(configService) {
 			
 		},
 
-		delete : function(item) {
+		delete : function(dbName, item) {
 
-
-			var dbName = configService.endpoint;
 			var items = this.getDb().collection(dbName, collection);
 
 			return items.remove( { _id : item._id } ).then( function(res) {
@@ -377,9 +344,8 @@ app.factory('LowlaFactory', ['configService', function(configService) {
 
 		},
 
-		deleteAll : function() {
+		deleteAll : function(dbName) {
 
-			var dbName = configService.endpoint;
 			var items = this.getDb().collection(dbName, collection);
 
 			return items.remove({})
@@ -394,7 +360,7 @@ app.factory('LowlaFactory', ['configService', function(configService) {
 			
 		},
 
-		exists : function(id) {
+		exists : function(dbName, id) {
 			return this.getById(id).then( function(res) {
 				return {exists : (res != null)};
 			});

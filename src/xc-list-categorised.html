@@ -1,8 +1,6 @@
- <div class='container bootcards-container'>
+ <div>
 
- <div class='row'>
-
- 	<div class="bootcards-list {{colLeft}}" ng-show="!$root.hideList">
+ 	<div class="bootcards-list" ng-class="colClass()" ng-show="!$root.hideList">
 
 		<div class="panel panel-default">
 
@@ -40,6 +38,10 @@
 					<i class="fa fa-spinner fa-spin fa-fw" style="margin-right:0; opacity: 1;"></i>Loading...
 				</div>
 
+				<div class="list-group-item" ng-show="groups.length == 0">
+					No items found
+				</div>
+
 				<div class="list-group-item" ng-show="!isLoading && hasMore">
 					<button ng-click="loadMore()" id="btnLoadMore" class="btn btn-default">
 						Load more...
@@ -58,7 +60,4 @@
 
 	</div>
 
- </div>
-
 </div>
-

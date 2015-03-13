@@ -1,10 +1,18 @@
 var app = angular.module("xcomponents");
 
 app.directive('xcList', 
-	['$rootScope', '$filter', 'xcUtils', 'xcDataFactory', 'configService', 
-	function($rootScope, $filter, xcUtils, xcDataFactory, configService) {
+	['$rootScope', '$filter', 'xcUtils', 'xcDataFactory', 
+	function($rootScope, $filter, xcUtils, xcDataFactory) {
 
 	var loadData = function(scope) {
+
+		//abort if the data needs to be filtered, but there's not filter value
+		if (scope.filterBy && (typeof scope.filterValue == 'undefined' ||
+			scope.filterValue == null || scope.filterValue.length==0) ) {
+			return;
+		}
+
+		//console.info("LOAD FROM " + scope.url, scope.filterBy, scope.filterValue);
 
 		if ( scope.srcDataEntries) {
 
@@ -16,13 +24,14 @@ app.directive('xcList',
 		} else {
 
 			xcDataFactory.getStore(scope.datastoreType)
-			.all().then( function(res) {
+			.all(scope.url).then( function(res) {
 				
 				var numRes = res.length;
 
+				//console.log('found ' + numRes + ' at ' + scope.url);
+
 				if (scope.filterBy && scope.filterValue) {
 					//filter the result set
-					console.log('filter the data using ' + scope.filterBy + ' and ' + scope.filterValue);
 					
 					var filteredRes = [];
 
@@ -34,6 +43,8 @@ app.directive('xcList',
 					});
 
 					res = filteredRes;
+
+					//console.log('filtered:' + res.length);
 
 				}
 				
@@ -88,7 +99,8 @@ app.directive('xcList',
 			autoloadFirst : '=?',
 			allowAdd : '=',
 			groupBy : '@',			/*only relevant for categorised, accordion lists*/
-			filterBy : '@',			
+			filterBy : '@',	
+			filterSrc : '@',		
 			filterValue : '@',		
 			orderBy : '@',
 			orderReversed : '@',
@@ -98,8 +110,8 @@ app.directive('xcList',
 			iconField : '@',		/*icon*/ 
 			imagePlaceholderIcon : '@',		/*icon to be used if no thumbnail could be found, see http://fortawesome.github.io/Font-Awesome/icons/ */
 			datastoreType : '@',
-			infiniteScroll : '@'
-
+			infiniteScroll : '@',
+			embedded : '@'
 		},
 
 		restrict : 'E',
@@ -112,8 +124,6 @@ app.directive('xcList',
 		},
 
 		link : function(scope, elem, attrs) {
-
-			configService.setEndpoint( attrs.url);
 
 			scope.colLeft = 'col-sm-' + attrs.listWidth;
 			scope.colRight = 'col-sm-' + (12 - parseInt(attrs.listWidth, 10) );
@@ -129,6 +139,7 @@ app.directive('xcList',
 			$scope.datastoreType = (typeof $scope.datastoreType == 'undefined' ? 'accordion' : $scope.datastoreType);
 
 			//set defaults
+			$scope.embedded = (typeof $scope.embedded == 'undefined' ? false : $scope.embedded);
 			$scope.allowSearch = (typeof $scope.allowSearch == 'undefined' ? true : $scope.allowSearch);
 			$scope.autoloadFirst = (typeof $scope.autoloadFirst == 'undefined' ? false : $scope.autoloadFirst);
 			$scope.infiniteScroll = (typeof $scope.infiniteScroll == 'undefined' ? false : $scope.infiniteScroll);
@@ -165,6 +176,10 @@ app.directive('xcList',
 
 			$scope.clearSearch = function() {
 				$scope.filter = '';
+			};
+
+			$scope.colClass = function() {
+				return ($scope.embedded ? '' : $scope.colLeft);
 			};
 
 			$scope.addNewItem = function() {
@@ -248,18 +263,31 @@ app.directive('xcList',
 		
 				$scope.selected = item;
 				$scope.$emit('selectItemEvent', item);
+
+				//broadcast event to child scopes
+				$scope.$broadcast('itemSelected', item);
 				
 			};
 
+			
+			$rootScope.$on('selectItemEvent', function(ev, item) {
+
+				if ($scope.filterBy) {
+					$scope.filterValue = item[$scope.filterSrc];
+					loadData($scope);
+				}
+				
+			});
+
 			$scope.showImage = function(item) {
 				return $scope.imageField && item[$scope.imageField];
-			}
+			};
 			$scope.showPlaceholder = function(item) {
 				return $scope.imagePlaceholderIcon && !item[$scope.imageField];
-			}
+			};
 			$scope.showIcon = function(item) {
 				return $scope.iconField && item[$scope.iconField];
-			}
+			};
 
 			$scope.delete = function(item) {
 				loadData($scope);
@@ -297,7 +325,7 @@ app.directive('xcList',
 		    	$scope.select(targetItem);
 				
 				xcDataFactory.getStore($scope.datastoreType)
-				.saveNew( targetItem )
+				.saveNew( $scope.url, targetItem )
 				.then( function(res) {
 
 					if ($scope.type == 'categorised' || $scope.type=='accordion'){ 

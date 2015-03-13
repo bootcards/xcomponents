@@ -1,6 +1,6 @@
 <div>
 
-	<div class="panel-heading">
+	<div class="panel-heading" ng-if="title.length>0">
 
 		<div class="row">
 
@@ -33,9 +33,16 @@
 				      <i class="fa fa-search"></i>
 			      </div>
 			    </div>
-			    <div class="col-xs-3">
+				   
+				<div class="col-xs-3" ng-if="allowAdd && !title">
+
+					<a class="btn btn-primary btn-block" href="#" ng-click="addNewItem()">
+						<i class="fa fa-plus"></i> 
+						<span>Add</span>
+					</a>
 					
-			    </div>
+				</div>
+
 			</div>						    
 		</div>				
 

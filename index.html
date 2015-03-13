@@ -256,33 +256,39 @@ Create your app once using XComponents and Javascript, then run it online or off
 
   &lt;xc-header title="View my cars"&gt;&lt;/xc-header&gt;
 
-  &lt;xc-list 
-    title="Cars"
-    list-width="5" 
-    allow-add="true"
-    order-by="make"
-    order-reversed="false"
-    url="/api/Cars/:id"
-    summary-field="make"
-    details-field="model"
-    image-field="thumbnailUrl"
-    image-placeholder-icon="car"
-    autoload-first="true"
-    type="categorised"
-    group-by="make"
-    infinite-scroll="true"&gt;
+  &lt;xc-layout&gt;
 
-    &lt;xc-form 
-      url="/api/Cars/:id" 
-      default-text="Select a car from the list"
-      thumbnail-field="thumbnailUrl"
-      thumbnail-show-with="name"&gt;&lt;/xc-form&gt;
+    &lt;xc-list 
+      title="Cars"
+      list-width="5" 
+      allow-add="true"
+      order-by="make"
+      order-reversed="false"
+      url="/api/Cars/:id"
+      summary-field="make"
+      details-field="model"
+      image-field="thumbnailUrl"
+      image-placeholder-icon="car"
+      autoload-first="true"
+      type="categorised"
+      group-by="make"
+      infinite-scroll="true"&gt;
 
-  &lt;/xc-list&gt;
+      &lt;xc-form 
+        url="/api/Cars/:id" 
+        default-text="Select a car from the list"
+        thumbnail-field="thumbnailUrl"
+        thumbnail-show-with="name"&gt;&lt;/xc-form&gt;
+
+    &lt;/xc-list&gt;
+
+  &lt;/xc-layout&gt;
 
   &lt;xc-footer&gt;&lt;/xc-footer&gt;
 
-&lt;/body&gt;&lt;/html&gt;</code></pre>
+&lt;/body&gt;
+
+&lt;/html&gt;</code></pre>
 
       <h4>6: Start the server</h4>
      <p>Start the local server with <code>slc run</code> and view the result at <a href="http://localhost:3000" target="_blank">http://localhost:3000</a>.</p>
