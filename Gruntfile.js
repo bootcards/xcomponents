@@ -39,7 +39,8 @@ module.exports = function(grunt) {
           'bower_components/angular-resource/angular-resource.min.js',
           'bower_components/angular-animate/angular-animate.min.js',
           'bower_components/angular-sanitize/angular-sanitize.min.js',
-          'bower_components/angular-touch/angular-touch.min.js',
+          'bower_components/angular-route/angular-route.min.js',
+          'bower_components/angular-cookies/angular-cookies.min.js',
           'bower_components/angular-bootstrap/ui-bootstrap.min.js',
           'bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js'
 
@@ -61,10 +62,11 @@ module.exports = function(grunt) {
     },
 
     copy: {
-      css: {
+      all: {
         files: [
           {expand: true, src: ['src/css/*'], dest: 'dist/css/', filter: 'isFile', flatten: true},
           {expand: true, src: ['src/includes/*'], dest: 'dist/includes/', filter: 'isFile', flatten: true},
+          {expand: true, src: ['src/js/*'], dest: 'dist/js/', filter: 'isFile', flatten: true},
         ]
       }
     },
@@ -72,7 +74,7 @@ module.exports = function(grunt) {
     watch : {
 
       scripts: {
-        files: ['src/**/*.js', 'src/**/*.html', 'src/**/*.css'],
+        files: ['Gruntfile.js', 'src/**/*.js', 'src/**/*.html', 'src/**/*.css'],
         tasks: ['default'],
         options: {
           spawn: false,
@@ -103,7 +105,7 @@ module.exports = function(grunt) {
     'concat:js1',
     'concat:js2',
     'concat:js-libs',
-    'copy:css',
+    'copy:all',
     'uglify:build',
     'clean:tmp',
    ]);
