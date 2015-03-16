@@ -18,6 +18,7 @@
     "grunt-contrib-uglify": "^0.7.0",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-html2js": "^0.2.9",
+    "grunt-text-replace": "^0.4.0",
     "transformers": "^3.1.0",
     "void-elements": "^1.0.0",
     "with": "^4.0.0"

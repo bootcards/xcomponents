@@ -3,6 +3,8 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     banner: '/* <%= pkg.name %> <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd h:MM") %> */\n',
+    pouch : '<script type="text/javascript" src="../../../pouchdb/dist/pouchdb.min.js"></script>\n',
+    lowla : '<script type="text/javascript" src="../../../lowladb/dist/lowladb.min.js"></script>\n',
     
     /*clean the output folder*/
     clean:{
@@ -71,6 +73,25 @@ module.exports = function(grunt) {
       }
     },
 
+   replace: {
+      pouch: {
+        src: ['dist/includes/includes.html'],         
+        dest: 'dist/includes/includes-pouch.html',     
+        replacements: [{
+          from: '<!-- include:pouch -->',                  
+          to: grunt.config('pouch')
+        }]
+      },
+      lowla: {
+        src: ['dist/includes/includes.html'],           
+        dest: 'dist/includes/includes-lowla.html',    
+        replacements: [{
+          from: '<!-- include:lowla -->',                   
+          to: grunt.config('lowla')
+        }]
+      }
+    },
+
     watch : {
 
       scripts: {
@@ -97,6 +118,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-text-replace');
   
   // Default task(s).
   grunt.registerTask('default', [
@@ -106,6 +128,8 @@ module.exports = function(grunt) {
     'concat:js2',
     'concat:js-libs',
     'copy:all',
+    'replace:pouch',
+    'replace:lowla',
     'uglify:build',
     'clean:tmp',
    ]);
