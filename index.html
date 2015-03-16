@@ -190,11 +190,8 @@ Create your app once using XComponents and Javascript, then run it online or off
 
       <h4>4: JavaScript config file</h4>
       <p>Create a file called <code>cars.js</code> in the <code>/client</code> folder. This file contains app configuration settings. Set its contents to:</p>
-     <pre><code>var xcomponents = {
-
-  appVersion : '0.1',
-
-  menuOptions : [
+     <pre><code>xcomponents.appVersion = '0.1';
+xcomponents.menuOptions = [
 
     { label : 'Languages', isSecondary : true, icon : 'fa-globe' ,
       menuOptions : [
@@ -211,21 +208,19 @@ Create your app once using XComponents and Javascript, then run it online or off
       ]
     },
     
-  ],
+  ];
 
-  footerOptions : [
+xcomponents.footerOptions : [
     { label : 'Cars', url : '/index.html', icon : 'fa-dashboard'}
-  ], 
+  ]; 
 
-  modelName : 'Car', 
+xcomponents.modelName : 'Car'; 
 
-  fields : [
+xcomponents.fields : [
     { label : 'Make' , field: 'make', required: true},
     { label : 'Model' , field: 'model' },
     { label : 'Color' , field: 'color' },
-  ]
-
-}</code></pre>
+  ];</code></pre>
 
       <h4>5: Basic page with a list and card</h4>
       <p>Create a file called <code>index.html</code> in the <code>/client</code> folder. This will be our main app page:</p>
@@ -244,6 +239,7 @@ Create your app once using XComponents and Javascript, then run it online or off
   &lt;/style&gt;
   
   &lt;!-- polyfill for html imports & xcomponents resources --&gt;
+  &lt;script type="text/javascript" src="/bower_components/xcomponents/dist/js/xc-base.js"&gt;&lt;/script&gt;
   &lt;script type="text/javascript" src="/bower_components/webcomponentsjs/HTMLImports.min.js"&gt;&lt;/script&gt;
   &lt;link rel="import" href="/bower_components/xcomponents/dist/includes/includes.html"&gt;
  
