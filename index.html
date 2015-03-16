@@ -169,7 +169,7 @@ Create your app once using XComponents and Javascript, then run it online or off
       <h4>2: Setup the REST server</h4>
       <p>Create a new folder for you app. Using a terminal, go into the folder and enter <code>slc loopback</code>. This will setup the basic Loopback application.</p>
 
-      <p>We need to create a data model in Loopback: let's create a list of cars. Enter: <code>slc loopback:model</code> and enter Car as the model name. Accept all defaults until you get to "Properties". Create the following properties: 'make', 'type' and 'color'. Leave the property name empty to stop creating properties.
+      <p>We need to create a data model in Loopback: let's create a list of cars. Enter: <code>slc loopback:model</code> and enter Car as the model name. Accept all defaults until you get to "Properties". Create the following properties: 'make', 'type', 'color' and 'details'. Accept the defaults for every property. Leave the property name empty to stop creating properties.
 
       <p>
         Delete the file <code>server/boot/root.js</code>. That provides a default response for the root (/) route. We don't need that, because we're going to serve our own app: open <code>server/middleware.json</code> and replace the <code>files</code> property with:
@@ -210,16 +210,17 @@ xcomponents.menuOptions = [
     
   ];
 
-xcomponents.footerOptions : [
+xcomponents.footerOptions = [
     { label : 'Cars', url : '/index.html', icon : 'fa-dashboard'}
   ]; 
 
-xcomponents.modelName : 'Car'; 
+xcomponents.modelName = 'Car'; 
 
-xcomponents.fields : [
+xcomponents.fields = [
     { label : 'Make' , field: 'make', required: true},
     { label : 'Model' , field: 'model' },
-    { label : 'Color' , field: 'color' },
+    { label : 'Color', field : 'color', type : 'select', options : ['Blue', 'Yellow', 'Green'] },
+    { field : 'details', type : 'multiline'}
   ];</code></pre>
 
       <h4>5: Basic page with a list and card</h4>
@@ -255,7 +256,6 @@ xcomponents.fields : [
   &lt;xc-layout&gt;
 
     &lt;xc-list 
-      title="Cars"
       list-width="5" 
       allow-add="true"
       order-by="make"
