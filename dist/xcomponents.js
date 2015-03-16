@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-13 2:55 */
+/* xcomponents 0.1.0 2015-03-16 10:11 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -382,6 +382,8 @@ var app = angular.module('xcomponents', [
 	'templates-main',
 	'xc.factories',
 	'ngResource',
+	'ngRoute',
+	'ngCookies',
 	'ngAnimate',
 	'ngSanitize',
 	'ui.bootstrap'
@@ -391,11 +393,15 @@ var app = angular.module('xcomponents', [
 var hasNativeHTMLImportsSupport = ('import' in document.createElement('link'));
 
 if (hasNativeHTMLImportsSupport) {
+	
 	angular.element(document).ready(function() {
-	 angular.bootstrap(document, ['xcomponents']);
+		if (typeof xcomponents != 'undefined') { xcomponents.executeCallbacks(); }
+		angular.bootstrap(document, ['xcomponents']);
 	});
+
 } else {
 	window.addEventListener('HTMLImportsLoaded', function(e){ 
+		if (typeof xcomponents != 'undefined') { xcomponents.executeCallbacks(); }
 		angular.bootstrap(document, ['xcomponents']);
 	});
 }

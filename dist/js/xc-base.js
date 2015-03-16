@@ -1,6 +1,10 @@
 
 var xcomponents = xcomponents || {
 	callbacks : [],
+	menuOptions : [],
+	footerOptions : [],
+	charts : [],
+	menuAlignRight : true,
 
 	addCallback : function( fnCallback) {
 		this.callbacks.push(fnCallback);
@@ -13,6 +17,3 @@ var xcomponents = xcomponents || {
 		}
 	}
 };
-
-
-console.log( xcomponents.callbacks.length);
