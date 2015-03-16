@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-16 10:11 */
+/* xcomponents 0.1.0 2015-03-16 10:52 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -1550,8 +1550,6 @@ app.directive('xcList',
 
 					res = filteredRes;
 
-					//console.log('filtered:' + res.length);
-
 				}
 				
 				if (scope.type == 'categorised' || scope.type=='accordion') {
@@ -1561,9 +1559,12 @@ app.directive('xcList',
 					
 					//auto load first entry in the first group
 					if (scope.autoloadFirst && !scope.selected && !bootcards.isXS() ) {
-						scope.select( scope.groups[0].entries[0] );
-						if (scope.type == 'accordion') {		//auto expand first group
-							scope.groups[0].collapsed = false;
+
+						if (scope.groups.length>0) {
+							if (scope.groups[0].entries.length>0) { scope.select( scope.groups[0].entries[0] ); }
+							if (scope.type == 'accordion') {		//auto expand first group
+								scope.groups[0].collapsed = false;
+							}
 						}
 					}
 		
