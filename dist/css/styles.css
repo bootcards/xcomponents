@@ -133,3 +133,16 @@ a {
 .form-control::-ms-clear {
     display: none;
 }
+
+/*textAngular HTML editor*/
+.ta-toolbar {
+  background-color: #F0F0F0;
+  padding: 10px 10px 5px !important;
+  margin-left: 0px;
+  border: 1px solid #EEE;
+}
+.ta-editor, .white-box {
+  padding: 10px !important;
+  background-color: #FFF;
+  border: 1px solid #EEE;
+}

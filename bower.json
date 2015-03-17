@@ -28,7 +28,8 @@
     "angular-touch": "~1.3.14",
     "lowladb": "~0.1.0",
     "angular-route": "~1.3.14",
-    "angular-cookies": "~1.3.14"
+    "angular-cookies": "~1.3.14",
+    "textAngular": "~1.3.11"
   },
   "resolutions": {
     "angular": "~1.3.8"

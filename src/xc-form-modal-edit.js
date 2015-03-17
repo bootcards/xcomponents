@@ -2,8 +2,8 @@
 var app = angular.module('xcomponents');
 
 app.controller('UpdateItemInstanceCtrl', 
-	[ '$scope', '$modalInstance', 'selectedItem', 'fieldsEdit', 'modelName', 'isNew', 'allowDelete',
-	function ( $scope, $modalInstance, selectedItem, fieldsEdit, modelName, isNew, allowDelete) {
+	[ '$scope', '$modalInstance', 'selectedItem', 'fieldsEdit', 'modelName', 'isNew', 'allowDelete', 'xcUtils',
+	function ( $scope, $modalInstance, selectedItem, fieldsEdit, modelName, isNew, allowDelete, xcUtils) {
 
 	//check for date fields
 	angular.forEach( fieldsEdit, function(field) {
@@ -23,6 +23,7 @@ app.controller('UpdateItemInstanceCtrl',
 	$scope.selectedItem = angular.copy( selectedItem );
 
 	$scope.fieldOptions = [];
+	$scope.editorToolbarOptions = xcUtils.getConfig('editorToolbarOptions');
 
 	angular.forEach( fieldsEdit, function(f) {
 		if (f.type.indexOf('sel')==0) {

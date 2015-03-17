@@ -1,10 +1,14 @@
 
 var xcomponents = xcomponents || {
-	callbacks : [],
+
+	editorToolbarOptions : [['bold','italics','underline'],['ol','ul','insertImage','insertLink']],
+
 	menuOptions : [],
 	footerOptions : [],
 	charts : [],
 	menuAlignRight : true,
+
+	callbacks : [],
 
 	addCallback : function( fnCallback) {
 		this.callbacks.push(fnCallback);

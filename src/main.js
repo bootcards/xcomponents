@@ -13,6 +13,7 @@ var app = angular.module('xcomponents', [
 	'ngCookies',
 	'ngAnimate',
 	'ngSanitize',
+	'textAngular',
 	'ui.bootstrap'
 ]);
 
@@ -150,10 +151,6 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 	      });
 	}, 500);
 
-});
-
-app.run( function() {
-	FastClick.attach(document.body);
 });
 
 app.directive('disableNgAnimate', ['$animate', function($animate) {

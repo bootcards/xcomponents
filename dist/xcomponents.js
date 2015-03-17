@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-16 10:52 */
+/* xcomponents 0.1.0 2015-03-17 11:28 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -386,6 +386,7 @@ var app = angular.module('xcomponents', [
 	'ngCookies',
 	'ngAnimate',
 	'ngSanitize',
+	'textAngular',
 	'ui.bootstrap'
 ]);
 
@@ -523,10 +524,6 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 	      });
 	}, 500);
 
-});
-
-app.run( function() {
-	FastClick.attach(document.body);
 });
 
 app.directive('disableNgAnimate', ['$animate', function($animate) {
@@ -1041,8 +1038,8 @@ app.directive('xcFooter', function() {
 var app = angular.module('xcomponents');
 
 app.controller('UpdateItemInstanceCtrl', 
-	[ '$scope', '$modalInstance', 'selectedItem', 'fieldsEdit', 'modelName', 'isNew', 'allowDelete',
-	function ( $scope, $modalInstance, selectedItem, fieldsEdit, modelName, isNew, allowDelete) {
+	[ '$scope', '$modalInstance', 'selectedItem', 'fieldsEdit', 'modelName', 'isNew', 'allowDelete', 'xcUtils',
+	function ( $scope, $modalInstance, selectedItem, fieldsEdit, modelName, isNew, allowDelete, xcUtils) {
 
 	//check for date fields
 	angular.forEach( fieldsEdit, function(field) {
@@ -1062,6 +1059,7 @@ app.controller('UpdateItemInstanceCtrl',
 	$scope.selectedItem = angular.copy( selectedItem );
 
 	$scope.fieldOptions = [];
+	$scope.editorToolbarOptions = xcUtils.getConfig('editorToolbarOptions');
 
 	angular.forEach( fieldsEdit, function(f) {
 		if (f.type.indexOf('sel')==0) {
@@ -2337,7 +2335,8 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "	<div class=\"modal-body form-horizontal\">\n" +
     "\n" +
     "		<div class=\"form-group\" ng-repeat=\"field in fieldsEdit\" ng-class=\"{ 'has-error': cardForm[field.field].$dirty && cardForm[field.field].$invalid }\">\n" +
-    "			<label class=\"col-xs-3 control-label\">{{field.label}}</label>\n" +
+    "			<label class=\"col-xs-3 control-label\" ng-if=\"field.label != null && field.type != 'html'\">{{field.label}}</label>\n" +
+    "			<label class=\"col-md-3 control-label\" ng-if=\"field.label != null && field.type =='html'\">{{field.label}}</label>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='text' || field.type=='link'\">\n" +
     "				<input class=\"form-control\" name=\"{{field.field}}\" ng-model=\"selectedItem[field.field]\" ng-required=\"field.required\"  />\n" +
     "				<a class=\"fa fa-times-circle fa-lg clearer\" ng-hide=\"isEmpty(selectedItem[field.field])\" ng-click=\"clearField(field.field)\"></a>\n" +
@@ -2356,6 +2355,15 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='multiline'\">\n" +
     "				<textarea class=\"form-control\" name=\"{{field.field}}\" ng-model=\"selectedItem[field.field]\" ng-required=\"field.required\"></textarea>\n" +
     "				<a class=\"fa fa-times-circle fa-lg clearer\" ng-hide=\"isEmpty(selectedItem[field.field])\"ng-click=\"clearField(field.field)\"></a>\n" +
+    "			</div>\n" +
+    "			<div class=\"col-md-9 needsclick\" ng-if=\"field.type=='html'\">\n" +
+    "				<div text-angular name=\"{{field.field}}\" \n" +
+    "					class=\"needsclick\"\n" +
+    "					ta-toolbar=\"{{editorToolbarOptions}}\" \n" +
+    "					ta-text-editor-class=\"border-around\"\n" +
+    "					ta-html-editor-class=\"border-around\"\n" +
+    "					ng-model=\"selectedItem[field.field]\" \n" +
+    "					ng-required=\"field.required\"></div>\n" +
     "			</div>\n" +
     "			<div class=\"col-xs-9\" ng-if=\"field.type=='select'\">\n" +
     "				<select class=\"form-control\" \n" +
@@ -2449,6 +2457,10 @@ angular.module("xc-form.html", []).run(["$templateCache", function($templateCach
     "					<h4 class=\"list-group-item-heading\">{{selectedItem[field.field]}}</h4>\n" +
     "				</div>\n" +
     "				<div class=\"list-group-item\" ng-if=\"field.type=='multiline'\">\n" +
+    "					<label>{{field.label}}</label>\n" +
+    "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field]\"></h4>\n" +
+    "				</div>\n" +
+    "				<div class=\"list-group-item\" ng-if=\"field.type=='html'\">\n" +
     "					<label>{{field.label}}</label>\n" +
     "					<h4 class=\"list-group-item-heading\" ng-bind-html=\"selectedItem[field.field]\"></h4>\n" +
     "				</div>\n" +
