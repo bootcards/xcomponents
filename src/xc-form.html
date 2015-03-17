@@ -41,7 +41,7 @@
 					</span>
 
 					<label>{{field.label}}</label>
-					<h4 class="list-group-item-heading">{{selectedItem[field.field]}}</h4>
+					<h4 class="list-group-item-heading">{{selectedItem[field.field] | fltr : field.filter}}</h4>
 				</div>
 				<div class="list-group-item" ng-if="field.type=='date'">
 					<label>{{field.label}}</label>
@@ -49,7 +49,7 @@
 				</div>
 				<div class="list-group-item" ng-if="field.type=='select'">
 					<label>{{field.label}}</label>
-					<h4 class="list-group-item-heading">{{selectedItem[field.field]}}</h4>
+					<h4 class="list-group-item-heading">{{selectedItem[field.field] | fltr : field.filter}}</h4>
 				</div>
 				<div class="list-group-item" ng-if="field.type=='multiline'">
 					<label>{{field.label}}</label>
@@ -62,17 +62,17 @@
 				<a href="mailto:{{selectedItem[field.field]}}" class="list-group-item" 
 					ng-if="field.type=='email'">
 					<label>{{field.label}}</label>
-					<h4 class="list-group-item-heading">{{selectedItem[field.field]}}</h4>
+					<h4 class="list-group-item-heading">{{selectedItem[field.field] | fltr : field.filter}}</h4>
 				</a>
 				<a href="tel:{{selectedItem[field.field]}}" class="list-group-item" 
 					ng-if="field.type=='phone'">
 					<label>{{field.label}}</label>
-					<h4 class="list-group-item-heading">{{selectedItem[field.field]}}</h4>
+					<h4 class="list-group-item-heading">{{selectedItem[field.field] | fltr : field.filter}}</h4>
 				</a>
 				<a href="{{selectedItem[field.field]}}" class="list-group-item" 
 					ng-if="field.type=='link'">
 					<label>{{field.label}}</label>
-					<h4 class="list-group-item-heading">{{selectedItem[field.field]}}</h4>
+					<h4 class="list-group-item-heading">{{selectedItem[field.field] | fltr : field.filter}}</h4>
 				</a>
 
 			<div>

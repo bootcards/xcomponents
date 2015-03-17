@@ -79,6 +79,7 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 			config.fieldsRead = [];		//list of fields in read mode
 			config.fieldsEdit = [];		//list of fields in edit mode
 			config.fieldsFormula = [];	//list of field formulas
+			config.fieldFilters = [];
 
 			//add labels if not specified (proper cased field name)
 			for (var i=0; i<config.fields.length; i++) {
@@ -99,6 +100,10 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 				//set 'show in edit mode' property
 				if ( !f.hasOwnProperty('edit') ) {
 					f.edit = true;
+				}
+
+				if (f.hasOwnProperty('filter')) {
+					config.fieldFilters[f.field] = f.filter;
 				}
 
 				if (f.type == 'select' || f.type == 'select-multiple') {
@@ -161,4 +166,19 @@ app.directive('disableNgAnimate', ['$animate', function($animate) {
     }
   };
 }]);
+
+app.filter('fltr', function($interpolate, $filter, xcUtils) {
+	return function(item, filterName, fieldType) {
+
+		if (arguments.length >= 3 && fieldType != 'text') {
+			//filter by field type
+			return $filter(fieldType)(item);
+		} else if (!filterName) {
+			return item;	
+		} else {
+			var _res = $interpolate('{{value | ' + filterName + '}}');
+			return _res( {value : item } );
+		}
+	};
+});
 

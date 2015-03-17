@@ -26,9 +26,9 @@
 						class="img-rounded pull-left" 
 						ng-src="{{ imageBase + item[imageField] }}" />
 
-						<h4 class="list-group-item-heading">{{item[summaryField]}}&nbsp;</h4>
+						<h4 class="list-group-item-heading">{{item[summaryField] | fltr : fieldFilters[summaryField]}}&nbsp;</h4>
 
-						<p class="list-group-item-text">{{ convert(item) }}&nbsp;</p>
+						<p class="list-group-item-text">{{ item[detailsField] | fltr : fieldFilters[detailsField] : detailsFieldType }}&nbsp;</p>
 						
 					</a>
 

@@ -160,6 +160,8 @@ app.directive('xcList',
 			$scope.fieldsEdit = xcUtils.getConfig('fieldsEdit');
 			$scope.imageBase = xcUtils.getConfig('imageBase');
 
+			$scope.fieldFilters = xcUtils.getConfig('fieldFilters');
+
 			$rootScope.$on('refreshList', function(msg) {
 				loadData($scope);
 			});
@@ -305,18 +307,6 @@ app.directive('xcList',
 			    	$scope.hasMore = $scope.itemsShown < $scope.totalNumItems;
 			    }
 
-		    };
-
-		    $scope.convert = function(item) {
-		    	
-		    	if ($scope.detailsFieldType == 'date') {
-		    		return $filter('date')(item[$scope.detailsField]);
-		    	} else {
-		    		return item[$scope.detailsField];
-		
-		    	}
-
-		  
 		    };
 
 		    $scope.saveNewItem = function(targetItem) {

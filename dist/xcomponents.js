@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-17 11:28 */
+/* xcomponents 0.1.0 2015-03-17 12:17 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -452,6 +452,7 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 			config.fieldsRead = [];		//list of fields in read mode
 			config.fieldsEdit = [];		//list of fields in edit mode
 			config.fieldsFormula = [];	//list of field formulas
+			config.fieldFilters = [];
 
 			//add labels if not specified (proper cased field name)
 			for (var i=0; i<config.fields.length; i++) {
@@ -472,6 +473,10 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 				//set 'show in edit mode' property
 				if ( !f.hasOwnProperty('edit') ) {
 					f.edit = true;
+				}
+
+				if (f.hasOwnProperty('filter')) {
+					config.fieldFilters[f.field] = f.filter;
 				}
 
 				if (f.type == 'select' || f.type == 'select-multiple') {
@@ -534,6 +539,21 @@ app.directive('disableNgAnimate', ['$animate', function($animate) {
     }
   };
 }]);
+
+app.filter('fltr', function($interpolate, $filter, xcUtils) {
+	return function(item, filterName, fieldType) {
+
+		if (arguments.length >= 3 && fieldType != 'text') {
+			//filter by field type
+			return $filter(fieldType)(item);
+		} else if (!filterName) {
+			return item;	
+		} else {
+			var _res = $interpolate('{{value | ' + filterName + '}}');
+			return _res( {value : item } );
+		}
+	};
+});
 
 
 
@@ -1664,6 +1684,8 @@ app.directive('xcList',
 			$scope.fieldsEdit = xcUtils.getConfig('fieldsEdit');
 			$scope.imageBase = xcUtils.getConfig('imageBase');
 
+			$scope.fieldFilters = xcUtils.getConfig('fieldFilters');
+
 			$rootScope.$on('refreshList', function(msg) {
 				loadData($scope);
 			});
@@ -1809,18 +1831,6 @@ app.directive('xcList',
 			    	$scope.hasMore = $scope.itemsShown < $scope.totalNumItems;
 			    }
 
-		    };
-
-		    $scope.convert = function(item) {
-		    	
-		    	if ($scope.detailsFieldType == 'date') {
-		    		return $filter('date')(item[$scope.detailsField]);
-		    	} else {
-		    		return item[$scope.detailsField];
-		
-		    	}
-
-		  
 		    };
 
 		    $scope.saveNewItem = function(targetItem) {
@@ -2446,7 +2456,7 @@ angular.module("xc-form.html", []).run(["$templateCache", function($templateCach
     "					</span>\n" +
     "\n" +
     "					<label>{{field.label}}</label>\n" +
-    "					<h4 class=\"list-group-item-heading\">{{selectedItem[field.field]}}</h4>\n" +
+    "					<h4 class=\"list-group-item-heading\">{{selectedItem[field.field] | fltr : field.filter}}</h4>\n" +
     "				</div>\n" +
     "				<div class=\"list-group-item\" ng-if=\"field.type=='date'\">\n" +
     "					<label>{{field.label}}</label>\n" +
@@ -2454,7 +2464,7 @@ angular.module("xc-form.html", []).run(["$templateCache", function($templateCach
     "				</div>\n" +
     "				<div class=\"list-group-item\" ng-if=\"field.type=='select'\">\n" +
     "					<label>{{field.label}}</label>\n" +
-    "					<h4 class=\"list-group-item-heading\">{{selectedItem[field.field]}}</h4>\n" +
+    "					<h4 class=\"list-group-item-heading\">{{selectedItem[field.field] | fltr : field.filter}}</h4>\n" +
     "				</div>\n" +
     "				<div class=\"list-group-item\" ng-if=\"field.type=='multiline'\">\n" +
     "					<label>{{field.label}}</label>\n" +
@@ -2467,17 +2477,17 @@ angular.module("xc-form.html", []).run(["$templateCache", function($templateCach
     "				<a href=\"mailto:{{selectedItem[field.field]}}\" class=\"list-group-item\" \n" +
     "					ng-if=\"field.type=='email'\">\n" +
     "					<label>{{field.label}}</label>\n" +
-    "					<h4 class=\"list-group-item-heading\">{{selectedItem[field.field]}}</h4>\n" +
+    "					<h4 class=\"list-group-item-heading\">{{selectedItem[field.field] | fltr : field.filter}}</h4>\n" +
     "				</a>\n" +
     "				<a href=\"tel:{{selectedItem[field.field]}}\" class=\"list-group-item\" \n" +
     "					ng-if=\"field.type=='phone'\">\n" +
     "					<label>{{field.label}}</label>\n" +
-    "					<h4 class=\"list-group-item-heading\">{{selectedItem[field.field]}}</h4>\n" +
+    "					<h4 class=\"list-group-item-heading\">{{selectedItem[field.field] | fltr : field.filter}}</h4>\n" +
     "				</a>\n" +
     "				<a href=\"{{selectedItem[field.field]}}\" class=\"list-group-item\" \n" +
     "					ng-if=\"field.type=='link'\">\n" +
     "					<label>{{field.label}}</label>\n" +
-    "					<h4 class=\"list-group-item-heading\">{{selectedItem[field.field]}}</h4>\n" +
+    "					<h4 class=\"list-group-item-heading\">{{selectedItem[field.field] | fltr : field.filter}}</h4>\n" +
     "				</a>\n" +
     "\n" +
     "			<div>\n" +
@@ -2704,9 +2714,9 @@ angular.module("xc-list-accordion.html", []).run(["$templateCache", function($te
     "						class=\"img-rounded pull-left\" \n" +
     "						ng-src=\"{{ imageBase + item[imageField] }}\" />\n" +
     "\n" +
-    "						<h4 class=\"list-group-item-heading\">{{item[summaryField]}}&nbsp;</h4>\n" +
+    "						<h4 class=\"list-group-item-heading\">{{item[summaryField] | fltr : fieldFilters[summaryField]}}&nbsp;</h4>\n" +
     "\n" +
-    "						<p class=\"list-group-item-text\">{{ convert(item) }}&nbsp;</p>\n" +
+    "						<p class=\"list-group-item-text\">{{ item[detailsField] | fltr : fieldFilters[detailsField] : detailsFieldType }}&nbsp;</p>\n" +
     "						\n" +
     "					</a>\n" +
     "\n" +
@@ -2772,9 +2782,9 @@ angular.module("xc-list-categorised.html", []).run(["$templateCache", function($
     "						class=\"img-rounded pull-left\" \n" +
     "						ng-src=\"{{ imageBase + item[imageField] }}\" />\n" +
     "\n" +
-    "						<h4 class=\"list-group-item-heading\">{{item[summaryField]}}&nbsp;</h4>\n" +
+    "						<h4 class=\"list-group-item-heading\">{{item[summaryField] | fltr : fieldFilters[summaryField]}}&nbsp;</h4>\n" +
     "\n" +
-    "						<p class=\"list-group-item-text\">{{ convert(item) }}&nbsp;</p>\n" +
+    "						<p class=\"list-group-item-text\">{{ item[detailsField] | fltr : fieldFilters[detailsField] : detailsFieldType }}&nbsp;</p>\n" +
     "						\n" +
     "					</a>\n" +
     "\n" +
@@ -2839,14 +2849,14 @@ angular.module("xc-list-detailed.html", []).run(["$templateCache", function($tem
     "								class=\"img-rounded pull-left\" \n" +
     "								ng-src=\"{{ imageBase + item[imageField] }}\" />\n" +
     "\n" +
-    "							<h4 class=\"list-group-item-heading\">{{item[summaryField]}}</h4>\n" +
+    "							<h4 class=\"list-group-item-heading\">{{item[summaryField] | fltr : fieldFilters[summaryField]}}&nbsp;</h4>\n" +
     "\n" +
-    "							<p class=\"list-group-item-text\">{{ convert(item) }}&nbsp;</p>\n" +
+    "							<p class=\"list-group-item-text\">{{ item[detailsField] | fltr : fieldFilters[detailsField] : detailsFieldType }}&nbsp;</p>\n" +
     "\n" +
     "						</div>\n" +
     "						<div class=\"col-sm-6\">\n" +
-    "							<p class=\"list-group-item-text\">{{item[detailsFieldSubTop]}}</p>\n" +
-    "							<p class=\"list-group-item-text\">{{item[detailsFieldSubBottom]}}</p>\n" +
+    "							<p class=\"list-group-item-text\">{{item[detailsFieldSubTop] | fltr : fieldFilters[detailsFieldSubTop]}}</p>\n" +
+    "							<p class=\"list-group-item-text\">{{item[detailsFieldSubBottom] | fltr : fieldFilters[detailsFieldSubBottom]}}</p>\n" +
     "						</div>\n" +
     "\n" +
     "					</div>\n" +
@@ -2909,9 +2919,9 @@ angular.module("xc-list-flat.html", []).run(["$templateCache", function($templat
     "						class=\"img-rounded pull-left\" \n" +
     "						ng-src=\"{{ imageBase + item[imageField] }}\" />\n" +
     "\n" +
-    "					<h4 class=\"list-group-item-heading\">{{item[summaryField]}}&nbsp;</h4>\n" +
+    "					<h4 class=\"list-group-item-heading\">{{item[summaryField] | fltr : fieldFilters[summaryField]}}&nbsp;</h4>\n" +
     "\n" +
-    "					<p class=\"list-group-item-text\">{{ convert(item) }}&nbsp;</p>\n" +
+    "					<p class=\"list-group-item-text\">{{ item[detailsField] | fltr : fieldFilters[detailsField] : detailsFieldType }}&nbsp;</p>\n" +
     "					\n" +
     "				</a>\n" +
     "\n" +
