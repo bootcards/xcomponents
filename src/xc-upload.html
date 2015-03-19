@@ -1,5 +1,7 @@
 <div class="panel panel-default boorcards-media"> 
 
+  <form>
+
   <div class="panel-heading clearfix">
     <h class="panel-title pull-left">{{::title}}</h3>  
   </div>
@@ -38,8 +40,10 @@
       </div>
       <div class="btn-group">
         <button class="hidden" type="button">save</button>
-        <button type="button" ng-click="savePhoto(this, 'view:_id1:_id173:button1')" class="btn btn-default uploadphotobutton">
-          <i class="fa fa-upload"></i>Upload</button></div>
+        <button type="button" ng-click="savePhoto()" class="btn btn-default uploadphotobutton">
+          <i class="fa" ng-class="{'fa-upload' : !uploadInProgress, 'fa-circle-o-notch fa-spin' : uploadInProgress}"></i>Upload</button></div>
     </div>
   </div>
+
+  </form>
 </div>

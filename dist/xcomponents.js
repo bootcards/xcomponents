@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-17 12:17 */
+/* xcomponents 0.1.0 2015-03-19 2:37 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -2052,12 +2052,13 @@ app.directive('xcToggle', function() {
 
 var app = angular.module('xcomponents');
 
-app.directive('xcUpload', function() {
+app.directive('xcUpload', ['$http', 'xcDataFactory', function($http, xcDataFactory) {
 
 	return {
 
 		scope : {
-			title : '@'
+			title : '@',
+			url : '@'
 		},
 
 		replace : true,
@@ -2072,6 +2073,7 @@ app.directive('xcUpload', function() {
 			$scope.doCrop = false;
 			$scope.customSelect = null;
 			$scope.orientation = 0;
+			$scope.uploadInProgress = false;
 		
 			$scope.init = function() {
 				
@@ -2141,11 +2143,55 @@ app.directive('xcUpload', function() {
 				$scope.loadImage(file);
 			};
 
+			$scope.savePhoto = function() {
+
+				//get the file input
+				var $resizeFileUpload = $('.js-photouploader-upload');
+				var files = $resizeFileUpload[0].files;
+				if (typeof files == 'undefined' || files.length === 0 ) {
+					return;
+				}
+						
+				//show a spinner icon in the upload button
+				$scope.uploadInProgress = true;
+				
+				var _resizedFile = files[0];
+
+				//create FormData object to send all form data to Unplugged
+				var fd = new FormData();
+				                            
+				//now add the resized image to the FormData object and send it
+				var canvas = document.getElementById('photoUploadCanvas');
+			     
+			    if (canvas.toBlob) {
+
+				    canvas.toBlob(
+				        function (blob) {
+
+				        	blob.name = _resizedFile.name;
+
+				            fd.append( 'file', blob, _resizedFile.name );
+				            
+				            $http.post( $scope.url, fd, {
+								transformRequest: angular.identity,
+								headers: {'Content-Type': undefined}
+				            }).then( function(res) {
+				            	alert('Photo Saved');
+				            	$scope.uploadInProgress = false;
+				            });
+				            
+				        },
+				        'image/jpeg'
+				    );
+				}
+
+			};
+
 		}
 
 	};
 
-});
+}]);
 angular.module('templates-main', ['xc-base.html', 'xc-carousel.html', 'xc-chart.html', 'xc-file.html', 'xc-footer.html', 'xc-form-modal-edit.html', 'xc-form.html', 'xc-header.html', 'xc-image.html', 'xc-layout.html', 'xc-list-accordion.html', 'xc-list-categorised.html', 'xc-list-detailed.html', 'xc-list-flat.html', 'xc-list-heading.html', 'xc-reading.html', 'xc-summary-item.html', 'xc-summary.html', 'xc-upload.html']);
 
 angular.module("xc-base.html", []).run(["$templateCache", function($templateCache) {
@@ -3078,6 +3124,8 @@ angular.module("xc-upload.html", []).run(["$templateCache", function($templateCa
   $templateCache.put("xc-upload.html",
     "<div class=\"panel panel-default boorcards-media\"> \n" +
     "\n" +
+    "  <form>\n" +
+    "\n" +
     "  <div class=\"panel-heading clearfix\">\n" +
     "    <h class=\"panel-title pull-left\">{{::title}}</h3>  \n" +
     "  </div>\n" +
@@ -3116,9 +3164,11 @@ angular.module("xc-upload.html", []).run(["$templateCache", function($templateCa
     "      </div>\n" +
     "      <div class=\"btn-group\">\n" +
     "        <button class=\"hidden\" type=\"button\">save</button>\n" +
-    "        <button type=\"button\" ng-click=\"savePhoto(this, 'view:_id1:_id173:button1')\" class=\"btn btn-default uploadphotobutton\">\n" +
-    "          <i class=\"fa fa-upload\"></i>Upload</button></div>\n" +
+    "        <button type=\"button\" ng-click=\"savePhoto()\" class=\"btn btn-default uploadphotobutton\">\n" +
+    "          <i class=\"fa\" ng-class=\"{'fa-upload' : !uploadInProgress, 'fa-circle-o-notch fa-spin' : uploadInProgress}\"></i>Upload</button></div>\n" +
     "    </div>\n" +
     "  </div>\n" +
+    "\n" +
+    "  </form>\n" +
     "</div>");
 }]);

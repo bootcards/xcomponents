@@ -1,12 +1,13 @@
 
 var app = angular.module('xcomponents');
 
-app.directive('xcUpload', function() {
+app.directive('xcUpload', ['$http', 'xcDataFactory', function($http, xcDataFactory) {
 
 	return {
 
 		scope : {
-			title : '@'
+			title : '@',
+			url : '@'
 		},
 
 		replace : true,
@@ -21,6 +22,7 @@ app.directive('xcUpload', function() {
 			$scope.doCrop = false;
 			$scope.customSelect = null;
 			$scope.orientation = 0;
+			$scope.uploadInProgress = false;
 		
 			$scope.init = function() {
 				
@@ -90,8 +92,52 @@ app.directive('xcUpload', function() {
 				$scope.loadImage(file);
 			};
 
+			$scope.savePhoto = function() {
+
+				//get the file input
+				var $resizeFileUpload = $('.js-photouploader-upload');
+				var files = $resizeFileUpload[0].files;
+				if (typeof files == 'undefined' || files.length === 0 ) {
+					return;
+				}
+						
+				//show a spinner icon in the upload button
+				$scope.uploadInProgress = true;
+				
+				var _resizedFile = files[0];
+
+				//create FormData object to send all form data to Unplugged
+				var fd = new FormData();
+				                            
+				//now add the resized image to the FormData object and send it
+				var canvas = document.getElementById('photoUploadCanvas');
+			     
+			    if (canvas.toBlob) {
+
+				    canvas.toBlob(
+				        function (blob) {
+
+				        	blob.name = _resizedFile.name;
+
+				            fd.append( 'file', blob, _resizedFile.name );
+				            
+				            $http.post( $scope.url, fd, {
+								transformRequest: angular.identity,
+								headers: {'Content-Type': undefined}
+				            }).then( function(res) {
+				            	alert('Photo Saved');
+				            	$scope.uploadInProgress = false;
+				            });
+				            
+				        },
+				        'image/jpeg'
+				    );
+				}
+
+			};
+
 		}
 
 	};
 
-});
+}]);
