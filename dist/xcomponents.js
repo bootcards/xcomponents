@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-19 4:07 */
+/* xcomponents 0.1.0 2015-03-19 4:27 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -2358,7 +2358,7 @@ angular.module("xc-footer.html", []).run(["$templateCache", function($templateCa
     "			<div class=\"btn-group\">\n" +
     "				<ng-transclude></ng-transclude>\n" +
     "\n" +
-    "				<a href=\"{{o.url}}\" ng-repeat=\"o in ::footerOptions\" class=\"btn btn-default\">\n" +
+    "				<a href=\"{{o.url}}\" ng-repeat=\"o in ::footerOptions\" class=\"btn btn-default no-break-out\">\n" +
     "		            <i class=\"fa fa-2x\" ng-class=\"o.icon ? o.icon : null\"></i>\n" +
     "		            {{o.label}}\n" +
     "		        </a>\n" +
@@ -2586,7 +2586,7 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "\n" +
     "        {{o.callback}}\n" +
     "          <!--basic option-->\n" +
-    "          <a href=\"{{o.url}}\" ng-if=\"!hasSubmenu(o)\">\n" +
+    "          <a href=\"{{o.url}}\" ng-if=\"!hasSubmenu(o)\" class=\"no-break-out\">\n" +
     "            <i class=\"fa\" ng-class=\"o.icon ? o.icon : null\"></i>\n" +
     "            {{o.label}}\n" +
     "          </a>\n" +
@@ -2598,7 +2598,7 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "\n" +
     "            <ul class=\"dropdown-menu\">\n" +
     "              <li ng-repeat=\"so in ::o.menuOptions\"  ng-class=\"{'active' : isActive(so)}\">\n" +
-    "                <a href=\"{{::so.url}}\">\n" +
+    "                <a href=\"{{::so.url}}\" class=\"no-break-out\">\n" +
     "                  <i class=\"fa fa-fw\" ng-class=\"so.icon ? so.icon : null\"></i>\n" +
     "                  {{::so.label}}\n" +
     "                </a>\n" +
@@ -2614,7 +2614,7 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "        <li ng-repeat=\"o in ::menuOptions\" ng-class=\"{'active' : isActive(o), 'dropdown' : hasSubmenu(o)}\">\n" +
     "\n" +
     "          <!--basic option-->\n" +
-    "          <a href=\"{{o.url}}\" ng-if=\"!hasSubmenu(o)\">\n" +
+    "          <a href=\"{{o.url}}\" ng-if=\"!hasSubmenu(o)\" class=\"no-break-out\">\n" +
     "            <i class=\"fa\" ng-class=\"o.icon ? o.icon : null\"></i>\n" +
     "            {{o.label}}\n" +
     "          </a>\n" +
@@ -2626,7 +2626,7 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "\n" +
     "            <ul class=\"dropdown-menu\">\n" +
     "              <li ng-repeat=\"so in ::o.menuOptions\"  ng-class=\"{'active' : isActive(so)}\">\n" +
-    "                <a href=\"{{::so.url}}\">\n" +
+    "                <a href=\"{{::so.url}}\" class=\"no-break-out\">\n" +
     "                  <i class=\"fa fa-fw\" ng-class=\"so.icon ? so.icon : null\"></i>\n" +
     "                  {{::so.label}}\n" +
     "                </a>\n" +
@@ -2647,12 +2647,12 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "      <li ng-repeat=\"o in ::menuOptions\" ng-class=\"{'active' : isActive(o)}\">\n" +
     "\n" +
     "        <!--basic option-->\n" +
-    "        <a href=\"{{::o.url}}\" ng-if=\"!hasSubmenu(o)\">\n" +
+    "        <a href=\"{{::o.url}}\" ng-if=\"!hasSubmenu(o)\" class=\"no-break-out\">\n" +
     "          <i class=\"fa fa-lg fa-fw\" ng-class=\"o.icon ? o.icon : null\"></i>&nbsp;{{::o.label}}\n" +
     "        </a>\n" +
     "\n" +
     "        <!--option with submenu-->\n" +
-    "        <a href=\"#\" ng-if=\"hasSubmenu(o)\" class=\"dropdown-toggle\" data-toggle=\"collapse\" ng-click=\"o.collapsed = !o.collapsed\">\n" +
+    "        <a href=\"#\" ng-if=\"hasSubmenu(o)\" class=\"dropdown-toggle no-break-out\" data-toggle=\"collapse\" ng-click=\"o.collapsed = !o.collapsed\">\n" +
     "            <i class=\"fa fa-fw fa-lg fa-chevron-circle-right\"></i>&nbsp;{{::o.label}}\n" +
     "        </a>\n" +
     "\n" +
@@ -2660,7 +2660,7 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "\n" +
     "          <ul class=\"nav navmenu-nav\"  >\n" +
     "            <li ng-repeat=\"so in ::o.menuOptions\">\n" +
-    "              <a href=\"{{so.url}}\">\n" +
+    "              <a href=\"{{so.url}}\" class=\"no-break-out\">\n" +
     "                <i class=\"fa fa-fw fa-lg\" ng-class=\"so.icon ? so.icon : null\"></i>&nbsp;{{::so.label}}\n" +
     "              </a>\n" +
     "            </li>\n" +
@@ -2674,12 +2674,12 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "      <li ng-repeat=\"o in ::menuOptionsSecondary\" ng-class=\"{'active' : isActive(o)}\">\n" +
     "\n" +
     "        <!--basic option-->\n" +
-    "        <a href=\"{{::o.url}}\" ng-if=\"!hasSubmenu(o)\">\n" +
+    "        <a href=\"{{::o.url}}\" ng-if=\"!hasSubmenu(o)\" class=\"no-break-out\">\n" +
     "          <i class=\"fa fa-fw fa-lg\" ng-class=\"o.icon ? o.icon : null\"></i>&nbsp;{{::o.label}}\n" +
     "        </a>\n" +
     "\n" +
     "        <!--option with submenu-->\n" +
-    "        <a href=\"#\" ng-if=\"hasSubmenu(o)\" class=\"dropdown-toggle\" data-toggle=\"dropdown\" ng-click=\"o.collapsed = !o.collapsed\">\n" +
+    "        <a href=\"#\" ng-if=\"hasSubmenu(o)\" class=\"dropdown-toggle no-break-out\" data-toggle=\"dropdown\" ng-click=\"o.collapsed = !o.collapsed\">\n" +
     "          <i class=\"fa fa-fw fa-chevron-circle-right\"></i>&nbsp;{{::o.label}}\n" +
     "        </a>\n" +
     " \n" +
@@ -2687,7 +2687,7 @@ angular.module("xc-header.html", []).run(["$templateCache", function($templateCa
     "\n" +
     "          <ul class=\"nav navmenu-nav\"  >\n" +
     "              <li ng-repeat=\"so in ::o.menuOptions\">\n" +
-    "                <a href=\"{{so.url}}\">\n" +
+    "                <a href=\"{{so.url}}\" class=\"no-break-out\">\n" +
     "                  <i class=\"fa fa-fw fa-lg\" ng-class=\"so.icon ? so.icon : null\"></i>&nbsp;{{::so.label}}\n" +
     "                </a>\n" +
     "              </li>\n" +
@@ -3084,7 +3084,7 @@ angular.module("xc-reading.html", []).run(["$templateCache", function($templateC
 angular.module("xc-summary-item.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-summary-item.html",
     "<div class=\"col-xs-6 col-sm-4  col-md-6\">\n" +
-    "	<a class=\"bootcards-summary-item\" \n" +
+    "	<a class=\"bootcards-summary-item no-break-out\" \n" +
     "		href=\"{{target}}\"\n" +
     "		style=\"padding-top:20px;\">\n" +
     "		<i class=\"fa fa-3x {{icon}}\"></i>\n" +

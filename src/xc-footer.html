@@ -9,7 +9,7 @@
 			<div class="btn-group">
 				<ng-transclude></ng-transclude>
 
-				<a href="{{o.url}}" ng-repeat="o in ::footerOptions" class="btn btn-default">
+				<a href="{{o.url}}" ng-repeat="o in ::footerOptions" class="btn btn-default no-break-out">
 		            <i class="fa fa-2x" ng-class="o.icon ? o.icon : null"></i>
 		            {{o.label}}
 		        </a>

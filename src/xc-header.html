@@ -39,7 +39,7 @@
 
         {{o.callback}}
           <!--basic option-->
-          <a href="{{o.url}}" ng-if="!hasSubmenu(o)">
+          <a href="{{o.url}}" ng-if="!hasSubmenu(o)" class="no-break-out">
             <i class="fa" ng-class="o.icon ? o.icon : null"></i>
             {{o.label}}
           </a>
@@ -51,7 +51,7 @@
 
             <ul class="dropdown-menu">
               <li ng-repeat="so in ::o.menuOptions"  ng-class="{'active' : isActive(so)}">
-                <a href="{{::so.url}}">
+                <a href="{{::so.url}}" class="no-break-out">
                   <i class="fa fa-fw" ng-class="so.icon ? so.icon : null"></i>
                   {{::so.label}}
                 </a>
@@ -67,7 +67,7 @@
         <li ng-repeat="o in ::menuOptions" ng-class="{'active' : isActive(o), 'dropdown' : hasSubmenu(o)}">
 
           <!--basic option-->
-          <a href="{{o.url}}" ng-if="!hasSubmenu(o)">
+          <a href="{{o.url}}" ng-if="!hasSubmenu(o)" class="no-break-out">
             <i class="fa" ng-class="o.icon ? o.icon : null"></i>
             {{o.label}}
           </a>
@@ -79,7 +79,7 @@
 
             <ul class="dropdown-menu">
               <li ng-repeat="so in ::o.menuOptions"  ng-class="{'active' : isActive(so)}">
-                <a href="{{::so.url}}">
+                <a href="{{::so.url}}" class="no-break-out">
                   <i class="fa fa-fw" ng-class="so.icon ? so.icon : null"></i>
                   {{::so.label}}
                 </a>
@@ -100,12 +100,12 @@
       <li ng-repeat="o in ::menuOptions" ng-class="{'active' : isActive(o)}">
 
         <!--basic option-->
-        <a href="{{::o.url}}" ng-if="!hasSubmenu(o)">
+        <a href="{{::o.url}}" ng-if="!hasSubmenu(o)" class="no-break-out">
           <i class="fa fa-lg fa-fw" ng-class="o.icon ? o.icon : null"></i>&nbsp;{{::o.label}}
         </a>
 
         <!--option with submenu-->
-        <a href="#" ng-if="hasSubmenu(o)" class="dropdown-toggle" data-toggle="collapse" ng-click="o.collapsed = !o.collapsed">
+        <a href="#" ng-if="hasSubmenu(o)" class="dropdown-toggle no-break-out" data-toggle="collapse" ng-click="o.collapsed = !o.collapsed">
             <i class="fa fa-fw fa-lg fa-chevron-circle-right"></i>&nbsp;{{::o.label}}
         </a>
 
@@ -113,7 +113,7 @@
 
           <ul class="nav navmenu-nav"  >
             <li ng-repeat="so in ::o.menuOptions">
-              <a href="{{so.url}}">
+              <a href="{{so.url}}" class="no-break-out">
                 <i class="fa fa-fw fa-lg" ng-class="so.icon ? so.icon : null"></i>&nbsp;{{::so.label}}
               </a>
             </li>
@@ -127,12 +127,12 @@
       <li ng-repeat="o in ::menuOptionsSecondary" ng-class="{'active' : isActive(o)}">
 
         <!--basic option-->
-        <a href="{{::o.url}}" ng-if="!hasSubmenu(o)">
+        <a href="{{::o.url}}" ng-if="!hasSubmenu(o)" class="no-break-out">
           <i class="fa fa-fw fa-lg" ng-class="o.icon ? o.icon : null"></i>&nbsp;{{::o.label}}
         </a>
 
         <!--option with submenu-->
-        <a href="#" ng-if="hasSubmenu(o)" class="dropdown-toggle" data-toggle="dropdown" ng-click="o.collapsed = !o.collapsed">
+        <a href="#" ng-if="hasSubmenu(o)" class="dropdown-toggle no-break-out" data-toggle="dropdown" ng-click="o.collapsed = !o.collapsed">
           <i class="fa fa-fw fa-chevron-circle-right"></i>&nbsp;{{::o.label}}
         </a>
  
@@ -140,7 +140,7 @@
 
           <ul class="nav navmenu-nav"  >
               <li ng-repeat="so in ::o.menuOptions">
-                <a href="{{so.url}}">
+                <a href="{{so.url}}" class="no-break-out">
                   <i class="fa fa-fw fa-lg" ng-class="so.icon ? so.icon : null"></i>&nbsp;{{::so.label}}
                 </a>
               </li>
