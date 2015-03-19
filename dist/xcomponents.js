@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-19 2:37 */
+/* xcomponents 0.1.0 2015-03-19 4:07 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -2725,7 +2725,7 @@ angular.module("xc-layout.html", []).run(["$templateCache", function($templateCa
   $templateCache.put("xc-layout.html",
     "<div class=\"container bootcards-container\">\n" +
     "	<div class=\"row\">\n" +
-    "		<ng-transclude></ng-transclude>\n" +
+    "		<span ng-transclude></span>\n" +
     "	</div>\n" +
     "</div>");
 }]);
@@ -2790,7 +2790,7 @@ angular.module("xc-list-accordion.html", []).run(["$templateCache", function($te
     "\n" +
     "	<div class='bootcards-cards {{colRight}}' ng-show=\"$root.showCards\">\n" +
     "\n" +
-    "		<ng-transclude></ng-transclude>\n" +
+    "		<span ng-transclude></span>\n" +
     "\n" +
     "	</div>\n" +
     "\n" +
@@ -2858,7 +2858,7 @@ angular.module("xc-list-categorised.html", []).run(["$templateCache", function($
     "\n" +
     "	<div class='bootcards-cards {{colRight}}' ng-show=\"$root.showCards\">\n" +
     "\n" +
-    "		<ng-transclude></ng-transclude>\n" +
+    "		<span ng-transclude></span>\n" +
     "\n" +
     "	</div>\n" +
     "\n" +
@@ -2932,7 +2932,7 @@ angular.module("xc-list-detailed.html", []).run(["$templateCache", function($tem
     "\n" +
     "	<div class='bootcards-cards {{colRight}}' ng-show=\"$root.showCards\">\n" +
     "\n" +
-    "		<ng-transclude></ng-transclude>\n" +
+    "		<span ng-transclude></span>\n" +
     "\n" +
     "	</div>\n" +
     "\n" +
@@ -2942,7 +2942,7 @@ angular.module("xc-list-detailed.html", []).run(["$templateCache", function($tem
 
 angular.module("xc-list-flat.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-list-flat.html",
-    "<div>\n" +
+    "<span>\n" +
     "\n" +
     " 	<div class=\"bootcards-list\" ng-class=\"colClass()\" ng-show=\"!$root.hideList\">\n" +
     "\n" +
@@ -2993,11 +2993,11 @@ angular.module("xc-list-flat.html", []).run(["$templateCache", function($templat
     "\n" +
     "	<div class='bootcards-cards {{colRight}}' ng-show=\"$root.showCards\">\n" +
     "\n" +
-    "		<ng-transclude></ng-transclude>\n" +
+    "		<span ng-transclude></span>\n" +
     "\n" +
     "	</div>\n" +
     "\n" +
-    "</div>\n" +
+    "</span>\n" +
     "\n" +
     "");
 }]);
