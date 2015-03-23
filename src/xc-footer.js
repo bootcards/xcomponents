@@ -13,6 +13,7 @@ app.directive('xcFooter', function() {
 		controller : function($rootScope, $scope, $document, xcUtils, $timeout) {
 
 			$scope.footerOptions = xcUtils.getConfig('footerOptions');
+			$scope.footerTitle = xcUtils.getConfig('footerTitle');
 
 		}
 
