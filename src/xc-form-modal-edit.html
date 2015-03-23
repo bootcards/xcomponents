@@ -14,7 +14,7 @@
 				<i class="fa fa-check"></i>Save
 			</button>
 		</div>
-		<h4 class="modal-title">Edit {{modelName}}</h4>		
+		<h4 class="modal-title">Edit {{model.name}}</h4>		
 	</div>
 					
 	<div class="modal-body form-horizontal">
@@ -78,7 +78,7 @@
 	<div class="modal-footer" ng-if="allowDelete && !isNew">
 		<button type="button" class="btn btn-danger btn-block" ng-click="deleteItem()">
 			<i class="fa fa-trash-o"></i>
-			Delete {{modelName}}
+			Delete {{model.name}}
 		</button>		
 	</div>
 

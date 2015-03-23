@@ -5,6 +5,7 @@ var xcomponents = xcomponents || {
 
 	menuOptions : [],
 	footerOptions : [],
+	models : [],
 	charts : [],
 	menuAlignRight : true,
 

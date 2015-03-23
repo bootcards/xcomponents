@@ -90,6 +90,7 @@ app.directive('xcList',
 
 			title : '@',			/*title of the list*/
 			type : '@',				/*list type, options: flat (default), categorised, accordion*/
+			modelName : '@',				/*required: name of the model to use for the form instance*/
 			listWidth : '=' ,		/*width of the list (nr 1..11)*/
 			summaryField : '@',		/*name of the field used as a summary field*/
 			detailsField : '@',     
@@ -126,6 +127,10 @@ app.directive('xcList',
 
 		link : function(scope, elem, attrs) {
 
+			if (!scope.model) {
+				return;
+			}
+
 			scope.colLeft = 'col-sm-' + attrs.listWidth;
 			scope.colRight = 'col-sm-' + (12 - parseInt(attrs.listWidth, 10) );
 			
@@ -134,6 +139,28 @@ app.directive('xcList',
 		},
 
 		controller: function($rootScope, $scope, $modal, $filter, xcUtils) {
+
+			if (!$scope.modelName) {
+
+				console.error("cannot load list: no model name provided");
+				return;
+
+			} else {
+
+				//get the model config
+				var models = xcUtils.getConfig('models');
+				$scope.model = models[$scope.modelName];
+
+				if (!$scope.model) {
+					console.error("cannot load list: invalid model name provided ('" + $scope.modelName + "')");
+					return;
+				}
+			}
+
+      		$scope.fieldsRead = $scope.model.fieldsRead;
+			$scope.fieldsEdit = $scope.model.fieldsEdit;
+			$scope.imageBase = $scope.model.imageBase;
+			$scope.fieldFilters = $scope.model.fieldFilters;
 
 			$scope.hideList = false;
 			$scope.orderReversed = $scope.$eval( $scope.orderReversed);		//for booleans
@@ -154,13 +181,6 @@ app.directive('xcList',
 
 			$scope.selected = null;
 			$scope.numPages = 1;
-
-			$scope.modelName = xcUtils.getConfig('modelName');
-      		$scope.fieldsRead = xcUtils.getConfig('fieldsRead');
-			$scope.fieldsEdit = xcUtils.getConfig('fieldsEdit');
-			$scope.imageBase = xcUtils.getConfig('imageBase');
-
-			$scope.fieldFilters = xcUtils.getConfig('fieldFilters');
 
 			$rootScope.$on('refreshList', function(msg) {
 				loadData($scope);
@@ -195,11 +215,8 @@ app.directive('xcList',
 						selectedItem : function () {
 							return {};
 						},
-						fieldsEdit : function() {
-							return $scope.fieldsEdit;
-						},
-						modelName : function() {
-							return $scope.modelName;
+						model : function() {
+							return $scope.model;
 						},
 						isNew : function() {
 							return true;

@@ -2,8 +2,10 @@
 var app = angular.module('xcomponents');
 
 app.controller('UpdateItemInstanceCtrl', 
-	[ '$scope', '$modalInstance', 'selectedItem', 'fieldsEdit', 'modelName', 'isNew', 'allowDelete', 'xcUtils',
-	function ( $scope, $modalInstance, selectedItem, fieldsEdit, modelName, isNew, allowDelete, xcUtils) {
+	[ '$scope', '$modalInstance', 'selectedItem', 'model', 'isNew', 'allowDelete', 'xcUtils',
+	function ( $scope, $modalInstance, selectedItem, model, isNew, allowDelete, xcUtils) {
+
+	var fieldsEdit = model.fieldsEdit;
 
 	//check for date fields
 	angular.forEach( fieldsEdit, function(field) {
@@ -22,6 +24,7 @@ app.controller('UpdateItemInstanceCtrl',
 	//create a copy of the object we're editing (to deal with 'cancel')
 	$scope.selectedItem = angular.copy( selectedItem );
 
+	$scope.model = model;
 	$scope.fieldOptions = [];
 	$scope.editorToolbarOptions = xcUtils.getConfig('editorToolbarOptions');
 
@@ -37,11 +40,9 @@ app.controller('UpdateItemInstanceCtrl',
 			} catch (e) { }
 		}
 
-	})
+	});
 
-	//$scope.selectedItem = selectedItem;
 	$scope.fieldsEdit = fieldsEdit;
-	$scope.modelName = modelName;
 	$scope.isNew = isNew;
 	$scope.allowDelete = allowDelete;
 

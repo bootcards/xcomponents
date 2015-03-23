@@ -70,74 +70,80 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 
 	if (typeof xcomponents != 'undefined') {
 
-		console.log('set XComponents config');
+		console.log('Load XComponents config');
 
 		var config = xcomponents;
 
-		if (config.fields) {
+		if (config.models) {
 
-			config.fieldsRead = [];		//list of fields in read mode
-			config.fieldsEdit = [];		//list of fields in edit mode
-			config.fieldsFormula = [];	//list of field formulas
-			config.fieldFilters = [];
+			for(var modelName in config.models) {
 
-			//add labels if not specified (proper cased field name)
-			for (var i=0; i<config.fields.length; i++) {
+				var model = config.models[modelName];
 
-				var f = config.fields[i];
+				model.fieldsRead = [];		//list of fields in read mode
+				model.fieldsEdit = [];		//list of fields in edit mode
+				model.fieldsFormula = [];	//list of field formulas
+				model.fieldFilters = [];
+				model.fields = model.fields || [];
 
-				if (!f.type) {
-					f.type = 'text';		//default type=text
-				}
+				//add labels if not specified (proper cased field name)
+				for (var i=0; i<model.fields.length; i++) {
 
-				if ( !f.hasOwnProperty('label') ) {
-					f.label = f.field.substring(0,1).toUpperCase() + f.field.substring(1);
-				}
-				//set 'show in read mode' property
-				if ( !f.hasOwnProperty('read') ) {
-					f.read = true;
-				}
-				//set 'show in edit mode' property
-				if ( !f.hasOwnProperty('edit') ) {
-					f.edit = true;
-				}
+					var f = model.fields[i];
 
-				if (f.hasOwnProperty('filter')) {
-					config.fieldFilters[f.field] = f.filter;
-				}
+					if (!f.type) {
+						f.type = 'text';		//default type=text
+					}
 
-				if (f.type == 'select' || f.type == 'select-multiple') {
-				
-					if (f.options.hasOwnProperty('endpoint')) {
+					if ( !f.hasOwnProperty('label') ) {
+						f.label = f.field.substring(0,1).toUpperCase() + f.field.substring(1);
+					}
+					//set 'show in read mode' property
+					if ( !f.hasOwnProperty('read') ) {
+						f.read = true;
+					}
+					//set 'show in edit mode' property
+					if ( !f.hasOwnProperty('edit') ) {
+						f.edit = true;
+					}
 
-						f.options = xcUtils.resolveRemoteOptionsList(f.options);
-						
-					} else if (f.options.length>0 && typeof f.options[0] == 'string') {
+					if (f.hasOwnProperty('filter')) {
+						model.fieldFilters[f.field] = f.filter;
+					}
 
-						var o = [];
+					if (f.type == 'select' || f.type == 'select-multiple') {
+					
+						if (f.options.hasOwnProperty('endpoint')) {
 
-						angular.forEach(f.options, function(option) {
-							o.push( {label : option, value : option});
-						});
+							f.options = xcUtils.resolveRemoteOptionsList(f.options);
+							
+						} else if (f.options.length>0 && typeof f.options[0] == 'string') {
 
-						f.options = o;
+							var o = [];
+
+							angular.forEach(f.options, function(option) {
+								o.push( {label : option, value : option});
+							});
+
+							f.options = o;
+
+						}
 
 					}
 
-				}
+					if (f.read) {
+						model.fieldsRead.push(f);
+					}
 
-				if (f.read) {
-					config.fieldsRead.push(f);
-				}
+					if (f.edit) {
+						model.fieldsEdit.push(f);
+					}
+					if ( f.hasOwnProperty('formula') && f.formula != null ) {
+						model.fieldsFormula.push(f);
+					}
 
-				if (f.edit) {
-					config.fieldsEdit.push(f);
+					
 				}
-				if ( f.hasOwnProperty('formula') && f.formula != null ) {
-					config.fieldsFormula.push(f);
-				}
-
-				
 			}
 		}
 
