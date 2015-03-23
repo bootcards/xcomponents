@@ -214,14 +214,15 @@ xcomponents.footerOptions = [
     { label : 'Cars', url : '/index.html', icon : 'fa-dashboard'}
   ]; 
 
-xcomponents.modelName = 'Car'; 
-
-xcomponents.fields = [
+xcomponents.model['car'] = {
+  name : 'Car',
+  fields : [
     { label : 'Make' , field: 'make', required: true},
     { label : 'Model' , field: 'model' },
     { label : 'Color', field : 'color', type : 'select', options : ['Blue', 'Yellow', 'Green'] },
     { field : 'details', type : 'multiline'}
-  ];</code></pre>
+  ]
+};</code></pre>
 
       <h4>5: Basic page with a list and card</h4>
       <p>Create a file called <code>index.html</code> in the <code>/client</code> folder. This will be our main app page:</p>
@@ -257,6 +258,7 @@ xcomponents.fields = [
 
     &lt;xc-list 
       list-width="5" 
+      model-name="car"
       allow-add="true"
       order-by="make"
       order-reversed="false"
@@ -272,6 +274,7 @@ xcomponents.fields = [
 
       &lt;xc-form 
         url="/api/Cars/:id" 
+        model-name="car"
         default-text="Select a car from the list"
         thumbnail-field="thumbnailUrl"
         thumbnail-show-with="name"&gt;&lt;/xc-form&gt;
