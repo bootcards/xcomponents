@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-23 11:05 */
+/* xcomponents 0.1.0 2015-03-23 3:08 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -2029,7 +2029,15 @@ app.directive('xcSummaryItem', function() {
 
 		replace : true,
 		restrict : 'E',
-		templateUrl : 'xc-summary-item.html'
+		templateUrl : 'xc-summary-item.html',
+
+		controller : function($scope) {
+
+			$scope.openLink = function(url) {
+				window.location.href = url;
+			};
+
+		}
 
 	};
 
@@ -2365,20 +2373,17 @@ angular.module("xc-file.html", []).run(["$templateCache", function($templateCach
     "    <div class=\"btn-group btn-group-justified\">\n" +
     "      <div class=\"btn-group\">\n" +
     "        <a class=\"btn btn-default\" ng-href=\"{{url}}\" onclick=\"alert('This button is disabled')\">\n" +
-    "          <i class=\"fa fa-arrow-down\"></i>\n" +
-    "          Download\n" +
+    "          <i class=\"fa fa-arrow-down\"></i>Download\n" +
     "        </a>\n" +
     "      </div>\n" +
     "      <div class=\"btn-group\" ng-if=\"allowFavorite\">\n" +
     "        <a class=\"btn btn-default\" href=\"#\" onclick=\"alert('This button is disabled')\">\n" +
-    "          <i class=\"fa fa-star\"></i>\n" +
-    "          Favorite\n" +
+    "          <i class=\"fa fa-star\"></i>Favorite\n" +
     "        </a>\n" +
     "      </div>\n" +
     "      <div class=\"btn-group\" ng-show=\"allowEmail\">\n" +
     "        <a class=\"btn btn-default\" href=\"#\" onclick=\"alert('This button is disabled')\">\n" +
-    "          <i class=\"fa fa-envelope\"></i>\n" +
-    "          Email\n" +
+    "          <i class=\"fa fa-envelope\"></i>Email\n" +
     "        </a>\n" +
     "      </div>\n" +
     "    </div>\n" +
@@ -3127,8 +3132,8 @@ angular.module("xc-summary-item.html", []).run(["$templateCache", function($temp
   $templateCache.put("xc-summary-item.html",
     "<div class=\"col-xs-6 col-sm-4\">\n" +
     "\n" +
-    "	<a class=\"bootcards-summary-item no-break-out\" \n" +
-    "		href=\"{{target}}\"\n" +
+    "	<a class=\"bootcards-summary-item\" \n" +
+    "		ng-click=\"openLink(target)\"\n" +
     "		style=\"padding-top:35px;\">\n" +
     "		<i class=\"fa fa-3x {{icon}}\"></i>\n" +
     "		<h4>\n" +
