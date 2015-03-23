@@ -1,4 +1,4 @@
-/* xcomponents 0.1.0 2015-03-19 4:27 */
+/* xcomponents 0.1.0 2015-03-23 9:46 */
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -1048,6 +1048,7 @@ app.directive('xcFooter', function() {
 		controller : function($rootScope, $scope, $document, xcUtils, $timeout) {
 
 			$scope.footerOptions = xcUtils.getConfig('footerOptions');
+			$scope.footerTitle = xcUtils.getConfig('footerTitle');
 
 		}
 
@@ -2230,7 +2231,7 @@ angular.module("xc-carousel.html", []).run(["$templateCache", function($template
 
 angular.module("xc-chart.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-chart.html",
-    "<div>\n" +
+    "<span>\n" +
     "\n" +
     "	<div class=\"panel panel-default bootcards-chart\">\n" +
     "		\n" +
@@ -2285,7 +2286,7 @@ angular.module("xc-chart.html", []).run(["$templateCache", function($templateCac
     "		</div>	 -->												\n" +
     "	</div>\n" +
     "\n" +
-    "</div>\n" +
+    "</span>\n" +
     "");
 }]);
 
@@ -2349,23 +2350,24 @@ angular.module("xc-file.html", []).run(["$templateCache", function($templateCach
 angular.module("xc-footer.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-footer.html",
     "<div class=\"navbar navbar-default navbar-fixed-bottom\">\n" +
-    "		<div class=\"container\">\n" +
+    "	<div class=\"container\">\n" +
     "			\n" +
-    "			<div class=\"bootcards-desktop-footer clearfix\">\n" +
-    "				<p class=\"pull-left\">XComponents | version 0.1</p>\n" +
-    "			</div>\n" +
-    "\n" +
-    "			<div class=\"btn-group\">\n" +
-    "				<ng-transclude></ng-transclude>\n" +
-    "\n" +
-    "				<a href=\"{{o.url}}\" ng-repeat=\"o in ::footerOptions\" class=\"btn btn-default no-break-out\">\n" +
-    "		            <i class=\"fa fa-2x\" ng-class=\"o.icon ? o.icon : null\"></i>\n" +
-    "		            {{o.label}}\n" +
-    "		        </a>\n" +
-    "\n" +
-    "			</div>\n" +
+    "		<div class=\"bootcards-desktop-footer clearfix\" ng-if=\"footerTitle != null\">\n" +
+    "			<p class=\"pull-left\">{{footerTitle}}</p>\n" +
     "		</div>\n" +
-    "	</div>");
+    "\n" +
+    "		<div class=\"btn-group\">\n" +
+    "			<ng-transclude></ng-transclude>\n" +
+    "\n" +
+    "			<a href=\"{{o.url}}\" ng-repeat=\"o in ::footerOptions\" class=\"btn btn-default no-break-out\">\n" +
+    "	            <i class=\"fa fa-2x\" ng-class=\"o.icon ? o.icon : null\"></i>\n" +
+    "	            {{o.label}}\n" +
+    "	        </a>\n" +
+    "\n" +
+    "		</div>\n" +
+    "\n" +
+    "	</div>\n" +
+    "</div>");
 }]);
 
 angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($templateCache) {
@@ -2460,7 +2462,7 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
 
 angular.module("xc-form.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-form.html",
-    "<div>\n" +
+    "<span>\n" +
     "\n" +
     "	<!-- text if no item is selected -->\n" +
     "	<div ng-class=\"{'panel panel-default' : true , 'hidden' : selectedItem || !defaultText }\">\n" +
@@ -2541,7 +2543,7 @@ angular.module("xc-form.html", []).run(["$templateCache", function($templateCach
     "\n" +
     "	</div>\n" +
     "\n" +
-    "</div>");
+    "</span>");
 }]);
 
 angular.module("xc-header.html", []).run(["$templateCache", function($templateCache) {
@@ -2732,7 +2734,7 @@ angular.module("xc-layout.html", []).run(["$templateCache", function($templateCa
 
 angular.module("xc-list-accordion.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-list-accordion.html",
-    "<div>\n" +
+    "<span>\n" +
     "\n" +
     " 	<div class=\"bootcards-list\" ng-class=\"colClass()\" ng-show=\"!$root.hideList\">\n" +
     "\n" +
@@ -2794,13 +2796,13 @@ angular.module("xc-list-accordion.html", []).run(["$templateCache", function($te
     "\n" +
     "	</div>\n" +
     "\n" +
-    "</div>\n" +
+    "</span>\n" +
     "");
 }]);
 
 angular.module("xc-list-categorised.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-list-categorised.html",
-    "<div>\n" +
+    "<span>\n" +
     "\n" +
     " 	<div class=\"bootcards-list\" ng-class=\"colClass()\" ng-show=\"!$root.hideList\">\n" +
     "\n" +
@@ -2862,13 +2864,13 @@ angular.module("xc-list-categorised.html", []).run(["$templateCache", function($
     "\n" +
     "	</div>\n" +
     "\n" +
-    "</div>\n" +
+    "</span>\n" +
     "");
 }]);
 
 angular.module("xc-list-detailed.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-list-detailed.html",
-    "<div>\n" +
+    "<span>\n" +
     "\n" +
     " 	<div class=\"bootcards-list\" ng-class=\"colClass()\" ng-show=\"!$root.hideList\">\n" +
     "\n" +
@@ -2936,7 +2938,7 @@ angular.module("xc-list-detailed.html", []).run(["$templateCache", function($tem
     "\n" +
     "	</div>\n" +
     "\n" +
-    "</div>\n" +
+    "</span>\n" +
     "");
 }]);
 
@@ -3083,16 +3085,18 @@ angular.module("xc-reading.html", []).run(["$templateCache", function($templateC
 
 angular.module("xc-summary-item.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("xc-summary-item.html",
-    "<div class=\"col-xs-6 col-sm-4  col-md-6\">\n" +
+    "<div class=\"col-xs-6 col-sm-4\">\n" +
+    "\n" +
     "	<a class=\"bootcards-summary-item no-break-out\" \n" +
     "		href=\"{{target}}\"\n" +
-    "		style=\"padding-top:20px;\">\n" +
+    "		style=\"padding-top:35px;\">\n" +
     "		<i class=\"fa fa-3x {{icon}}\"></i>\n" +
     "		<h4>\n" +
     "			{{title}}\n" +
     "			<span class=\"label label-info\">{{count}}</span>\n" +
     "		</h4>\n" +
     "	</a>\n" +
+    "\n" +
     "</div>\n" +
     "");
 }]);
