@@ -79,7 +79,7 @@ module.exports = function(grunt) {
         dest: 'dist/includes/includes-pouch.html',     
         replacements: [{
           from: '<!-- include:pouch -->',                  
-          to: grunt.config('pouch')
+          to: '' + grunt.config('pouch')
         }]
       },
       lowla: {
@@ -87,7 +87,7 @@ module.exports = function(grunt) {
         dest: 'dist/includes/includes-lowla.html',    
         replacements: [{
           from: '<!-- include:lowla -->',                   
-          to: grunt.config('lowla')
+          to: '' + grunt.config('lowla')
         }]
       }
     },
