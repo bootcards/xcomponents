@@ -1,7 +1,11 @@
+/*
+ * XComponents base card 
+ * http://xcomponents.org/site/docs.html#doc-base
+ */
 
 var app = angular.module('xcomponents');
 
-app.directive('xcBase', function() {
+app.directive('xcBase', [ function() {
 
 	return {
 
@@ -17,4 +21,4 @@ app.directive('xcBase', function() {
 
 	};
 
-});
+}]);

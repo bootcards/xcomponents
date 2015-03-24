@@ -20,16 +20,16 @@
     
   </div>
 
-  <div class="panel-body">
-{{::description}}
+  <div class="panel-body" ng-if="description.length>0">
+    {{::description}}
   </div>
 
   <img ng-src="{{previewUrl}}" class="img-responsive">
 
-  <div class="panel-footer">
+  <div class="panel-footer" ng-if="allowDownload || allowFavorite || allowEmail">
 
     <div class="btn-group btn-group-justified">
-      <div class="btn-group">
+      <div class="btn-group" ng-if="allowDownload">
         <a class="btn btn-default" ng-href="{{url}}" onclick="alert('This button is disabled')">
           <i class="fa fa-arrow-down"></i>Download
         </a>
