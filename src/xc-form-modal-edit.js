@@ -2,8 +2,8 @@
 var app = angular.module('xcomponents');
 
 app.controller('UpdateItemInstanceCtrl', 
-	[ '$scope', '$modalInstance', 'selectedItem', 'model', 'isNew', 'allowDelete', 'xcUtils',
-	function ( $scope, $modalInstance, selectedItem, model, isNew, allowDelete, xcUtils) {
+	[ '$scope', '$controller', '$modalInstance', 'selectedItem', 'model', 'isNew', 'allowDelete', 'xcUtils',
+	function ( $scope, $controller, $modalInstance, selectedItem, model, isNew, allowDelete, xcUtils) {
 
 	var fieldsEdit = model.fieldsEdit;
 
