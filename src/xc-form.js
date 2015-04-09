@@ -52,7 +52,7 @@ app.directive('xcForm',
 				$modal : $modal
 			} );
 
-      		$scope.fieldsRead = $scope.model.fieldsRead;
+			$scope.fieldsRead = $scope.model.fieldsRead;
 			$scope.fieldsEdit = $scope.model.fieldsEdit;
 			$scope.imageBase = $scope.model.imageBase;
 
