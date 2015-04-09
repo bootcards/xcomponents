@@ -46,8 +46,7 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 	$rootScope.iOS = $scope.iOS;
 	$rootScope.Android = $scope.Android;
 
-	var baseFolder = '/bower_components';
-	var css = baseFolder + '/bootcards/dist/css/';
+	var css = xcomponents.libsPath + '/bootcards/dist/css/';
 
 	var body = angular.element( $document[0].body);
 
@@ -189,7 +188,7 @@ app.filter('fltr', function($interpolate, $filter, xcUtils) {
 });
 
 
-/* xcomponents 0.1.0 2015-03-24 10:19 */
+/* xcomponents 0.1.0 2015-04-09 2:10 */
 var app = angular.module("xcomponents");
 
 app.controller( "BaseController", [
@@ -383,10 +382,10 @@ app.factory('RESTFactory', ['$http', function($http) {
 
 			url = url.replace(":id", "");
 
-			console.log('querying REST service at ' + url);
+			//console.log('querying REST service at ' + url);
 
 			return $http.get(url).then( function(res) {
-				console.log('returning '  + res.data.length + ' items');
+				//console.log('returning '  + res.data.length + ' items');
 				return res.data;
 			});
 
@@ -1360,7 +1359,7 @@ app.directive('xcForm',
 				$modal : $modal
 			} );
 
-      		$scope.fieldsRead = $scope.model.fieldsRead;
+			$scope.fieldsRead = $scope.model.fieldsRead;
 			$scope.fieldsEdit = $scope.model.fieldsEdit;
 			$scope.imageBase = $scope.model.imageBase;
 
@@ -2469,7 +2468,7 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "				<i class=\"fa fa-check\"></i>Save\n" +
     "			</button>\n" +
     "		</div>\n" +
-    "		<h4 class=\"modal-title\">Edit {{model.name}}</h4>		\n" +
+    "		<h4 class=\"modal-title\">{{(isNew ? 'Add ' : 'Edit ') + model.name}}</h4>		\n" +
     "	</div>\n" +
     "					\n" +
     "	<div class=\"modal-body form-horizontal\">\n" +
