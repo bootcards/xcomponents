@@ -51,13 +51,13 @@ app.controller('xcController', function($rootScope, $scope, $timeout, $document,
 	var body = angular.element( $document[0].body);
 
 	if ($scope.iOS) {
-		css += 'bootcards-ios-lite.min.css';
+		css += 'bootcards-ios.min.css';
 		body.addClass('bootcards-ios');
 	} else if ($scope.Android) {
-		css += 'bootcards-android-lite.min.css';
+		css += 'bootcards-android.min.css';
 		body.addClass('bootcards-android');
 	} else {
-		css += 'bootcards-desktop-lite.min.css';
+		css += 'bootcards-desktop.min.css';
 		body.addClass('bootcards-desktop');
 	}
 	
