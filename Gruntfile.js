@@ -23,13 +23,13 @@ module.exports = function(grunt) {
         options: { banner: '<%= banner %>' },
         src: [
           'src/*.js',
-          '!src/xc-main.js'
+          '!src/main.js'
         ],
         dest: 'dist/xcomponents-tmp.js'
       }, 
       js2 : {
         src: [
-          'src/xc-main.js',
+          'src/main.js',
           'dist/xcomponents-tmp.js',
           'dist/templates.js'
         ],

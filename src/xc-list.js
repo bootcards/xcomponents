@@ -1,8 +1,8 @@
 var app = angular.module("xcomponents");
 
 app.directive('xcList', 
-	['$rootScope', '$filter', 'xcUtils', 'xcDataFactory', 
-	function($rootScope, $filter, xcUtils, xcDataFactory) {
+	['$rootScope', '$controller', '$filter', 'xcUtils', 'xcDataFactory', 
+	function($rootScope, $controller, $filter, xcUtils, xcDataFactory) {
 
 	var loadData = function(scope) {
 
@@ -11,8 +11,6 @@ app.directive('xcList',
 			scope.filterValue == null || scope.filterValue.length==0) ) {
 			return;
 		}
-
-		//console.info("LOAD FROM " + scope.url, scope.filterBy, scope.filterValue);
 
 		if ( scope.srcDataEntries) {
 
@@ -27,8 +25,6 @@ app.directive('xcList',
 			.all(scope.url).then( function(res) {
 				
 				var numRes = res.length;
-
-				//console.log('found ' + numRes + ' at ' + scope.url);
 
 				if (scope.filterBy && scope.filterValue) {
 					//filter the result set
@@ -113,7 +109,8 @@ app.directive('xcList',
 			imagePlaceholderIcon : '@',		/*icon to be used if no thumbnail could be found, see http://fortawesome.github.io/Font-Awesome/icons/ */
 			datastoreType : '@',
 			infiniteScroll : '@',
-			embedded : '@'
+			embedded : '@',
+			directEdit : '@'
 		},
 
 		restrict : 'E',
@@ -157,6 +154,12 @@ app.directive('xcList',
 				}
 			}
 
+			// instantiate base controller
+			$controller('BaseController', { 
+				$scope: $scope, 
+				$modal : $modal
+			} );
+
       		$scope.fieldsRead = $scope.model.fieldsRead;
 			$scope.fieldsEdit = $scope.model.fieldsEdit;
 			$scope.imageBase = $scope.model.imageBase;
@@ -168,6 +171,7 @@ app.directive('xcList',
 
 			//set defaults
 			$scope.embedded = (typeof $scope.embedded == 'undefined' ? false : $scope.embedded);
+			$scope.directEdit = (typeof $scope.directEdit == 'undefined' ? false : $scope.directEdit);
 			$scope.allowSearch = (typeof $scope.allowSearch == 'undefined' ? true : $scope.allowSearch);
 			$scope.autoloadFirst = (typeof $scope.autoloadFirst == 'undefined' ? false : $scope.autoloadFirst);
 			$scope.infiniteScroll = (typeof $scope.infiniteScroll == 'undefined' ? false : $scope.infiniteScroll);
@@ -203,39 +207,6 @@ app.directive('xcList',
 
 			$scope.colClass = function() {
 				return ($scope.embedded ? '' : $scope.colLeft);
-			};
-
-			$scope.addNewItem = function() {
-
-				var modalInstance = $scope.modalInstance = $modal.open({
-					templateUrl: 'xc-form-modal-edit.html',
-					controller: 'UpdateItemInstanceCtrl',
-					backdrop : true,
-					resolve: {
-						selectedItem : function () {
-							return {};
-						},
-						model : function() {
-							return $scope.model;
-						},
-						isNew : function() {
-							return true;
-						},
-						allowDelete : function() {
-							return false;
-						}
-					}
-				});
-
-				modalInstance.result.then(function (data) {
-					if (data.reason =='save') {
-						$scope.saveNewItem(data.item);
-					}
-			    }, function () {
-			      //console.log('modal closed');
-			    });
-
-
 			};
 
 			//bind events for infinite scroll
@@ -279,6 +250,14 @@ app.directive('xcList',
 				});
 			};
 
+			$scope.itemClick = function(item) {
+				if ($scope.directEdit) {
+					$scope.editDetails(item);
+				} else {
+					$scope.select(item);
+				}
+			};
+
 			$scope.select = function(item) {
 		
 				$scope.selected = item;
@@ -288,7 +267,6 @@ app.directive('xcList',
 				$scope.$broadcast('itemSelected', item);
 				
 			};
-
 			
 			$rootScope.$on('selectItemEvent', function(ev, item) {
 
@@ -325,43 +303,6 @@ app.directive('xcList',
 			    }
 
 		    };
-
-		    $scope.saveNewItem = function(targetItem) {
-
-		    	xcUtils.calculateFormFields(targetItem);
-
-		    	$scope.select(targetItem);
-				
-				xcDataFactory.getStore($scope.datastoreType)
-				.saveNew( $scope.url, targetItem )
-				.then( function(res) {
-
-					if ($scope.type == 'categorised' || $scope.type=='accordion'){ 
-
-						//do a full refresh of the list
-						$rootScope.$emit('refreshList', '');
-
-					} else {
-
-						//add the item to the list and sort it
-						var sortFunction = xcUtils.getSortByFunction( $scope.orderBy, $scope.orderReversed );
-
-						$scope.items.push(res);
-
-				        //resort
-				        var ress = $scope.items;
-				        ress.sort( sortFunction );
-
-				        $scope.items = ress;
-
-					}				
-
-				})
-				.catch( function(err) {
-					alert("The item could not be saved/ updated: " + err.statusText);
-				});
-
-			};
 
 		}
 

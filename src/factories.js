@@ -45,10 +45,10 @@ app.factory('RESTFactory', ['$http', function($http) {
 
 			url = url.replace(":id", "");
 
-			console.log('querying REST service at ' + url);
+			//console.log('querying REST service at ' + url);
 
 			return $http.get(url).then( function(res) {
-				console.log('returning '  + res.data.length + ' items');
+				//console.log('returning '  + res.data.length + ' items');
 				return res.data;
 			});
 

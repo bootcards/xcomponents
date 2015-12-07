@@ -246,11 +246,9 @@ $(document).ready( function() {
 
             </p>
 
-            <div class="highlight"><pre><code class="javascript">var xcomponents = { };
+            <div class="highlight"><pre><code class="javascript">xcomponents.menuAlignRight = false;
 
-xcomponents.menuAlignRight : false,
-
-xcomponents.menuOptions : [
+xcomponents.menuOptions = [
     { label : 'Languages', isSecondary : true, icon : 'fa-globe' ,
       menuOptions : [
         { label : 'Dutch', url : 'contacts-accordion.html'},
@@ -290,9 +288,7 @@ xcomponents.menuOptions : [
 
             </p>
 
-<pre><code>var xcomponents = { };
-
-xcomponents.footerOptions : [
+<pre><code>xcomponents.footerOptions = [
   { label : 'Dashboard', url : '/index.html', icon : 'fa-dashboard'},
   { label : 'Contacts', url : 'contacts-flat.html', icon : 'fa-users' }
 ];</code></pre>
@@ -339,6 +335,7 @@ xcomponents.footerOptions : [
             </div>
 
   <pre><code>&lt;xc-list 
+    model-name="contact"
     title="People"
     list-width="5" 
     allow-add="true"
@@ -354,6 +351,7 @@ xcomponents.footerOptions : [
     infinite-scroll="true"&gt;
 
     &lt;xc-form 
+      model-name="contact"
       url="/api/Contacts/:id" 
       default-text="Select a contact from the list"
       thumbnail-field="thumbnailUrl"
@@ -367,18 +365,23 @@ xcomponents.footerOptions : [
   </tr></thead>
   <tbody>
     <tr><td>type</td><td>List type, can be 'flat', 'detailed', 'accordion' or 'categorised'</td><td>flat</td></tr>
+    <tr><td>model-name</td><td>Name of the model to use for this list. The model name specified here needs to be configured in the <code>xcomponents</code> JavaScript object.</td><td>contact</td></tr>
     <tr><td>title</td><td>(optional) List title</td><td>People</td></tr>
-    <tr><td>infinite-scroll</td><td>Activate infinite scroll. The list will show a 'load more' link if disabled.</td><td>true/ false</td></tr>
+    <tr><td>infinite-scroll</td><td>Activate infinite scroll. The list will show a 'load more' link if disabled.</td><td>true/ false (default)</td></tr>
     <tr><td>list-width</td><td>Relative list of the width. Can be a number from 1 to 12 (like the Bootstrap grid system)</td><td>5</td></tr>
     <tr><td>allow-add</td><td>Controls if an add button will be displayed</td><td>true / false</td></tr>
     <tr><td>order-by</td><td>Controls the sort order of the entries in the list. Should be the name of a property in the list</td><td>lastName</td></tr>
-    <tr><td>order-reversed</td><td>Inverts the sort order</td><td>true / false</td></tr>
+    <tr><td>order-reversed</td><td>Inverts the sort order</td><td>true / false (default)</td></tr>
     <tr><td>url</td><td>URL to the REST API endpoint of the list</td><td>/api/Contacts/:id</td></tr>
     <tr><td>summary-field</td><td>Object property shown in the list (top line).</td><td>name</td></tr>
     <tr><td>details-field</td><td>Object property shown in the list (bottom line).</td><td>company</td></tr>
     <tr><td>image-field</td><td>Object property containing a link to an image.</td><td>thumbnailUrl</td></tr>
     <tr><td>image-placeholder-icon</td><td>Name of a (Font Awesome) icon to show as an image placeholder (if no image is available)</td><td>user</td></tr>
-    <tr><td>autoload-first</td><td>Auto loads the first entry in the list in the form object</td><td>true / false</td></tr>
+    <tr><td>filter-by</td><td>Name of the property in this list to filter the results</td><td>name (for embedded lists only)</td></tr>
+    <tr><td>filter-src</td><td>Name of the property in the parent list to filter the current list (for embedded lists only)</td><td>name</td></tr>
+    <tr><td>autoload-first</td><td>Auto loads the first entry in the list in the form object</td><td>true / false (default)</td></tr>
+    <tr><td>embedded</td><td>Use for lists embedded in a column, removes gutters</td><td>true / false (default)</td></tr>
+    <tr><td>direct-edit</td><td>When set to true, a click on a list item will open the 'edit' modal</td><td>true / false (default)</td></tr>
   </tbody>
   </table>
 
@@ -438,6 +441,7 @@ xcomponents.footerOptions : [
             </div>
 
   <pre><code>&lt;xc-list 
+    model-name="contact"
     title="People"
     list-width="5" 
     allow-add="true"
@@ -503,6 +507,7 @@ xcomponents.footerOptions : [
             </div>
 
   <div class="highlight"><pre><code class="html">&lt;xc-list 
+    model-name="contact"
     title="People"
     list-width="5" 
     allow-add="true"
@@ -579,6 +584,7 @@ xcomponents.footerOptions : [
             </div>
 
    <div class="highlight"><pre><code class="html">&lt;xc-list 
+     model-name="contact"
     title="People"
     list-width="5" 
     allow-add="true"
@@ -638,7 +644,7 @@ xcomponents.footerOptions : [
 								</div>
 							</div>
 						</div>
-<div class="highlight"><pre><code class="html">&lt;xc-base ng-if="$parent.selected.id =='base'" footer-text="Built with Bootcards - Base Card"
+<div class="highlight"><pre><code class="html">&lt;xc-base footer-text="Built with Bootcards - Base Card"
   title="Base Card"&gt;
   
   &lt;div class="list-group-item"&gt;
@@ -719,6 +725,7 @@ xcomponents.footerOptions : [
 						</div>
 <div class="highlight"><pre><code class="html">&lt;xc-form
   url="/api/Contacts/:id"
+  model-name="contact"
   item-id="30233C541B56C65380257CDD0024D420" 
   thumbnail-field="thumbnailUrl"
   thumbnail-show-with="name"&gt;&lt;/xc-form&gt;</code></pre></div>
@@ -729,52 +736,52 @@ xcomponents.footerOptions : [
   </tr></thead>
   <tbody>
     <tr><td>url</td><td>REST endpoint to retrieve data from</td></tr>
-    <tr><td>item-id</td><td>Variable in the REST endpoint</td></tr>
-    <tr><td>thumbnail-field</td><td>Name of the thumbnail property</td></tr>
-    <tr><td>thumbnail-show-with</td><td>Name of the property to show the thumbnail next to.</td></tr>
+    <tr><td>model-name</td><td>Name of the model to use for this list. The model name specified here needs to be configured in the <code>xcomponents</code> JavaScript object.</td><td>contact</td></tr>
+    <tr><td>item-id</td><td>(optional) Variable in the REST endpoint</td></tr>
+    <tr><td>thumbnail-field</td><td>(optional) Name of the thumbnail property</td></tr>
+    <tr><td>thumbnail-show-with</td><td>(optional) Name of the property to show the thumbnail next to.</td></tr>
     
   </tbody>
   </table>
 
-  <p>Besides the configuration with HTML attributes, to display form data you also need to add a section to the application's <code>config.js</code> file. There you can control which object properties to show (in read and/or edit mode), which properties are required, etc. Sample contents:</p>
+  <p>Besides the configuration with HTML attributes, to display form data you also need to add a section to the application's <code>config.js</code> file for every model in use in your application. In that file you can control which object properties to show (in read and/or edit mode), which properties are required, etc. Sample contents:</p>
 
-  <div class="highlight"><pre><code class="javascript">var xcomponents = { };
-
-xcomponents.modelName = 'Contact';
-
-xcomponents.fields = [
-  { label : 'First name' , field: 'firstName', required: true, read: false},
-  { label : 'Last name' , field: 'lastName', required: true, read: false},
-  { field : 'name', edit: false, formula : ['firstName', 'lastName'] },
-  { field : 'title' }, 
-  { field : 'city' },
-  { field : 'company' },
-  { field : 'country', type : 'select', options : ['UK', 'USA (West Coast)', 'USA (East Coast)', 'The Netherlands']},
-  { label : 'Mobile enabled', field : 'mobileEnabled', type : 'toggle', labelTrue : 'On', labelFalse : 'Off'},
-  { field : 'devices', type : 'select-multiple', options : ['iPad 4', 'iPad Air', 'iPhone 6', 'iPhone 6 Plus', 'iPod Touch']},
-  { label : 'Email' , field:'email', type:'email', required: true},
-  { label : 'Phone', field:'phone', type: 'phone'},
-  { field : 'comments', type : 'multiline'}
-];
-
-xcomponents.imageBase = 'http://your.server/path/to/images/';</code></pre></div>
+  <div class="highlight"><pre><code class="javascript">xcomponents.models['contact'] = {
+  name : 'Contact',
+  fields : [
+    { label : 'First name' , field: 'firstName', required: true, read: false},
+    { label : 'Last name' , field: 'lastName', required: true, read: false},
+    { field : 'name', edit: false, formula : ['firstName', 'lastName'] },
+    { field : 'title' }, 
+    { field : 'city' },
+    { field : 'company' },
+    { field : 'country', type : 'select', options : ['UK', 'USA (West Coast)', 'USA (East Coast)', 'The Netherlands']},
+    { label : 'Mobile enabled', field : 'mobileEnabled', type : 'toggle', labelTrue : 'On', labelFalse : 'Off'},
+    { field : 'devices', type : 'select-multiple', options : ['iPad 4', 'iPad Air', 'iPhone 6', 'iPhone 6 Plus', 'iPod Touch']},
+    { label : 'Email' , field:'email', type:'email', required: true},
+    { label : 'Phone', field:'phone', type: 'phone'},
+    { field : 'comments', type : 'multiline'}
+  ],
+  imageBase : 'http://your.server/path/to/images/'
+};</code></pre></div>
 
 <table class="table table-condensed">
   <thead><tr>
     <th>Field</th><th>Value</th>
   </tr></thead>
   <tbody>
-    <tr><td>modelName</td><td>Name of the model that's being used</td></tr>
-    <tr><td>fields</td><td>Array of fields to show in read and/or edit mode. At a minimum you should defined the field name to use: <code>{ field : 'title'}</code>. Other attributes that can be used are:<br />
+    <tr><td>name</td><td>Name of the model that's being used</td></tr>
+    <tr><td>fields</td><td>Array of fields to show in read and/or edit mode. At a minimum you should defined the field name to use: <code>{ field : 'title'}</code>. All attributes that can be used:<br />
     <br />
-    <code>label</code><br />
+    <code>field</code> (name of the field, required)
+    <code>label</code> (label to use for the field, set to <code>null</code> to hide)<br />
     <code>required</code> (true/ false)<br />
     <code>read</code>: show in read mode: true (default) or false<br />
     <code>edit</code>: show in edit mode: true (default) or false<br />
     <code>formula</code>: formula to compute object properties, only concatenation is currently supported<br />
-    <code>type</code>: text (default), select, select-multiple, toggle, email, phone, multiline<br />
-    <code>options</code>: array of options for select fields<br /></td></tr>
-    <tr><td>image-base</td><td>Base url for images</td></tr>
+    <code>type</code>: text (default), html (uses the textAngular HTML Editor), select, select-multiple, toggle, email, phone, multiline<br />
+    <code>options</code>: array of options for <code>select</code> and <code>select-multiple</code> fields. Supports remote options (loaded from a REST API) too, syntax: <code>options : { endpoint:'/api/Devices', label : 'name', value : 'id'}</code><br /></td></tr>
+    <tr><td>imageBase</td><td>Base url for images</td></tr>
     
   </tbody>
   </table>
