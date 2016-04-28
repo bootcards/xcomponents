@@ -1,7 +1,7 @@
 
 var app = angular.module('xcomponents');
 
-app.directive('xcChart', function() {
+app.directive('xcChart', [function() {
 
 	return {
 
@@ -207,4 +207,4 @@ app.directive('xcChart', function() {
 
 	};
 
-});
+}]);

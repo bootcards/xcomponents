@@ -1,7 +1,7 @@
 
 var app = angular.module('xcomponents');
 
-app.directive('xcFooter', function() {
+app.directive('xcFooter', [function() {
 
 	return {
 
@@ -19,4 +19,4 @@ app.directive('xcFooter', function() {
 
 	};
 
-});
+}]);

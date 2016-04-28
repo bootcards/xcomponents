@@ -1,4 +1,340 @@
-/* xcomponents 0.1.0 2015-03-23 11:05 */
+/*
+ * Main XComponents module
+ *
+ * Note: we need to add all dependencies for this module here, so we can reference
+ * the module using just angular.module('<modname>');
+ */
+
+var app = angular.module('xcomponents', [
+	'templates-main',
+	'xc.factories',
+	'ngResource',
+	'ngRoute',
+	'ngCookies',
+	'ngAnimate',
+	'ngSanitize',
+	'textAngular',
+	'ui.bootstrap'
+]);
+
+//bootstrapping code
+var hasNativeHTMLImportsSupport = ('import' in document.createElement('link'));
+
+if (hasNativeHTMLImportsSupport) {
+	
+	angular.element(document).ready(function() {
+		if (typeof xcomponents != 'undefined') { xcomponents.executeCallbacks(); }
+		angular.bootstrap(document, ['xcomponents']);
+	});
+
+} else {
+	window.addEventListener('HTMLImportsLoaded', function(e){ 
+		if (typeof xcomponents != 'undefined') { xcomponents.executeCallbacks(); }
+		angular.bootstrap(document, ['xcomponents']);
+	});
+}
+
+app.controller('xcController', function($rootScope, $scope, $timeout, $document, xcUtils) {
+	
+	$scope.menuOptions = [];
+
+	//load the OS specific CSS
+	var userAgent = navigator.userAgent;
+	$scope.iOS = (/(iPhone|iPad|iPod)/gi).test(userAgent);
+	$scope.Android = (/(Android)/gi).test(userAgent);
+
+	$rootScope.iOS = $scope.iOS;
+	$rootScope.Android = $scope.Android;
+
+	var css = xcomponents.libsPath + '/bootcards/dist/css/';
+
+	var body = angular.element( $document[0].body);
+
+	if ($scope.iOS) {
+		css += 'bootcards-ios.min.css';
+		body.addClass('bootcards-ios');
+	} else if ($scope.Android) {
+		css += 'bootcards-android.min.css';
+		body.addClass('bootcards-android');
+	} else {
+		css += 'bootcards-desktop.min.css';
+		body.addClass('bootcards-desktop');
+	}
+	
+	var head = angular.element(document.getElementsByTagName('head')[0]);
+	head.append("<link rel='stylesheet' href='" + css + "' />");
+
+	//remove hidden class from body to show content
+	$('body').removeClass('hidden');
+
+	if (typeof xcomponents != 'undefined') {
+
+		console.log('Load XComponents config');
+
+		var config = xcomponents;
+
+		if (config.models) {
+
+			for(var modelName in config.models) {
+
+				var model = config.models[modelName];
+
+				model.fieldsRead = [];		//list of fields in read mode
+				model.fieldsEdit = [];		//list of fields in edit mode
+				model.fieldsFormula = [];	//list of field formulas
+				model.fieldFilters = [];
+				model.fields = model.fields || [];
+
+				//add labels if not specified (proper cased field name)
+				for (var i=0; i<model.fields.length; i++) {
+
+					var f = model.fields[i];
+
+					if (!f.type) {
+						f.type = 'text';		//default type=text
+					}
+
+					if ( !f.hasOwnProperty('label') ) {
+						f.label = f.field.substring(0,1).toUpperCase() + f.field.substring(1);
+					}
+					//set 'show in read mode' property
+					if ( !f.hasOwnProperty('read') ) {
+						f.read = true;
+					}
+					//set 'show in edit mode' property
+					if ( !f.hasOwnProperty('edit') ) {
+						f.edit = true;
+					}
+
+					if (f.hasOwnProperty('filter')) {
+						model.fieldFilters[f.field] = f.filter;
+					}
+
+					if (f.type == 'select' || f.type == 'select-multiple') {
+					
+						if (f.options.hasOwnProperty('endpoint')) {
+
+							f.options = xcUtils.resolveRemoteOptionsList(f.options);
+							
+						} else if (f.options.length>0 && typeof f.options[0] == 'string') {
+
+							var o = [];
+
+							angular.forEach(f.options, function(option) {
+								o.push( {label : option, value : option});
+							});
+
+							f.options = o;
+
+						}
+
+					}
+
+					if (f.read) {
+						model.fieldsRead.push(f);
+					}
+
+					if (f.edit) {
+						model.fieldsEdit.push(f);
+					}
+					if ( f.hasOwnProperty('formula') && f.formula != null ) {
+						model.fieldsFormula.push(f);
+					}
+
+					
+				}
+			}
+		}
+
+		$rootScope.config = xcomponents;
+
+	}
+
+	//initialize bootcards
+	$timeout( function() {
+		bootcards.init( {
+	        offCanvasHideOnMainClick : true,
+	        offCanvasBackdrop : false,
+	        enableTabletPortraitMode : true,
+	        disableRubberBanding : true,
+	        disableBreakoutSelector : 'a.no-break-out'
+	      });
+	}, 500);
+
+});
+
+app.directive('disableNgAnimate', ['$animate', function($animate) {
+  return {
+    restrict: 'A',
+    link: function(scope, element) {
+      $animate.enabled(false, element);
+    }
+  };
+}]);
+
+app.filter('fltr', function($interpolate, $filter, xcUtils) {
+	return function(item, filterName, fieldType) {
+
+		if (arguments.length >= 3 && fieldType != 'text') {
+			//filter by field type
+			return $filter(fieldType)(item);
+		} else if (!filterName) {
+			return item;	
+		} else {
+			var _res = $interpolate('{{value | ' + filterName + '}}');
+			return _res( {value : item } );
+		}
+	};
+});
+
+
+/* xcomponents 0.1.0 2015-04-09 2:49 */
+var app = angular.module("xcomponents");
+
+app.controller( "BaseController", [
+	'$rootScope', '$scope', '$modal', 'xcUtils', 'xcDataFactory',
+	function($rootScope, $scope, $modal, xcUtils, xcDataFactory) {
+
+	$scope.addNewItem = function() {
+
+		var modalInstance = $scope.modalInstance = $modal.open({
+			templateUrl: 'xc-form-modal-edit.html',
+			controller: 'UpdateItemInstanceCtrl',
+			backdrop : true,
+			resolve: {
+				selectedItem : function () {
+					return {};
+				},
+				model : function() {
+					return $scope.model;
+				},
+				isNew : function() {
+					return true;
+				},
+				allowDelete : function() {
+					return false;
+				}
+			}
+		});
+
+		modalInstance.result.then(function (data) {
+			if (data.reason =='save') {
+				$scope.saveNewItem(data.item);
+			}
+	    }, function () {
+	      //console.log('modal closed');
+	    });
+
+
+	};
+
+	$scope.saveNewItem = function(targetItem) {
+
+    	xcUtils.calculateFormFields(targetItem, $scope.model);
+
+    	$scope.select(targetItem);
+		
+		xcDataFactory.getStore($scope.datastoreType)
+		.saveNew( $scope.url, targetItem )
+		.then( function(res) {
+
+			if ($scope.type == 'categorised' || $scope.type=='accordion'){ 
+
+				//do a full refresh of the list
+				$rootScope.$emit('refreshList', '');
+
+			} else {
+
+				//add the item to the list and sort it
+				var sortFunction = xcUtils.getSortByFunction( $scope.orderBy, $scope.orderReversed );
+
+				$scope.items.push(res);
+
+		        //resort
+		        var ress = $scope.items;
+		        ress.sort( sortFunction );
+
+		        $scope.items = ress;
+
+			}				
+
+		})
+		.catch( function(err) {
+			alert("The item could not be saved/ updated: " + err.statusText);
+		});
+
+	};
+
+	$scope.saveItem = function(targetItem) {
+
+		xcUtils.calculateFormFields(targetItem, $scope.model);
+
+		$scope.selectedItem = targetItem;
+
+		xcDataFactory.getStore($scope.datastoreType)
+		.update( $scope.url, $scope.selectedItem)
+		.then( function(res) {
+
+			$rootScope.$emit('refreshList', '');
+			$scope.isNew = false;
+
+		})
+		.catch( function(err) {
+			alert("The item could not be saved/ updated: " + err.statusText);
+		});
+
+	};
+
+	$scope.deleteItem = function(targetItem) {
+
+		xcDataFactory.getStore($scope.datastoreType)
+		.delete( $scope.url, targetItem )
+		.then( function(res) {
+
+			$scope.$emit('deleteItemEvent', targetItem);
+			$scope.selectedItem = null;
+
+		})
+		.catch( function(err) {
+			console.error(err);
+		});
+
+	};
+
+	$scope.editDetails = function(item) {
+
+		var modalInstance = $scope.modalInstance = $modal.open({
+			templateUrl: 'xc-form-modal-edit.html',
+			controller: 'UpdateItemInstanceCtrl',
+			backdrop : true,
+			resolve: {
+				selectedItem : function () {
+					return item;
+				},
+				model : function() {
+					return $scope.model;
+				},
+				isNew : function() {
+					return $scope.isNew;
+				},
+				allowDelete : function() {
+					return $scope.allowDelete;
+				}
+			}
+		});
+
+		modalInstance.result.then(function (data) {
+			if (data.reason == 'save') {
+				$scope.saveItem(data.item);
+			} else if (data.reason == 'delete') {
+				$scope.deleteItem(data.item);
+			}
+	    }, function () {
+	      //console.log('modal closed');
+	    });
+	};
+
+} ]);
 
 var app = angular.module("xc.factories", ['ngResource', 'pouchdb']);
 
@@ -46,10 +382,10 @@ app.factory('RESTFactory', ['$http', function($http) {
 
 			url = url.replace(":id", "");
 
-			console.log('querying REST service at ' + url);
+			//console.log('querying REST service at ' + url);
 
 			return $http.get(url).then( function(res) {
-				console.log('returning '  + res.data.length + ' items');
+				//console.log('returning '  + res.data.length + ' items');
 				return res.data;
 			});
 
@@ -371,197 +707,6 @@ app.factory('LowlaFactory', [function() {
 
 
 }]);
-/*
- * Main XComponents module
- *
- * Note: we need to add all dependencies for this module here, so we can reference
- * the module using just angular.module('<modname>');
- */
-
-var app = angular.module('xcomponents', [
-	'templates-main',
-	'xc.factories',
-	'ngResource',
-	'ngRoute',
-	'ngCookies',
-	'ngAnimate',
-	'ngSanitize',
-	'textAngular',
-	'ui.bootstrap'
-]);
-
-//bootstrapping code
-var hasNativeHTMLImportsSupport = ('import' in document.createElement('link'));
-
-if (hasNativeHTMLImportsSupport) {
-	
-	angular.element(document).ready(function() {
-		if (typeof xcomponents != 'undefined') { xcomponents.executeCallbacks(); }
-		angular.bootstrap(document, ['xcomponents']);
-	});
-
-} else {
-	window.addEventListener('HTMLImportsLoaded', function(e){ 
-		if (typeof xcomponents != 'undefined') { xcomponents.executeCallbacks(); }
-		angular.bootstrap(document, ['xcomponents']);
-	});
-}
-
-app.controller('xcController', function($rootScope, $scope, $timeout, $document, xcUtils) {
-	
-	$scope.menuOptions = [];
-
-	//load the OS specific CSS
-	var userAgent = navigator.userAgent;
-	$scope.iOS = (/(iPhone|iPad|iPod)/gi).test(userAgent);
-	$scope.Android = (/(Android)/gi).test(userAgent);
-
-	$rootScope.iOS = $scope.iOS;
-	$rootScope.Android = $scope.Android;
-
-	var baseFolder = '/bower_components';
-	var css = baseFolder + '/bootcards/dist/css/';
-
-	var body = angular.element( $document[0].body);
-
-	if ($scope.iOS) {
-		css += 'bootcards-ios-lite.min.css';
-		body.addClass('bootcards-ios');
-	} else if ($scope.Android) {
-		css += 'bootcards-android-lite.min.css';
-		body.addClass('bootcards-android');
-	} else {
-		css += 'bootcards-desktop-lite.min.css';
-		body.addClass('bootcards-desktop');
-	}
-	
-	var head = angular.element(document.getElementsByTagName('head')[0]);
-	head.append("<link rel='stylesheet' href='" + css + "' />");
-
-	//remove hidden class from body to show content
-	$('body').removeClass('hidden');
-
-	if (typeof xcomponents != 'undefined') {
-
-		console.log('Load XComponents config');
-
-		var config = xcomponents;
-
-		if (config.models) {
-
-			for(var modelName in config.models) {
-
-				var model = config.models[modelName];
-
-				model.fieldsRead = [];		//list of fields in read mode
-				model.fieldsEdit = [];		//list of fields in edit mode
-				model.fieldsFormula = [];	//list of field formulas
-				model.fieldFilters = [];
-				model.fields = model.fields || [];
-
-				//add labels if not specified (proper cased field name)
-				for (var i=0; i<model.fields.length; i++) {
-
-					var f = model.fields[i];
-
-					if (!f.type) {
-						f.type = 'text';		//default type=text
-					}
-
-					if ( !f.hasOwnProperty('label') ) {
-						f.label = f.field.substring(0,1).toUpperCase() + f.field.substring(1);
-					}
-					//set 'show in read mode' property
-					if ( !f.hasOwnProperty('read') ) {
-						f.read = true;
-					}
-					//set 'show in edit mode' property
-					if ( !f.hasOwnProperty('edit') ) {
-						f.edit = true;
-					}
-
-					if (f.hasOwnProperty('filter')) {
-						model.fieldFilters[f.field] = f.filter;
-					}
-
-					if (f.type == 'select' || f.type == 'select-multiple') {
-					
-						if (f.options.hasOwnProperty('endpoint')) {
-
-							f.options = xcUtils.resolveRemoteOptionsList(f.options);
-							
-						} else if (f.options.length>0 && typeof f.options[0] == 'string') {
-
-							var o = [];
-
-							angular.forEach(f.options, function(option) {
-								o.push( {label : option, value : option});
-							});
-
-							f.options = o;
-
-						}
-
-					}
-
-					if (f.read) {
-						model.fieldsRead.push(f);
-					}
-
-					if (f.edit) {
-						model.fieldsEdit.push(f);
-					}
-					if ( f.hasOwnProperty('formula') && f.formula != null ) {
-						model.fieldsFormula.push(f);
-					}
-
-					
-				}
-			}
-		}
-
-		$rootScope.config = xcomponents;
-
-	}
-
-	//initialize bootcards
-	$timeout( function() {
-		bootcards.init( {
-	        offCanvasHideOnMainClick : true,
-	        offCanvasBackdrop : false,
-	        enableTabletPortraitMode : true,
-	        disableRubberBanding : true,
-	        disableBreakoutSelector : 'a.no-break-out'
-	      });
-	}, 500);
-
-});
-
-app.directive('disableNgAnimate', ['$animate', function($animate) {
-  return {
-    restrict: 'A',
-    link: function(scope, element) {
-      $animate.enabled(false, element);
-    }
-  };
-}]);
-
-app.filter('fltr', function($interpolate, $filter, xcUtils) {
-	return function(item, filterName, fieldType) {
-
-		if (arguments.length >= 3 && fieldType != 'text') {
-			//filter by field type
-			return $filter(fieldType)(item);
-		} else if (!filterName) {
-			return item;	
-		} else {
-			var _res = $interpolate('{{value | ' + filterName + '}}');
-			return _res( {value : item } );
-		}
-	};
-});
-
-
 
 //polyfill for indexOf function
 //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/indexOf
@@ -645,10 +790,10 @@ app.factory('xcUtils', function($rootScope, $http) {
 			}
 		},
 
-		calculateFormFields : function(form) {
+		calculateFormFields : function(form, model) {
 
 			//add computed fields: get the list of fields that need to be computed
-			var f = $rootScope.config['fieldsFormula'];
+			var f = model.fieldsFormula;
 
 			for (var i=0; i<f.length; i++) {
 				
@@ -755,10 +900,14 @@ app.factory('xcUtils', function($rootScope, $http) {
 	};
 
 });
+/*
+ * XComponents base card 
+ * http://xcomponents.org/site/docs.html#doc-base
+ */
 
 var app = angular.module('xcomponents');
 
-app.directive('xcBase', function() {
+app.directive('xcBase', [ function() {
 
 	return {
 
@@ -774,11 +923,15 @@ app.directive('xcBase', function() {
 
 	};
 
-});
+}]);
+/*
+ * XComponents carousel card 
+ * http://xcomponents.org/site/docs.html#doc-carousel
+ */
 
 var app = angular.module('xcomponents');
 
-app.directive('xcCarousel', function() {
+app.directive('xcCarousel', [function() {
 
 	return {
 
@@ -798,11 +951,11 @@ app.directive('xcCarousel', function() {
 	};
 
 
-} );
+} ]);
 
 var app = angular.module('xcomponents');
 
-app.directive('xcChart', function() {
+app.directive('xcChart', [function() {
 
 	return {
 
@@ -1008,12 +1161,12 @@ app.directive('xcChart', function() {
 
 	};
 
-});
+}]);
 
 
 var app = angular.module('xcomponents');
 
-app.directive('xcFile', function() {
+app.directive('xcFile', [function() {
 
 	return {
 
@@ -1027,7 +1180,8 @@ app.directive('xcFile', function() {
 			previewUrl : '@',
 			url : '@',
 			allowFavorite : '=',
-			allowEmail : '='
+			allowEmail : '=',
+			allowDownload : '='
 			
 		},
 
@@ -1038,11 +1192,11 @@ app.directive('xcFile', function() {
 
 	};
 
-});
+}]);
 
 var app = angular.module('xcomponents');
 
-app.directive('xcFooter', function() {
+app.directive('xcFooter', [function() {
 
 	return {
 
@@ -1060,13 +1214,13 @@ app.directive('xcFooter', function() {
 
 	};
 
-});
+}]);
 
 var app = angular.module('xcomponents');
 
 app.controller('UpdateItemInstanceCtrl', 
-	[ '$scope', '$modalInstance', 'selectedItem', 'model', 'isNew', 'allowDelete', 'xcUtils',
-	function ( $scope, $modalInstance, selectedItem, model, isNew, allowDelete, xcUtils) {
+	[ '$scope', '$controller', '$modalInstance', 'selectedItem', 'model', 'isNew', 'allowDelete', 'xcUtils',
+	function ( $scope, $controller, $modalInstance, selectedItem, model, isNew, allowDelete, xcUtils) {
 
 	var fieldsEdit = model.fieldsEdit;
 
@@ -1155,8 +1309,8 @@ app.controller('UpdateItemInstanceCtrl',
 var app = angular.module('xcomponents');
 
 app.directive('xcForm', 
-	['$rootScope', 'xcDataFactory', 
-	function($rootScope, xcDataFactory) {
+	['$rootScope', '$controller', 'xcDataFactory', 
+	function($rootScope, $controller, xcDataFactory) {
 
 	return {
 
@@ -1199,7 +1353,13 @@ app.directive('xcForm',
 
 			}
 
-      		$scope.fieldsRead = $scope.model.fieldsRead;
+			// instantiate base controller
+			$controller('BaseController', { 
+				$scope: $scope, 
+				$modal : $modal
+			} );
+
+			$scope.fieldsRead = $scope.model.fieldsRead;
 			$scope.fieldsEdit = $scope.model.fieldsEdit;
 			$scope.imageBase = $scope.model.imageBase;
 
@@ -1277,38 +1437,7 @@ app.directive('xcForm',
 				
 			}
 
-			$scope.editDetails = function() {
-
-				var modalInstance = $scope.modalInstance = $modal.open({
-					templateUrl: 'xc-form-modal-edit.html',
-					controller: 'UpdateItemInstanceCtrl',
-					backdrop : true,
-					resolve: {
-						selectedItem : function () {
-							return $scope.selectedItem;
-						},
-						model : function() {
-							return $scope.model;
-						},
-						isNew : function() {
-							return $scope.isNew;
-						},
-						allowDelete : function() {
-							return $scope.allowDelete;
-						}
-					}
-				});
-
-				modalInstance.result.then(function (data) {
-					if (data.reason == 'save') {
-						$scope.saveItem(data.item);
-					} else if (data.reason == 'delete') {
-						$scope.deleteItem(data.item);
-					}
-			    }, function () {
-			      //console.log('modal closed');
-			    });
-			};
+			
 
 			//determine if we need to show an image, placeholder image or just an icon
 			$scope.showImage = function() {
@@ -1321,41 +1450,7 @@ app.directive('xcForm',
 				return $scope.selectedItem && $scope.iconField && $scope.selectedItem[$scope.iconField];
 			};
 
-			$scope.saveItem = function(targetItem) {
-
-				xcUtils.calculateFormFields(targetItem);
-
-				$scope.selectedItem = targetItem;
-
-				xcDataFactory.getStore($scope.datastoreType)
-				.update( $scope.url, $scope.selectedItem)
-				.then( function(res) {
-
-					$rootScope.$emit('refreshList', '');
-					$scope.isNew = false;
-
-				})
-				.catch( function(err) {
-					alert("The item could not be saved/ updated: " + err.statusText);
-				});
-
-			};
-
-			$scope.deleteItem = function(targetItem) {
-
-				xcDataFactory.getStore($scope.datastoreType)
-				.delete( $scope.url, targetItem )
-				.then( function(res) {
-
-					$scope.$emit('deleteItemEvent', targetItem);
-					$scope.selectedItem = null;
-
-				})
-				.catch( function(err) {
-					console.error(err);
-				});
-
-			};
+			
 			
 		}
 
@@ -1549,8 +1644,8 @@ app.directive('xcLayout', [ function() {
 var app = angular.module("xcomponents");
 
 app.directive('xcList', 
-	['$rootScope', '$filter', 'xcUtils', 'xcDataFactory', 
-	function($rootScope, $filter, xcUtils, xcDataFactory) {
+	['$rootScope', '$controller', '$filter', 'xcUtils', 'xcDataFactory', 
+	function($rootScope, $controller, $filter, xcUtils, xcDataFactory) {
 
 	var loadData = function(scope) {
 
@@ -1559,8 +1654,6 @@ app.directive('xcList',
 			scope.filterValue == null || scope.filterValue.length==0) ) {
 			return;
 		}
-
-		//console.info("LOAD FROM " + scope.url, scope.filterBy, scope.filterValue);
 
 		if ( scope.srcDataEntries) {
 
@@ -1575,8 +1668,6 @@ app.directive('xcList',
 			.all(scope.url).then( function(res) {
 				
 				var numRes = res.length;
-
-				//console.log('found ' + numRes + ' at ' + scope.url);
 
 				if (scope.filterBy && scope.filterValue) {
 					//filter the result set
@@ -1661,7 +1752,8 @@ app.directive('xcList',
 			imagePlaceholderIcon : '@',		/*icon to be used if no thumbnail could be found, see http://fortawesome.github.io/Font-Awesome/icons/ */
 			datastoreType : '@',
 			infiniteScroll : '@',
-			embedded : '@'
+			embedded : '@',
+			directEdit : '@'
 		},
 
 		restrict : 'E',
@@ -1705,6 +1797,12 @@ app.directive('xcList',
 				}
 			}
 
+			// instantiate base controller
+			$controller('BaseController', { 
+				$scope: $scope, 
+				$modal : $modal
+			} );
+
       		$scope.fieldsRead = $scope.model.fieldsRead;
 			$scope.fieldsEdit = $scope.model.fieldsEdit;
 			$scope.imageBase = $scope.model.imageBase;
@@ -1716,6 +1814,7 @@ app.directive('xcList',
 
 			//set defaults
 			$scope.embedded = (typeof $scope.embedded == 'undefined' ? false : $scope.embedded);
+			$scope.directEdit = (typeof $scope.directEdit == 'undefined' ? false : $scope.directEdit);
 			$scope.allowSearch = (typeof $scope.allowSearch == 'undefined' ? true : $scope.allowSearch);
 			$scope.autoloadFirst = (typeof $scope.autoloadFirst == 'undefined' ? false : $scope.autoloadFirst);
 			$scope.infiniteScroll = (typeof $scope.infiniteScroll == 'undefined' ? false : $scope.infiniteScroll);
@@ -1751,39 +1850,6 @@ app.directive('xcList',
 
 			$scope.colClass = function() {
 				return ($scope.embedded ? '' : $scope.colLeft);
-			};
-
-			$scope.addNewItem = function() {
-
-				var modalInstance = $scope.modalInstance = $modal.open({
-					templateUrl: 'xc-form-modal-edit.html',
-					controller: 'UpdateItemInstanceCtrl',
-					backdrop : true,
-					resolve: {
-						selectedItem : function () {
-							return {};
-						},
-						model : function() {
-							return $scope.model;
-						},
-						isNew : function() {
-							return true;
-						},
-						allowDelete : function() {
-							return false;
-						}
-					}
-				});
-
-				modalInstance.result.then(function (data) {
-					if (data.reason =='save') {
-						$scope.saveNewItem(data.item);
-					}
-			    }, function () {
-			      //console.log('modal closed');
-			    });
-
-
 			};
 
 			//bind events for infinite scroll
@@ -1827,6 +1893,14 @@ app.directive('xcList',
 				});
 			};
 
+			$scope.itemClick = function(item) {
+				if ($scope.directEdit) {
+					$scope.editDetails(item);
+				} else {
+					$scope.select(item);
+				}
+			};
+
 			$scope.select = function(item) {
 		
 				$scope.selected = item;
@@ -1836,7 +1910,6 @@ app.directive('xcList',
 				$scope.$broadcast('itemSelected', item);
 				
 			};
-
 			
 			$rootScope.$on('selectItemEvent', function(ev, item) {
 
@@ -1873,43 +1946,6 @@ app.directive('xcList',
 			    }
 
 		    };
-
-		    $scope.saveNewItem = function(targetItem) {
-
-		    	xcUtils.calculateFormFields(targetItem);
-
-		    	$scope.select(targetItem);
-				
-				xcDataFactory.getStore($scope.datastoreType)
-				.saveNew( $scope.url, targetItem )
-				.then( function(res) {
-
-					if ($scope.type == 'categorised' || $scope.type=='accordion'){ 
-
-						//do a full refresh of the list
-						$rootScope.$emit('refreshList', '');
-
-					} else {
-
-						//add the item to the list and sort it
-						var sortFunction = xcUtils.getSortByFunction( $scope.orderBy, $scope.orderReversed );
-
-						$scope.items.push(res);
-
-				        //resort
-				        var ress = $scope.items;
-				        ress.sort( sortFunction );
-
-				        $scope.items = ress;
-
-					}				
-
-				})
-				.catch( function(err) {
-					alert("The item could not be saved/ updated: " + err.statusText);
-				});
-
-			};
 
 		}
 
@@ -2029,7 +2065,15 @@ app.directive('xcSummaryItem', function() {
 
 		replace : true,
 		restrict : 'E',
-		templateUrl : 'xc-summary-item.html'
+		templateUrl : 'xc-summary-item.html',
+
+		controller : function($scope) {
+
+			$scope.openLink = function(url) {
+				window.location.href = url;
+			};
+
+		}
 
 	};
 
@@ -2354,31 +2398,28 @@ angular.module("xc-file.html", []).run(["$templateCache", function($templateCach
     "    \n" +
     "  </div>\n" +
     "\n" +
-    "  <div class=\"panel-body\">\n" +
-    "{{::description}}\n" +
+    "  <div class=\"panel-body\" ng-if=\"description.length>0\">\n" +
+    "    {{::description}}\n" +
     "  </div>\n" +
     "\n" +
     "  <img ng-src=\"{{previewUrl}}\" class=\"img-responsive\">\n" +
     "\n" +
-    "  <div class=\"panel-footer\">\n" +
+    "  <div class=\"panel-footer\" ng-if=\"allowDownload || allowFavorite || allowEmail\">\n" +
     "\n" +
     "    <div class=\"btn-group btn-group-justified\">\n" +
-    "      <div class=\"btn-group\">\n" +
+    "      <div class=\"btn-group\" ng-if=\"allowDownload\">\n" +
     "        <a class=\"btn btn-default\" ng-href=\"{{url}}\" onclick=\"alert('This button is disabled')\">\n" +
-    "          <i class=\"fa fa-arrow-down\"></i>\n" +
-    "          Download\n" +
+    "          <i class=\"fa fa-arrow-down\"></i>Download\n" +
     "        </a>\n" +
     "      </div>\n" +
     "      <div class=\"btn-group\" ng-if=\"allowFavorite\">\n" +
     "        <a class=\"btn btn-default\" href=\"#\" onclick=\"alert('This button is disabled')\">\n" +
-    "          <i class=\"fa fa-star\"></i>\n" +
-    "          Favorite\n" +
+    "          <i class=\"fa fa-star\"></i>Favorite\n" +
     "        </a>\n" +
     "      </div>\n" +
     "      <div class=\"btn-group\" ng-show=\"allowEmail\">\n" +
     "        <a class=\"btn btn-default\" href=\"#\" onclick=\"alert('This button is disabled')\">\n" +
-    "          <i class=\"fa fa-envelope\"></i>\n" +
-    "          Email\n" +
+    "          <i class=\"fa fa-envelope\"></i>Email\n" +
     "        </a>\n" +
     "      </div>\n" +
     "    </div>\n" +
@@ -2427,7 +2468,7 @@ angular.module("xc-form-modal-edit.html", []).run(["$templateCache", function($t
     "				<i class=\"fa fa-check\"></i>Save\n" +
     "			</button>\n" +
     "		</div>\n" +
-    "		<h4 class=\"modal-title\">Edit {{model.name}}</h4>		\n" +
+    "		<h4 class=\"modal-title\">{{(isNew ? 'Add ' : 'Edit ') + model.name}}</h4>		\n" +
     "	</div>\n" +
     "					\n" +
     "	<div class=\"modal-body form-horizontal\">\n" +
@@ -2518,7 +2559,7 @@ angular.module("xc-form.html", []).run(["$templateCache", function($templateCach
     "\n" +
     "		<div class=\"panel-heading clearfix\">\n" +
     "			<h3 class=\"panel-title pull-left\">{{model.name}}</h3>\n" +
-    "			<a class=\"btn btn-primary pull-right\" ng-click=\"editDetails()\">\n" +
+    "			<a class=\"btn btn-primary pull-right\" ng-click=\"editDetails(selectedItem)\">\n" +
     "				<i class=\"fa fa-pencil\"></i><span>Edit</span>\n" +
     "			</a>\n" +
     "\n" +
@@ -2789,7 +2830,8 @@ angular.module("xc-list-accordion.html", []).run(["$templateCache", function($te
     "						{{group.name}}\n" +
     "					</a>\n" +
     "				\n" +
-    "					<a class=\"list-group-item\" ng-show=\"!group.collapsed\" ng-repeat=\"item in group.entries | filter : filter\" ng-click=\"select(item)\"\n" +
+    "					<a class=\"list-group-item\" ng-show=\"!group.collapsed\" ng-repeat=\"item in group.entries | filter : filter\" \n" +
+    "						ng-click=\"itemClick(item)\"\n" +
     "						ng-class=\"{'active' : selected == item}\">\n" +
     "\n" +
     "						<!--(placeholder) icon-->\n" +
@@ -2857,7 +2899,8 @@ angular.module("xc-list-categorised.html", []).run(["$templateCache", function($
     "						{{group.name}}\n" +
     "					</div>\n" +
     "				\n" +
-    "					<a class=\"list-group-item\" ng-repeat=\"item in group.entries | filter : filter\" ng-click=\"select(item)\"\n" +
+    "					<a class=\"list-group-item\" ng-repeat=\"item in group.entries | filter : filter\" \n" +
+    "						ng-click=\"itemClick(item)\"\n" +
     "						ng-class=\"{'active' : selected == item}\">\n" +
     "\n" +
     "						<!--(placeholder) icon-->\n" +
@@ -2920,7 +2963,8 @@ angular.module("xc-list-detailed.html", []).run(["$templateCache", function($tem
     "\n" +
     "			<div class=\"list-group\">\n" +
     "				\n" +
-    "				<a class=\"list-group-item animate-repeat\" ng-repeat=\"item in items | filter: filter | limitTo : itemsShown track by item.id\"  ng-click=\"select(item)\"\n" +
+    "				<a class=\"list-group-item animate-repeat\" ng-repeat=\"item in items | filter: filter | limitTo : itemsShown track by item.id\" \n" +
+    "					ng-click=\"itemClick(item)\"\n" +
     "					ng-class=\"{'active' : selected == item}\">\n" +
     "\n" +
     "					<div class=\"row\">\n" +
@@ -2994,7 +3038,8 @@ angular.module("xc-list-flat.html", []).run(["$templateCache", function($templat
     "\n" +
     "			<div class=\"list-group\">\n" +
     "				\n" +
-    "				<a class=\"list-group-item animate-repeat\" ng-repeat=\"item in items | filter: filter | limitTo : itemsShown track by item.id\"  ng-click=\"select(item)\"\n" +
+    "				<a class=\"list-group-item animate-repeat\" ng-repeat=\"item in items | filter: filter | limitTo : itemsShown track by item.id\" \n" +
+    "					ng-click=\"itemClick(item)\"\n" +
     "					ng-class=\"{'active' : selected == item}\">\n" +
     "\n" +
     "					<!--(placeholder) icon-->\n" +
@@ -3127,8 +3172,8 @@ angular.module("xc-summary-item.html", []).run(["$templateCache", function($temp
   $templateCache.put("xc-summary-item.html",
     "<div class=\"col-xs-6 col-sm-4\">\n" +
     "\n" +
-    "	<a class=\"bootcards-summary-item no-break-out\" \n" +
-    "		href=\"{{target}}\"\n" +
+    "	<a class=\"bootcards-summary-item\" \n" +
+    "		ng-click=\"openLink(target)\"\n" +
     "		style=\"padding-top:35px;\">\n" +
     "		<i class=\"fa fa-3x {{icon}}\"></i>\n" +
     "		<h4>\n" +
